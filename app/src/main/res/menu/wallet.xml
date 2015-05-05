@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:shoppingapp="http://schemas.android.com/apk/res-auto" >
+    
+	<item android:id="@+id/action_budgetAdd"
+          android:icon="@drawable/ic_action_add"
+          android:showAsAction="always"
+          android:title="@string/productAdd" />
+	<item android:id="@+id/action_help"
+	     android:showAsAction="always"
+	     android:icon="@drawable/ic_action_help"
+	     android:title="@string/textHelp" />
+</menu>

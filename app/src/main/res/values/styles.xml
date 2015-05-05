@@ -1,0 +1,115 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="Theme.Sherlock.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+        <item name="android:textSize">17sp</item>
+        <item name="actionBarStyle">@style/ActionBar.Solid.Apptheme</item>
+		<item name="actionBarItemBackground">@drawable/selectable_background_apptheme</item>        
+    </style>
+    
+    <style name="ActionBar.Solid.Apptheme" parent="@style/Widget.Sherlock.Light.ActionBar.Solid.Inverse">
+		<!-- background hex color: #98CB00 -->
+		<item name="background">@drawable/ab_solid_apptheme</item>
+		<item name="backgroundStacked">@drawable/ab_stacked_solid_apptheme</item>
+		<item name="backgroundSplit">@drawable/ab_bottom_solid_apptheme</item>
+	</style>
+    
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="TransparentProgressDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:windowIsFloating">true</item>
+    	<item name="android:background">@color/transparent</item>
+    	
+    	<item name="android:bottomBright">@color/transparent</item>
+		<item name="android:bottomDark">@color/transparent</item>
+		<item name="android:bottomMedium">@color/transparent</item>
+		<item name="android:centerBright">@color/transparent</item>
+		<item name="android:centerDark">@color/transparent</item>
+		<item name="android:centerMedium">@color/transparent</item>
+		<item name="android:fullBright">@color/transparent</item>
+		<item name="android:fullDark">@color/transparent</item>
+		<item name="android:topBright">@color/transparent</item>
+		<item name="android:topDark">@color/transparent</item>
+    </style>
+    
+    <style name="TextPagerTitle">
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="textListItem" parent="@android:style/TextAppearance">
+    	<item name="android:textColor">?android:textColorPrimary</item> 
+    	<item name="android:textAppearance">?android:textAppearanceMedium</item>
+    </style>
+    
+    <style name="textColouredButton" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+    </style>
+    
+    <style name="textMessage" parent="@android:style/TextAppearance">
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="textTitleMessage" parent="@android:style/TextAppearance">
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textAppearance">?android:textAppearanceLarge</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="editTextData" parent="@android:style/TextAppearance">
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+    </style>
+    
+    <style name="spinnerBlue" parent="Theme.Sherlock.Light">
+        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/spinner_blue</item>
+    </style>
+    
+    <style name="buttonColouredAppearance">
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:layout_margin">3dp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+    
+    <style name="buttonColouredAction">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+		<item name="android:layout_margin">3dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">2</item>
+    </style>
+
+    <style name="buttonColouredActionSave" parent="@style/buttonColouredAction">
+        <item name="android:background">@drawable/button_green</item>
+    </style>
+
+    <style name="buttonColouredActionCancel" parent="@style/buttonColouredAction">
+        <item name="android:background">@drawable/button_red</item>
+    </style>
+    
+</resources>

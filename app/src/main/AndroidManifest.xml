@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.householdplanner.shoppingapp"
+    android:versionCode="12"
+    android:versionName="1.5.1" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="com.householdplanner.shoppingapp.permission.C2D_MESSAGE" />
+
+    <permission
+        android:name="com.householdplanner.shoppingapp.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-sdk
+        android:minSdkVersion="10"
+        android:targetSdkVersion="22" />
+
+    <application android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <meta-data android:name="android.app.default_searchable" 
+            android:value=".SearchProductActivity" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <receiver
+            android:name=".services.GCMBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.householdplanner.shoppingapp" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".services.GCMIntentService" />
+
+        <activity
+            android:name=".MainActivity"
+            android:icon="@drawable/ic_launcher"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".SearchProductActivity"
+            android:launchMode="singleTop"
+            android:label="@string/search_product_activity_title"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.householdplanner.shoppingapp.MainActivity" />
+            <meta-data android:name="android.app.searchable"
+            	android:resource="@xml/searchable" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+            
+        
+        <activity
+            android:name=".ProductActivity"
+            android:label="@string/title_product"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.householdplanner.shoppingapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".ProductTicket"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".CurrentListActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <provider
+            android:name=".ProductProvider"
+            android:authorities="com.householdplanner.shoppingapp.ProductProvider"
+            android:exported="false" >
+        </provider>
+
+        <activity
+            android:name=".WalletActivity"
+            android:label="@string/title_activity_wallet"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.householdplanner.shoppingapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".BudgetActivity"
+            android:label="@string/title_activity_budget"
+            android:parentActivityName=".WalletActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.householdplanner.shoppingapp.WalletActivity" />
+        </activity>
+        <activity
+            android:name=".TicketActivity"
+            android:label="@string/title_activity_ticket"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.householdplanner.shoppingapp.MainActivity" />
+        </activity>
+        <activity android:name=".cross.AppPreferences"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.PREFERENCE" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".MarketActivity"
+            android:label="@string/title_activity_market"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+            <intent-filter>
+                <action android:name="com.householdplanner.shoppingapp.MarketActivityView" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".HelpActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+        </activity>
+        <activity
+            android:name=".MarketListActivity"
+            android:label="@string/title_activity_market_list"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+        </activity>
+        <activity
+            android:name=".help.HelpActivityFrame"
+            android:label="@string/title_help_activity_frame"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" >
+        </activity>
+        
+        
+    </application>
+
+</manifest>

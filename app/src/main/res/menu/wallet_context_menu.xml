@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+      xmlns:shoppingapp="http://schemas.android.com/apk/res-auto">
+      
+    <item android:id="@+id/editBudget"
+          android:showAsAction="always"
+          android:icon="@drawable/ic_action_edit"
+          android:title="@string/editBudget" />
+
+ 	<item android:id="@+id/deleteBudget"
+ 	    android:showAsAction="always"
+ 	    android:icon="@drawable/ic_action_discard"
+ 	    android:title="@string/deleteBudget" />
+ 	
+</menu> 

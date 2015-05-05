@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_WalletCategory_Title" >
+	    <ListPreference 
+	        android:key="prefCurrencySymbol"
+	        android:title="@string/labelCurrencySymbol"
+	        android:summary="@string/summaryCurrencySymbol"
+	        android:dialogTitle="@string/labelCurrencySymbol"
+	        android:entries="@array/listEntries_CurrencySymbols"
+	        android:entryValues="@array/listValues_CurrencySymbols"
+	        android:defaultValue="@string/pref_CurrencySymbol_DefaultValue"/>
+	</PreferenceCategory>
+    <PreferenceCategory android:title="@string/actionShoppingMode">
+        <CheckBoxPreference
+            android:key="prefRecalculateOrder"
+            android:title="@string/labelRecalculateOrder"
+            android:summary="@string/summaryRecalculateOrder"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+</PreferenceScreen> 

@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+      xmlns:shoppingapp="http://schemas.android.com/apk/res-auto">
+
+ 	<item android:id="@+id/deleteProduct"
+ 	    android:showAsAction="ifRoom"
+ 	    android:icon="@drawable/ic_action_discard"
+ 	    android:title="@string/deleteProduct" />
+ 	
+</menu> 
