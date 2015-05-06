@@ -16,9 +16,8 @@
 	    style="@style/editTextData"
 	    android:inputType="textCapSentences" /> 
 
-    <Spinner 
+    <android.support.v7.widget.AppCompatSpinner
 	    android:id="@+id/spCategory"
-	    style="@style/spinnerBlue" 
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:entries="@array/category_array" 
@@ -37,12 +36,10 @@
 		    android:hint="@string/amount"
 		    style="@style/editTextData" 
 		    android:inputType="numberDecimal" />
-	    <Spinner 
+	    <android.support.v7.widget.AppCompatSpinner
 	        android:id="@+id/spMeasure" 
-			style="@style/spinnerBlue"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-		    android:background="@drawable/spinner_blue"
 	        android:entries="@array/measure_array"
 	        android:prompt="@string/measureunit" />
 	</LinearLayout>
@@ -51,22 +48,20 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal">
-	    <Button 
+	    <android.support.v7.widget.AppCompatButton
 		    android:id="@+id/btnCancel"
 		    android:layout_width="0dp"
         	android:layout_weight="1"
         	android:layout_height="wrap_content"
         	android:gravity="center"
-			style="@style/buttonColouredActionCancel"
-		    android:text="@string/btnCancel" 
+		    android:text="@string/btnCancel"
 		    android:onClick="btnCancel_onClick" />
-		<Button 
+		<android.support.v7.widget.AppCompatButton
 		    android:id="@+id/btnSave"
 		    android:layout_width="0dp"
         	android:layout_weight="1"
         	android:layout_height="wrap_content"
         	android:gravity="center"
-			style="@style/buttonColouredActionSave"
 		    android:text="@string/btnSave"
 		    android:onClick="btnSave_onClick" />
 	</LinearLayout>

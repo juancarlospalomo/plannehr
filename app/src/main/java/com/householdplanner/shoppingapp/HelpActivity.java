@@ -1,15 +1,15 @@
 package com.householdplanner.shoppingapp;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-public class HelpActivity extends SherlockFragmentActivity {
+public class HelpActivity extends AppCompatActivity {
 
 	public static final String EXTRA_HELP_SCREEN = "helpScreen";
 	
@@ -47,7 +47,7 @@ public class HelpActivity extends SherlockFragmentActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getSupportMenuInflater().inflate(R.menu.help, menu);
+		getMenuInflater().inflate(R.menu.help, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

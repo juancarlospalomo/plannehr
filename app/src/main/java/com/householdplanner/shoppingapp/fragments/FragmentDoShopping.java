@@ -2,19 +2,19 @@ package com.householdplanner.shoppingapp.fragments;
 
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
 import com.householdplanner.shoppingapp.cross.ViewPagerShoppingListAdapter;
 
-public class FragmentDoShopping extends SherlockFragment implements OnFragmentProgress, OnLoadData {
+public class FragmentDoShopping extends Fragment implements OnFragmentProgress, OnLoadData {
 
 	private ViewPager mViewPager;
 	private ViewPagerShoppingListAdapter mViewPagerAdapter;

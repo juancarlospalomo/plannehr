@@ -122,7 +122,6 @@
     <string name="actionViewMarketCategories">Aisles Order</string>
     <string name="labelRecalculateOrder">Recalculate Aisles Order</string>
     <string name="summaryRecalculateOrder">Recalculate the Aisles order as you go shopping</string>
-    <string name="textActionRefresh">Share</string>
     <string name="textMovedToTicket">Taken to basket</string>
     <string name="actionShoppingMode">Shopping Mode</string>
     <string name="titleUsualTab">Usual</string>

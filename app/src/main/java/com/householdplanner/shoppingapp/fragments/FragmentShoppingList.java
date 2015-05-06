@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -16,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
@@ -29,7 +29,7 @@ import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.MarketCategoryStore;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 
-public class FragmentShoppingList extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class FragmentShoppingList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
 					OnFragmentProgress {
 
 	private static final int LOADER_ID = 1;
@@ -54,7 +54,8 @@ public class FragmentShoppingList extends SherlockFragment implements LoaderMana
 	public void onActivityCreated (Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		mHasRecalculate = prefs.getBoolean("prefRecalculateOrder", false);
+		//TODO: remove all functionality for recalculating
+		mHasRecalculate = false;
 		mMarketId = AppGlobalState.getInstance().getMarket(getActivity());
 		mMarketName = AppGlobalState.getInstance().getMarketName(getActivity());
 		LoadProductList();

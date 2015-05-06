@@ -1,59 +1,73 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:plannehr="http://schemas.android.com/apk/res-auto">
+    xmlns:plannehr="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_search"
-          android:title="@string/search_title"
-          android:icon="@drawable/ic_action_search"
-          android:showAsAction="always|collapseActionView"
-          android:actionViewClass="com.actionbarsherlock.widget.SearchView" />
-    
-	<item android:id="@+id/action_productAddByVoice"
-      	  android:showAsAction="always"
-     	  android:icon="@android:drawable/ic_btn_speak_now"
-     	  android:title="@string/productAdd" />
+    <item
+        android:id="@+id/action_search"
+        android:actionViewClass="android.support.v7.widget.SearchView"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="always|collapseActionView"
+        android:title="@string/search_title"
+        plannehr:actionViewClass="android.support.v7.widget.SearchView"
+        plannehr:showAsAction="always|collapseActionView" />
 
-    <item android:id="@+id/action_productAdd"
-		  android:showAsAction="always"
-		  android:icon="@drawable/ic_action_collections_new_label"
-		  android:title="@string/productAdd" />
-    
-    <item android:id="@+id/action_doShopping"
+    <item
+        android:id="@+id/action_productAddByVoice"
+        android:icon="@android:drawable/ic_btn_speak_now"
         android:showAsAction="always"
+        android:title="@string/productAdd"
+        plannehr:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_productAdd"
+        android:icon="@drawable/ic_action_collections_new_label"
+        android:showAsAction="always"
+        android:title="@string/productAdd"
+        plannehr:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_doShopping"
         android:icon="@drawable/ic_action_doshopping"
-        android:title="@string/buttonDoShopping" />
-    
-    <item android:id="@+id/action_refresh"
-		android:showAsAction="always"
-		android:icon="@drawable/ic_action_refresh"
-		android:title="@string/textActionRefresh" />
-		    
-    <item android:id="@+id/dropdown_menu"
+        android:showAsAction="always"
+        android:title="@string/buttonDoShopping"
+        plannehr:showAsAction="always" />
+
+    <item
+        android:id="@+id/dropdown_menu"
+        android:icon="@drawable/ic_action_overflow"
         android:showAsAction="always"
         android:title="@string/textOptions"
-        android:icon="@drawable/ic_action_overflow">
-		<menu>
-		    <item android:id="@+id/action_superMarkets"
-		        android:showAsAction="ifRoom"
-		        android:icon="@drawable/ic_action_market"
-		        android:title="@string/labelSupermarkets" />
-			    
-		    <item android:id="@+id/action_wallet"
-		        android:showAsAction="ifRoom"
-		 	    android:icon="@drawable/ic_currency"
-		 	    android:title="@string/actionWallet" />
-		    		 	
-		    <item android:id="@+id/action_settings"
-		 	    android:showAsAction="ifRoom"
-		 	    android:icon="@drawable/ic_action_settings"
-		 	    android:title="@string/actionSettings" />
-		    
-		    <item android:id="@+id/action_help"
-	     		android:showAsAction="ifRoom"
-	     		android:icon="@drawable/ic_action_help"
-	     		android:title="@string/textHelp" />
+        plannehr:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_superMarkets"
+                android:icon="@drawable/ic_action_market"
+                android:showAsAction="ifRoom"
+                android:title="@string/labelSupermarkets"
+                plannehr:showAsAction="ifRoom" />
 
-		</menu>
- 	</item>
+            <item
+                android:id="@+id/action_wallet"
+                android:icon="@drawable/ic_currency"
+                android:showAsAction="ifRoom"
+                android:title="@string/actionWallet"
+                plannehr:showAsAction="ifRoom" />
+
+            <item
+                android:id="@+id/action_settings"
+                android:icon="@drawable/ic_action_settings"
+                android:showAsAction="ifRoom"
+                android:title="@string/actionSettings"
+                plannehr:showAsAction="ifRoom" />
+
+            <item
+                android:id="@+id/action_help"
+                android:icon="@drawable/ic_action_help"
+                android:showAsAction="ifRoom"
+                android:title="@string/textHelp"
+                plannehr:showAsAction="ifRoom" />
+
+        </menu>
+    </item>
 
 </menu> 
 

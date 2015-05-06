@@ -12,7 +12,10 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -20,9 +23,6 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
 import com.householdplanner.shoppingapp.cross.font;
@@ -30,7 +30,7 @@ import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.stores.MarketStore;
 
-public class MarketListActivity extends SherlockFragmentActivity implements LoaderCallbacks<Cursor> {
+public class MarketListActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
 	private static final int NEW_MARKET_REQUEST_CODE = 1;
 	
@@ -152,7 +152,7 @@ public class MarketListActivity extends SherlockFragmentActivity implements Load
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		if ((!AppGlobalState.getInstance().isShoppingMode(this)) && (!mShowCheckNoMarket))  {
-			getSupportMenuInflater().inflate(R.menu.market_list_activity, menu);
+			getMenuInflater().inflate(R.menu.market_list_activity, menu);
 		}
 		return super.onCreateOptionsMenu(menu);
 	}

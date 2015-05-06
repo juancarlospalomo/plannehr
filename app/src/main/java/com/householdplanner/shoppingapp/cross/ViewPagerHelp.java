@@ -1,16 +1,16 @@
 package com.householdplanner.shoppingapp.cross;
 
-import com.householdplanner.shoppingapp.fragments.FragmentBackHelpCard;
-import com.householdplanner.shoppingapp.views.HelpView.TypeView;
-
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.householdplanner.shoppingapp.fragments.FragmentBackHelpCard;
+import com.householdplanner.shoppingapp.views.HelpView.TypeView;
+
 public class ViewPagerHelp extends FragmentStatePagerAdapter {
 
-	private static final int FRAGMENT_NUMBER = 5;
+	private static final int FRAGMENT_NUMBER = 4;
 	
 	public ViewPagerHelp(FragmentManager fm, Context context) {
 		super(fm);
@@ -21,19 +21,16 @@ public class ViewPagerHelp extends FragmentStatePagerAdapter {
 		FragmentBackHelpCard fragmentBackCard = null;
 		switch(position) {
 		case 0:
-			fragmentBackCard = new FragmentBackHelpCard(TypeView.EnterProducts);
+			fragmentBackCard = FragmentBackHelpCard.newInstance(TypeView.EnterProducts);
 			return fragmentBackCard;
 		case 1:
-			fragmentBackCard = new FragmentBackHelpCard(TypeView.SetMarket);
+			fragmentBackCard = FragmentBackHelpCard.newInstance(TypeView.SetMarket);
 			return fragmentBackCard;
 		case 2:
-			fragmentBackCard = new FragmentBackHelpCard(TypeView.StartBuy);
+			fragmentBackCard = FragmentBackHelpCard.newInstance(TypeView.StartBuy);
 			return fragmentBackCard;
 		case 3:
-			fragmentBackCard = new FragmentBackHelpCard(TypeView.WriteExpense);
-			return fragmentBackCard;
-		case 4:
-			fragmentBackCard = new FragmentBackHelpCard(TypeView.ShareList);
+			fragmentBackCard = FragmentBackHelpCard.newInstance(TypeView.WriteExpense);
 			return fragmentBackCard;
 		}
 		return fragmentBackCard;

@@ -1,10 +1,5 @@
 package com.householdplanner.shoppingapp.views;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.householdplanner.shoppingapp.R;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -12,14 +7,18 @@ import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 
+import com.householdplanner.shoppingapp.R;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class HelpView extends ViewGroup {
 	
 	public enum TypeView {
 		EnterProducts(0),
 		SetMarket(1),
 		StartBuy(2),
-		WriteExpense(3),
-		ShareList(4);
+		WriteExpense(3);
 		
 		private int _value;
 		private TypeView(int value) {
@@ -29,7 +28,10 @@ public class HelpView extends ViewGroup {
 		public int getValue() {
 			return _value;
 		}
-		
+
+		public static TypeView map(int value) {
+			return values()[value];
+		}
 	}
 	
 	public interface OnHelpViewClick {
@@ -117,18 +119,12 @@ public class HelpView extends ViewGroup {
 				div.right = columnSize * 3;
 				div.bottom = div.top + columnSize;
 				typeCapsule = TypeView.StartBuy;
-			} else if (index==TypeView.WriteExpense.getValue()) {
-				div.left = columnSize/2;
-				div.top = mCapsules.get(0).div.bottom;
-				div.right = columnSize + (columnSize/2);
+			} else {
+				div.left = columnSize;
+				div.top = mCapsules.get(0).div.bottom  - (r/2);
+				div.right = columnSize * 2;
 				div.bottom = div.top + columnSize;
 				typeCapsule = TypeView.WriteExpense;
-			} else {
-				div.left = (columnSize * 2) - (columnSize/2);
-				div.top = mCapsules.get(3).div.top;
-				div.right = (columnSize * 3) - (columnSize/2);
-				div.bottom = div.top + columnSize;
-				typeCapsule = TypeView.ShareList;
 			}
 			
 			divCapsule.typeCapsule = typeCapsule;

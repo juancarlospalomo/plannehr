@@ -7,12 +7,10 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/btnTicketDate"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        style="@style/buttonColouredAppearance"
-		android:background="@drawable/button_blue"
         android:gravity="center"
         android:onClick="showDatePickerDialog" 
         android:text="@string/atTicketDate"/>
@@ -33,20 +31,18 @@
         android:gravity="center_horizontal"
         android:layout_below="@id/edtExpense">
 
-        <Button android:id="@+id/btnCancelTicket"
+        <android.support.v7.widget.AppCompatButton android:id="@+id/btnCancelTicket"
             android:layout_width="0dp"
         	android:layout_weight="1"
         	android:layout_height="wrap_content"
         	android:gravity="center"
-			style="@style/buttonColouredActionCancel"
 			android:text="@string/btnCancel"
 	        android:onClick="btnCancelTicket_onClick"/>
-        <Button android:id="@+id/btnSaveTicket"
+        <android.support.v7.widget.AppCompatButton android:id="@+id/btnSaveTicket"
             android:layout_width="0dp"
         	android:layout_weight="1"
         	android:layout_height="wrap_content"
         	android:gravity="center"
-			style="@style/buttonColouredActionSave"
 			android:text="@string/btnSave"
 	        android:onClick="btnSaveTicket_onClick"/>
 

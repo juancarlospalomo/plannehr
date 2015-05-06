@@ -5,26 +5,28 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
@@ -36,7 +38,7 @@ import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 
-public class FragmentMyProducts extends SherlockFragment implements LoaderCallbacks<Cursor>, 
+public class FragmentMyProducts extends Fragment implements LoaderCallbacks<Cursor>,
 					OnItemClickListener, OnFragmentProgress {
 
 	public static final String KEY_USUAL_PRODUCTS = "Usual";
@@ -45,7 +47,7 @@ public class FragmentMyProducts extends SherlockFragment implements LoaderCallba
 	private boolean mStarted = false;
 	private MyProductsAdapter mAdapter = null;
 	private ListView mListView = null;
-	private ActionMode mActionMode;	
+	private ActionMode mActionMode;
 	private OnLoadData mCallback = null;
 	
 	public FragmentMyProducts() {
@@ -95,7 +97,7 @@ public class FragmentMyProducts extends SherlockFragment implements LoaderCallba
  
         if (hasCheckedItems && mActionMode == null)
             // there are some selected items, start the actionMode
-            mActionMode = getSherlockActivity().startActionMode(new ActionModeCallback());
+            mActionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(new ActionModeCallback());
         else if (!hasCheckedItems && mActionMode != null)
             // there no selected items, finish the actionMode
             mActionMode.finish();
@@ -275,7 +277,7 @@ public class FragmentMyProducts extends SherlockFragment implements LoaderCallba
 								@Override
 								public void run() {
 									getLoaderManager().restartLoader(LOADER_ID, null, FragmentMyProducts.this);
-									getSherlockActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+									getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
 								}
 							}, 100);
 						}

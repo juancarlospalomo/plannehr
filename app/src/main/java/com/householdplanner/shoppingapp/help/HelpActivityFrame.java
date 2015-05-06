@@ -4,15 +4,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ImageView;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.MenuItem;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.ViewPagerHelp;
 import com.householdplanner.shoppingapp.cross.ViewPagerTransformer;
 import com.householdplanner.shoppingapp.cross.ViewPagerTransformer.TransformType;
 
-public class HelpActivityFrame extends SherlockFragmentActivity{
+public class HelpActivityFrame extends AppCompatActivity{
 
 	public final static String EXTRA_INITIAL_CAPSULE = "initialCapsule";
 	
@@ -73,9 +73,6 @@ public class HelpActivityFrame extends SherlockFragmentActivity{
 			break;
 		case 3:
 			view = (ImageView) findViewById(R.id.imageCapsule4);
-			break;
-		case 4:
-			view = (ImageView) findViewById(R.id.imageCapsule5);
 			break;
 		}
 		

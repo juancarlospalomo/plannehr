@@ -1,25 +1,26 @@
 package com.householdplanner.shoppingapp;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.householdplanner.shoppingapp.cross.font;
-import com.householdplanner.shoppingapp.repositories.WalletRepository;
-import com.householdplanner.shoppingapp.stores.BudgetStore;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 
-public class BudgetActivity extends SherlockFragmentActivity {
+import com.householdplanner.shoppingapp.cross.font;
+import com.householdplanner.shoppingapp.repositories.WalletRepository;
+import com.householdplanner.shoppingapp.stores.BudgetStore;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+
+public class BudgetActivity extends AppCompatActivity {
 
 	private final int NEW_MODE = 1;
 	private final int EDIT_MODE  = 2;
@@ -129,7 +130,7 @@ public class BudgetActivity extends SherlockFragmentActivity {
 	}
 	
 	private void setUIBudgetData() {
-		Spinner spinnerBudget = (Spinner) findViewById(R.id.spMonth);
+		AppCompatSpinner spinnerBudget = (AppCompatSpinner) findViewById(R.id.spMonth);
 		spinnerBudget.setOnItemSelectedListener(new MonthOnItemSelectedListener());
 		if (mMode==EDIT_MODE) {
 			spinnerBudget.setSelection(mMonthId);

@@ -1,29 +1,30 @@
 package com.householdplanner.shoppingapp;
 
-import java.util.ArrayList;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
-import com.householdplanner.shoppingapp.cross.font;
-import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
-import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
-import android.widget.Spinner;
 
-public class ProductActivity extends SherlockFragmentActivity implements DialogInterface.OnClickListener {
+import com.householdplanner.shoppingapp.cross.AppPreferences;
+import com.householdplanner.shoppingapp.cross.font;
+import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
+import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
+import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
+
+import java.util.ArrayList;
+
+public class ProductActivity extends AppCompatActivity implements DialogInterface.OnClickListener {
 
 	private static final int NEW_MODE = 1;
 	private static final int EDIT_MODE  = 2;
@@ -94,8 +95,8 @@ public class ProductActivity extends SherlockFragmentActivity implements DialogI
 	private void setUIProductData() {
 		EditText editProductName = (EditText) findViewById(R.id.edProductName);
 		EditText editAmount = (EditText) findViewById(R.id.edAmount);
-		Spinner spinnerMeasure = (Spinner) findViewById(R.id.spMeasure);
-		Spinner spinnerCategory = (Spinner) findViewById(R.id.spCategory);
+		AppCompatSpinner spinnerMeasure = (AppCompatSpinner) findViewById(R.id.spMeasure);
+		AppCompatSpinner spinnerCategory = (AppCompatSpinner) findViewById(R.id.spCategory);
 		editProductName.setText(mName);
 		editAmount.setText(mAmount);
 		spinnerMeasure.setSelection(mMeasureId);
@@ -110,12 +111,12 @@ public class ProductActivity extends SherlockFragmentActivity implements DialogI
 	}
 	
 	private void addListenerOnSpinnerMeasureItemSelection() {
-		Spinner spinnerMeasure = (Spinner) findViewById(R.id.spMeasure);
+		AppCompatSpinner spinnerMeasure = (AppCompatSpinner) findViewById(R.id.spMeasure);
 		spinnerMeasure.setOnItemSelectedListener(new MeasureOnItemSelectedListener());
 	}
 	
 	private void addListenerOnSpinnerCategoryItemSelection() {
-		Spinner spinnerCategory = (Spinner) findViewById(R.id.spCategory);
+		AppCompatSpinner spinnerCategory = (AppCompatSpinner) findViewById(R.id.spCategory);
 		spinnerCategory.setOnItemSelectedListener(new CategoryOnItemSelectedListener());
 	}
 

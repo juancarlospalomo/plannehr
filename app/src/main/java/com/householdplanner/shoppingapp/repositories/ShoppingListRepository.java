@@ -257,25 +257,7 @@ public class ShoppingListRepository {
 	  }
 	  
 	  public boolean deleteProductItem(int id) {
-		  if (!util.isPartOfNetwork(mContext)) {
-			  return deletePermanentProductItem(id);
-		  } else {
-			  long rowsAffected = getDatabase().delete(ShoppingListStore.TABLE_LIST, "_id=" + id + " and " +
-					  ShoppingListStore.COLUMN_OPERATION + "=" + TypeOperation.Add.getValue(), null);
-			  if (rowsAffected==0) {
-				  ContentValues values = new ContentValues();
-				  values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-				  values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
-				  values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Delete.getValue());
-				  rowsAffected = getDatabase().update(ShoppingListStore.TABLE_LIST, 
-				    		values, "_id=" + id, null);
-			  }
-			  if (rowsAffected>0) {
-				  return true;
-			  } else {
-				  return false;
-			  }
-		  }
+		  return deletePermanentProductItem(id);
 	  }
 
 	  public boolean deletePermanentProductItem(int id) {
@@ -385,17 +367,7 @@ public class ShoppingListRepository {
 	  }
 	  
 	  public boolean deleteCommittedProducts() {
-		  boolean result = false;
-		  if (!util.isPartOfNetwork(mContext)) {
-			  result = getDatabase().delete(ShoppingListStore.TABLE_LIST, ShoppingListStore.COLUMN_COMMITTED + "=1", null)>0;
-		  } else {
-			  ContentValues values = new ContentValues();
-			  values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-			  values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
-			  values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Delete.getValue());
-			  result = getDatabase().update(ShoppingListStore.TABLE_LIST, values, ShoppingListStore.COLUMN_COMMITTED + "=1", null)>0;
-		  }
-		  return result;
+		  return getDatabase().delete(ShoppingListStore.TABLE_LIST, ShoppingListStore.COLUMN_COMMITTED + "=1", null)>0;
 	  }
 	  
 	  public boolean existProductInNotCommittedList(String name) {

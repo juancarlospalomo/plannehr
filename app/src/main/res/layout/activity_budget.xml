@@ -6,10 +6,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <Spinner android:id="@+id/spMonth"
+    <android.support.v7.widget.AppCompatSpinner android:id="@+id/spMonth"
         android:layout_height="wrap_content"
 	    android:layout_width="match_parent" 
-		style="@style/spinnerBlue"
         android:entries="@array/month_array"
         android:prompt="@string/monthName" />
     
@@ -56,20 +55,18 @@
         android:layout_below="@+id/edtTarget"
         android:layout_marginTop="20dp"
         android:orientation="horizontal">
-	    <Button android:id="@+id/btnCancelBudget"
+	    <android.support.v7.widget.AppCompatButton android:id="@+id/btnCancelBudget"
 	        android:layout_width="0dp"
         	android:layout_weight="1"
         	android:layout_height="wrap_content"
         	android:gravity="center"
-			style="@style/buttonColouredActionCancel"
 	        android:text="@string/btnCancel"
 	        android:onClick="btnCancelBudget_onClick"/>
-	    <Button android:id="@+id/btnSaveBudget"
+	    <android.support.v7.widget.AppCompatButton android:id="@+id/btnSaveBudget"
 	        android:layout_width="0dp"
         	android:layout_weight="1"
         	android:layout_height="wrap_content"
         	android:gravity="center"
-			style="@style/buttonColouredActionSave"
 	        android:text="@string/btnSave"
 	        android:onClick="btnSaveBudget_onClick" />
     </LinearLayout>

@@ -10,11 +10,4 @@
 	        android:entryValues="@array/listValues_CurrencySymbols"
 	        android:defaultValue="@string/pref_CurrencySymbol_DefaultValue"/>
 	</PreferenceCategory>
-    <PreferenceCategory android:title="@string/actionShoppingMode">
-        <CheckBoxPreference
-            android:key="prefRecalculateOrder"
-            android:title="@string/labelRecalculateOrder"
-            android:summary="@string/summaryRecalculateOrder"
-            android:defaultValue="true" />
-    </PreferenceCategory>
-</PreferenceScreen> 
+</PreferenceScreen>

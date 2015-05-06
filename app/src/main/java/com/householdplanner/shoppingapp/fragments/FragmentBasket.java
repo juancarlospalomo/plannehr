@@ -3,6 +3,7 @@ package com.householdplanner.shoppingapp.fragments;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -13,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.actionbarsherlock.app.SherlockFragment;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
@@ -23,7 +23,7 @@ import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 
-public class FragmentBasket extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+public class FragmentBasket extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
 				OnFragmentProgress {
 	
 	public FragmentBasket() {

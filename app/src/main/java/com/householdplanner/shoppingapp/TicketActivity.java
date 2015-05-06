@@ -1,14 +1,5 @@
 package com.householdplanner.shoppingapp;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.Menu;
-import com.householdplanner.shoppingapp.cross.ExpenseStructure;
-import com.householdplanner.shoppingapp.cross.font;
-import com.householdplanner.shoppingapp.cross.util;
-import com.householdplanner.shoppingapp.repositories.WalletRepository;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -17,13 +8,24 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
+import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-public class TicketActivity extends SherlockFragmentActivity {
+import com.householdplanner.shoppingapp.cross.ExpenseStructure;
+import com.householdplanner.shoppingapp.cross.font;
+import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.repositories.WalletRepository;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+public class TicketActivity extends AppCompatActivity {
 
 	public static final String EXTRA_HAS_PRODUCTS = "hasProducts";
 	
@@ -98,7 +100,7 @@ public class TicketActivity extends SherlockFragmentActivity {
 	}
 	
 	private void setDefaultValues() {
-		Button btnDate = (Button) findViewById(R.id.btnTicketDate);
+		AppCompatButton btnDate = (AppCompatButton) findViewById(R.id.btnTicketDate);
 		btnDate.setTypeface(font.getButtonFont(this));
 		btnDate.setText(util.getFormattedDate());
 		EditText editTextExpense = (EditText) findViewById(R.id.edtExpense);
@@ -125,7 +127,7 @@ public class TicketActivity extends SherlockFragmentActivity {
 	}
 	
 	private void GetDataFromUI() {
-		Button btnDate = (Button) findViewById(R.id.btnTicketDate);
+		AppCompatButton btnDate = (AppCompatButton) findViewById(R.id.btnTicketDate);
 		String sTicketDate = btnDate.getText().toString().trim();
 		if (sTicketDate!=getResources().getString(R.string.atTicketDate)) {
 			mTicketDate = sTicketDate;
@@ -187,7 +189,7 @@ public class TicketActivity extends SherlockFragmentActivity {
 
 		@Override
 		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			Button btnDate = (Button) this.getActivity().findViewById(R.id.btnTicketDate);
+			AppCompatButton btnDate = (AppCompatButton) this.getActivity().findViewById(R.id.btnTicketDate);
 			btnDate.setText(util.getFormattedDate(year, monthOfYear, dayOfMonth));
 		}		
 	}

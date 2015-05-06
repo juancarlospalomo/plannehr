@@ -1,7 +1,5 @@
 package com.householdplanner.shoppingapp.fragments;
 
-import java.io.File;
-import java.util.ArrayList;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
@@ -9,8 +7,8 @@ import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,45 +20,50 @@ import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.support.v4.app.LoaderManager;
-import com.actionbarsherlock.app.SherlockDialogFragment;
-import com.actionbarsherlock.app.SherlockFragment;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+
 import com.householdplanner.shoppingapp.MarketActivity;
 import com.householdplanner.shoppingapp.MarketListActivity;
 import com.householdplanner.shoppingapp.ProductActivity;
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
 import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.help.HelpActivityFrame;
+import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 import com.householdplanner.shoppingapp.views.HelpView;
 import com.householdplanner.shoppingapp.views.HelpView.OnHelpViewClick;
 import com.householdplanner.shoppingapp.views.HelpView.TypeView;
-import com.householdplanner.shoppingapp.repositories.MarketRepository;
 
-public class FragmentEnterList extends SherlockFragment implements LoaderManager.LoaderCallbacks<Cursor>,
+import java.io.File;
+import java.util.ArrayList;
+
+public class FragmentEnterList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
 							OnItemClickListener, OnFragmentProgress {
 
 	public static final String TAG_FRAGMENT = "fragmentEnterList";
@@ -266,7 +269,7 @@ public class FragmentEnterList extends SherlockFragment implements LoaderManager
  
         if (hasCheckedItems && mActionMode == null)
             // there are some selected items, start the actionMode
-            mActionMode = getSherlockActivity().startActionMode(new ActionModeCallback());
+            mActionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(new ActionModeCallback());
         else if (!hasCheckedItems && mActionMode != null)
             // there no selected items, finish the actionMode
             mActionMode.finish();
@@ -811,9 +814,9 @@ public class FragmentEnterList extends SherlockFragment implements LoaderManager
         }
     }
 
-	public static class ConfirmationDialog extends SherlockDialogFragment {
+	public static class ConfirmationDialog extends DialogFragment {
 		
-		public SherlockFragment callback;
+		public Fragment callback;
 		
 		public ConfirmationDialog() {
 			super();

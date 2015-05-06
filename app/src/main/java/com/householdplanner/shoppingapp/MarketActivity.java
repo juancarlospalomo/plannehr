@@ -13,9 +13,13 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.View.OnClickListener;
@@ -30,10 +34,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.householdplanner.shoppingapp.WalletActivity.ConfirmationDialog;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.ColorPickerDialog;
@@ -50,7 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MarketActivity extends SherlockFragmentActivity implements LoaderManager.LoaderCallbacks<Cursor>,
+public class MarketActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>,
 		OnItemClickListener {
 
 	private static final int LOADER_ID = 1;
@@ -111,9 +111,10 @@ public class MarketActivity extends SherlockFragmentActivity implements LoaderMa
     	mAdapter.toggleSelection(position);
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
         
-        if (hasCheckedItems && mActionMode == null)
-            // there are some selected items, start the actionMode
-            mActionMode = getSherlock().startActionMode(new ActionModeCallback());
+        if (hasCheckedItems && mActionMode == null) {
+			// there are some selected items, start the actionMode
+            mActionMode = startSupportActionMode(new ActionModeCallback());
+		}
         else if (!hasCheckedItems && mActionMode != null)
             // there no selected items, finish the actionMode
             mActionMode.finish();

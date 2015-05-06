@@ -17,8 +17,12 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -27,10 +31,6 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.actionbarsherlock.view.ActionMode;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
 import com.householdplanner.shoppingapp.cross.font;
@@ -41,7 +41,7 @@ import com.householdplanner.shoppingapp.stores.BudgetStore;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
-public class WalletActivity extends SherlockFragmentActivity implements 
+public class WalletActivity extends AppCompatActivity implements
 	LoaderManager.LoaderCallbacks<Cursor>, OnItemClickListener {
 
 	private static final int BUDGET_ADD = 1;
@@ -103,9 +103,9 @@ public class WalletActivity extends SherlockFragmentActivity implements
     	mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent,
-					View view, int position, long id) {
+										   View view, int position, long id) {
 				if (!AppGlobalState.getInstance().isShoppingMode(WalletActivity.this)) {
-					if (mActionMode==null) {
+					if (mActionMode == null) {
 						onListItemSelect(position);
 						return true;
 					} else {
@@ -122,9 +122,10 @@ public class WalletActivity extends SherlockFragmentActivity implements
     	mAdapter.toggleSelection(position);
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
         
-        if (hasCheckedItems && mActionMode == null)
-            // there are some selected items, start the actionMode
-            mActionMode = getSherlock().startActionMode(new ActionModeCallback());
+        if (hasCheckedItems && mActionMode == null) {
+			// there are some selected items, start the actionMode
+            mActionMode = startSupportActionMode(new ActionModeCallback());
+		}
         else if (!hasCheckedItems && mActionMode != null)
             // there no selected items, finish the actionMode
             mActionMode.finish();
@@ -144,7 +145,7 @@ public class WalletActivity extends SherlockFragmentActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getSupportMenuInflater().inflate(R.menu.wallet, menu);
+		getMenuInflater().inflate(R.menu.wallet, menu);
 		return true;
 	}
 
