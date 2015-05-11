@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -39,6 +40,7 @@ public class BudgetActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setUpFont();
 		getIntentData();
+		createButtonHandlers();
 		if (mMode == NEW_MODE) {
 			//It hasn't been called to edit a budget.   
 			//Try to get if it has been called to create budget for a exact month
@@ -52,19 +54,27 @@ public class BudgetActivity extends AppCompatActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		return true;
 	}
-	
-	public void btnSaveBudget_onClick(View view) {
-		if (saveBudget()) {
-			setResult(Activity.RESULT_OK);
-			finish();
-		}
+
+	/**
+	 * Create the handlers for the button in the activity
+	 */
+	private void createButtonHandlers() {
+		AppCompatButton buttonOk = (AppCompatButton) findViewById(R.id.btnSaveBudget);
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (saveBudget()) {
+					setResult(Activity.RESULT_OK);
+					finish();
+				}
+			}
+		});
 	}
-	
-	public void btnCancelBudget_onClick(View view) {
-		setResult(Activity.RESULT_CANCELED);
-		finish();
-	}
-	
+
+	/**
+	 * Save the budget in database
+	 * @return true if the budget was saved correctly
+	 */
 	private boolean saveBudget() {
 		WalletRepository budgetRepository = new WalletRepository(this);
 		if (validate()) {

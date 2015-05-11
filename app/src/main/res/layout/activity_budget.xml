@@ -1,74 +1,63 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"    
+    android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin" >
+    android:paddingTop="@dimen/activity_vertical_margin">
 
-    <android.support.v7.widget.AppCompatSpinner android:id="@+id/spMonth"
+    <android.support.v7.widget.AppCompatSpinner
+        android:id="@+id/spMonth"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-	    android:layout_width="match_parent" 
         android:entries="@array/month_array"
         android:prompt="@string/monthName" />
-    
-    <TextView 
-        android:id="@+id/textBudgetAvailable" 
-        android:layout_height="wrap_content" 
-        android:layout_width="wrap_content" 
-        android:layout_below="@+id/spMonth"
-        android:layout_alignLeft="@+id/spMonth"
+
+    <TextView
+        android:id="@+id/textBudgetAvailable"
         style="@style/textMessage"
-        android:text="@string/budgetAvailable"/>
-    
-    <EditText 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/spMonth"
+        android:layout_below="@+id/spMonth"
+        android:text="@string/budgetAvailable" />
+
+    <EditText
         android:id="@+id/edtAvailable"
+        style="@style/editTextData"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textBudgetAvailable"
-        android:inputType="numberDecimal"
-        style="@style/editTextData"
-        android:hint="@string/budgetAvailable"/>
-    
-    <TextView 
-        android:id="@+id/textBudgetTarget" 
-        android:layout_height="wrap_content" 
-        android:layout_width="wrap_content" 
-        android:layout_toRightOf="@+id/textBudgetAvailable"
+        android:hint="@string/budgetAvailable"
+        android:inputType="numberDecimal" />
+
+    <TextView
+        android:id="@+id/textBudgetTarget"
+        style="@style/textMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/edtTarget"
         android:layout_alignTop="@+id/textBudgetAvailable"
-        style="@style/textMessage"
-        android:text="@string/budgetTarget"/>
-    <EditText 
+        android:layout_toRightOf="@+id/textBudgetAvailable"
+        android:text="@string/budgetTarget" />
+
+    <EditText
         android:id="@+id/edtTarget"
+        style="@style/editTextData"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/edtAvailable"
         android:layout_toRightOf="@+id/edtAvailable"
-        android:inputType="numberDecimal"
-        style="@style/editTextData"
-        android:hint="@string/budgetTarget"/>
-    
-    <LinearLayout 
+        android:hint="@string/budgetTarget"
+        android:inputType="numberDecimal" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnSaveBudget"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/edtTarget"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
-	    <android.support.v7.widget.AppCompatButton android:id="@+id/btnCancelBudget"
-	        android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_height="wrap_content"
-        	android:gravity="center"
-	        android:text="@string/btnCancel"
-	        android:onClick="btnCancelBudget_onClick"/>
-	    <android.support.v7.widget.AppCompatButton android:id="@+id/btnSaveBudget"
-	        android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_height="wrap_content"
-        	android:gravity="center"
-	        android:text="@string/btnSave"
-	        android:onClick="btnSaveBudget_onClick" />
-    </LinearLayout>
-    
+        android:layout_below="@id/edtTarget"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/btnSave" />
+
 </RelativeLayout>

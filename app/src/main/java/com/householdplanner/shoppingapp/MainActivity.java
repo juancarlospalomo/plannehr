@@ -16,7 +16,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
@@ -223,12 +222,11 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
             restartShoppingMode();
         } else {
             final MenuItem searchItem = menu.findItem(R.id.action_search);
-            Log.d("MainActivity", String.valueOf(searchItem != null));
             SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-            Log.d("MainActivity", "searchView: " + String.valueOf(searchItem != null));
             searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
             SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+            searchView.setQueryHint(getString(R.string.text_hint_search_view_product));
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
                 @Override

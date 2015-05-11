@@ -25,11 +25,11 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile ('proguard-project.txt'), 'proguard-rules.pro'
-            applicationVariants.all { variant ->
+/*            applicationVariants.all { variant ->
                 variant.outputs.each { output ->
                     output.outputFile = new File("build\\outputs\\apk\\ShoppingApp.apk")
                 }
-            }
+            }*/
         }
         debug {
             signingConfig signingConfigs.debug

@@ -201,5 +201,8 @@
 	<string name="textTitleStartBuy">COMPRAR EN EL SUPERMERCADO</string>
 	<string name="textTitleWriteExpense">FIN COMPRA Y ANOTAR GASTO</string>
 	<string name="textTitleShare">COMPARTE TUS DATOS EN TUS DISPOSITIVOS</string>
-	
+
+    <!-- SearchView Hint -->
+    <string name="text_hint_search_view_product">Search product</string>
+
 </resources>

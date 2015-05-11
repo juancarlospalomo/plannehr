@@ -201,5 +201,8 @@
 	<string name="textTitleStartBuy">START TO BUY IN SUPERMARKET</string>
 	<string name="textTitleWriteExpense">END SHOPPING &amp; WRITE EXPENSE</string>
 	<string name="textTitleShare">SHARE YOUR DATA IN YOUR DEVICES</string>
-	
+
+    <!-- SearchView Hint -->
+    <string name="text_hint_search_view_product">Search product</string>
+
 </resources>

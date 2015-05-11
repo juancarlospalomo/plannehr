@@ -5,9 +5,11 @@
         android:id="@+id/action_search"
         android:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_action_search"
+        android:queryHint="@string/product_name"
         android:showAsAction="always|collapseActionView"
         android:title="@string/search_title"
         plannehr:actionViewClass="android.support.v7.widget.SearchView"
+        plannehr:queryHint="@string/product_name"
         plannehr:showAsAction="always|collapseActionView" />
 
     <item

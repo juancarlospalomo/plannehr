@@ -42,6 +42,7 @@ public class TicketActivity extends AppCompatActivity {
 		Intent intent = this.getIntent();
 		mHasProducts = intent.getBooleanExtra(EXTRA_HAS_PRODUCTS, false);
 		setDefaultValues();
+		createButtonHandlers();
 	}
 
 	@Override
@@ -50,19 +51,21 @@ public class TicketActivity extends AppCompatActivity {
 		return true;
 	}
 
-	public void btnSaveTicket_onClick(View view) {
-		GetDataFromUI();
-		if (!Validate()) { 
-			ShowValidationErrorMessage();
-		} else {
-			checkExistBudget();
-		}
+	private void createButtonHandlers() {
+		AppCompatButton buttonOk = (AppCompatButton) findViewById(R.id.btnSaveTicket);
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				GetDataFromUI();
+				if (!Validate()) {
+					ShowValidationErrorMessage();
+				} else {
+					checkExistBudget();
+				}
+			}
+		});
 	}
-	
-	public void btnCancelTicket_onClick(View view) {
-		finish();
-	}
-	
+
 	public void showDatePickerDialog(View view) {
 		DialogFragment dateFragment = new DatePickerFragment();
 		dateFragment.show(getSupportFragmentManager(), "fecha");

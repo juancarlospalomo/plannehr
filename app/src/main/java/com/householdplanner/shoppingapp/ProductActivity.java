@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -55,7 +56,9 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
 		getIntentData();
 		if (mMode==EDIT_MODE) {
 			setUIProductData();
-		} 
+		}
+
+		createButtonHandlers();
 		addListenerOnSpinnerMeasureItemSelection();
 		addListenerOnSpinnerCategoryItemSelection();
 	}
@@ -91,7 +94,33 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
 		} catch (NumberFormatException e) {}
 		  catch (NullPointerException e) {}
 	}
-	
+
+	/**
+	 * Create the handlers for buttons in the activity
+	 */
+	private void createButtonHandlers() {
+		AppCompatButton buttonOk = (AppCompatButton) findViewById(R.id.btnSave);
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				setFieldValuesFromUI();
+				if (validate()) {
+					if (mMode == NEW_MODE) {
+						if (!existProductInList()) {
+							saveAndFinish();
+						} else {
+							showAskDialog();
+						}
+					} else {
+						saveAndFinish();
+					}
+				} else {
+					showValidationErrorMessage();
+				}
+			}
+		});
+	}
+
 	private void setUIProductData() {
 		EditText editProductName = (EditText) findViewById(R.id.edProductName);
 		EditText editAmount = (EditText) findViewById(R.id.edAmount);
@@ -120,28 +149,6 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
 		spinnerCategory.setOnItemSelectedListener(new CategoryOnItemSelectedListener());
 	}
 
-	public void btnSave_onClick(View view) {
-		setFieldValuesFromUI();
-		if (validate()) {
-			if (mMode == NEW_MODE) {
-				if (!existProductInList()) {
-					saveAndFinish();
-				} else {
-					showAskDialog();
-				}
-			} else {
-				saveAndFinish();
-			}
-		} else {
-			showValidationErrorMessage();
-		}
-	}
-	
-	public void btnCancel_onClick(View view) {
-		setResult(Activity.RESULT_CANCELED);
-		finish();
-	}
-	
 	public void saveProduct() {
 		ShoppingListRepository shoppingListRepository = new ShoppingListRepository(this);
 		if (mMode==NEW_MODE) {
