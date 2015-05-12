@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.householdplanner.shoppingapp.cross.AppPreferences;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
@@ -208,7 +207,6 @@ public class SearchProductActivity extends AppCompatActivity implements LoaderCa
 			});
     		mCursor.moveToPosition(position);
    			viewHolder.imageCheck.setImageResource(R.drawable.ic_check_off);
-   			viewHolder.textName.setTypeface(font.getListItemFont(SearchProductActivity.this));
    			viewHolder.textName.setText(util.getCompleteHistoryRow(mContext, mCursor, false));
     		return convertView;
     	}

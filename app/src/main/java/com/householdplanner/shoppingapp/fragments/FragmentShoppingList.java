@@ -17,12 +17,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
@@ -183,7 +183,6 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 			});
 			
     		mCursor.moveToPosition(position);
-    		viewHolder.text.setTypeface(font.getListItemFont(getActivity()));
     		viewHolder.text.setText(util.getCompleteProductRow(mContext, mCursor, false));
     		return convertView;
     	}

@@ -20,13 +20,12 @@
 	    android:id="@+id/spCategory"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
-	    android:entries="@array/category_array" 
+	    android:entries="@array/category_array"
 	    android:prompt="@string/categoryId" />
     
     <LinearLayout 
         android:id="@+id/amountLayout"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:orientation="horizontal">
 		<EditText 
@@ -49,6 +48,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="bottom|end"
+		android:theme="@style/Widget.ApplilandiaButton"
 		android:text="@string/btnSave" />
 
 </LinearLayout>

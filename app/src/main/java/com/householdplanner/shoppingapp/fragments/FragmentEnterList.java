@@ -21,6 +21,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.AppCompatTextView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,7 +33,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.MarketListActivity;
 import com.householdplanner.shoppingapp.ProductActivity;
@@ -40,7 +40,6 @@ import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
@@ -344,9 +343,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
     static class ViewHolder {
         public ImageView imageMarket;
-        public TextView text;
+        public AppCompatTextView text;
         public ImageView image;
-        public ImageView imageDelete;
     }
 
     public class EnterListAdapter extends SimpleCursorAdapter {
@@ -373,9 +371,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 convertView = inflater.inflate(R.layout.rowlayout, parent, false);
                 viewHolder = new ViewHolder();
                 viewHolder.imageMarket = (ImageView) convertView.findViewById(R.id.imageSuperMarket);
-                viewHolder.text = (TextView) convertView.findViewById(R.id.label);
+                viewHolder.text = (AppCompatTextView) convertView.findViewById(R.id.label);
                 viewHolder.image = (ImageView) convertView.findViewById(R.id.imageRightArrow);
-                viewHolder.imageDelete = (ImageView) convertView.findViewById(R.id.imageDelete);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
@@ -385,13 +382,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 @Override
                 public void onClick(View v) {
                     EditProduct(pos);
-                }
-            });
-
-            viewHolder.imageDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DeleteProduct(pos);
                 }
             });
 
@@ -419,14 +409,11 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
             viewHolder.text.setText(util.getCompleteProductRow(mContext, mCursor, false));
             viewHolder.image.setImageResource(R.drawable.ic_action_edit);
-            viewHolder.imageDelete.setVisibility(View.VISIBLE);
             if (mSelectedItems.get(position)) {
                 viewHolder.text.setTextColor(getResources().getColor(android.R.color.white));
-                viewHolder.text.setTypeface(font.getListItemSelectedFont(getActivity()));
                 convertView.setBackgroundColor(getResources().getColor(R.color.rowSelected));
             } else {
                 viewHolder.text.setTextColor(getResources().getColor(android.R.color.black));
-                viewHolder.text.setTypeface(font.getListItemFont(getActivity()));
                 convertView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
             }
             return convertView;

@@ -10,36 +10,31 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textMonthName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        style="@style/textMessage"
         android:text="@string/textBudgetMonthName"/>
     
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textBudgetAvailable"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/textMessage"
         android:text="@string/textBudgetAvailable"/>
-	<TextView 
+	<android.support.v7.widget.AppCompatTextView
 	    android:id="@+id/textBudgetTarget"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    style="@style/textMessage"
 	    android:text="@string/textBudgetTarget"/>
-	<TextView
+	<android.support.v7.widget.AppCompatTextView
 	    android:id="@+id/textWithDrawn"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    style="@style/textMessage"
 	    android:text="@string/textBudgetWithDrawn"/>
-	<TextView
+	<android.support.v7.widget.AppCompatTextView
    	    android:id = "@+id/textWalletMoney"
        	android:layout_width="wrap_content"
        	android:layout_height="wrap_content"
-       	style="@style/textMessage"
        	android:text="@string/textWalletMoney" />
 	
 	<RelativeLayout 
@@ -54,7 +49,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_marginBottom="20dp"
 	        android:orientation="horizontal" >
-	       	<TextView 
+	       	<android.support.v7.widget.AppCompatTextView
 		        android:id="@+id/textAvailableBarColour"
 		        android:layout_width="10dp"
 		        android:layout_height="10dp"
@@ -62,7 +57,7 @@
 		        android:gravity="center_horizontal"
 		        android:layout_gravity="center_vertical"
 		        android:layout_marginLeft="10dp" />
-	   		<TextView
+	   		<android.support.v7.widget.AppCompatTextView
 		   	    android:id="@+id/textAvailableBarLegend"
 		   	    android:layout_width="wrap_content"
 		   	    android:layout_height="wrap_content"
@@ -70,7 +65,7 @@
 		   	    android:textColor="#000"
 		   	    android:layout_gravity="center_vertical"
 		   	    android:text="@string/textAvailableBarLegend" />
-	   		<TextView 
+	   		<android.support.v7.widget.AppCompatTextView
 		        android:id="@+id/textSpentBarColour"
 		        android:layout_width="10dp"
 		        android:layout_height="10dp"
@@ -78,7 +73,7 @@
 		        android:gravity="center_horizontal"
 		        android:layout_gravity="center_vertical"
 		        android:layout_marginLeft="10dp" />
-	   		<TextView
+	   		<android.support.v7.widget.AppCompatTextView
 		   	    android:id="@+id/textSpentBarLegend"
 		   	    android:layout_width="wrap_content"
 		   	    android:layout_height="wrap_content"
@@ -86,7 +81,7 @@
 		   	    android:textColor="#000"
 		   	    android:layout_gravity="center_vertical"
 		   	    android:text="@string/textSpentBarLegend" />
-	   		<TextView 
+	   		<android.support.v7.widget.AppCompatTextView
 		        android:id="@+id/textForecastBarColour"
 		        android:layout_width="10dp"
 		        android:layout_height="10dp"
@@ -94,7 +89,7 @@
 		        android:gravity="center_horizontal"
 		        android:layout_gravity="center_vertical"
 		        android:layout_marginLeft="10dp" />
-	   		<TextView
+	   		<android.support.v7.widget.AppCompatTextView
 		   	    android:id="@+id/textForecastBarLegend"
 		   	    android:layout_width="wrap_content"
 		   	    android:layout_height="wrap_content"
@@ -104,7 +99,7 @@
 		   	    android:text="@string/textForecastBarLegend" />
 	    </LinearLayout>
 
-	    <TextView
+	    <android.support.v7.widget.AppCompatTextView
 	        android:id="@+id/textAvailableBar"
 	        android:layout_width="40dp"
 	        android:layout_height="100dp"
@@ -113,7 +108,7 @@
 	        android:layout_marginLeft="40dp"
 	        android:layout_alignParentBottom="true"
 	        android:layout_below="@+id/layoutLegend" />
-	    <TextView 
+	    <android.support.v7.widget.AppCompatTextView
 	        android:id="@+id/textSpentBar"
 	        android:layout_width="40dp"
 	        android:layout_height="wrap_content"
@@ -122,7 +117,7 @@
 	        android:layout_toRightOf="@+id/textAvailableBar"
 	        android:layout_alignBottom="@+id/textAvailableBar"
 	        android:layout_alignParentBottom="true" />
-		<TextView
+		<android.support.v7.widget.AppCompatTextView
 		    android:id="@+id/textForecastBar"
 		    android:layout_width="40dp"
 		    android:layout_height="wrap_content"
@@ -131,7 +126,7 @@
 		    android:layout_toRightOf="@+id/textSpentBar"
 		    android:layout_alignBottom="@+id/textSpentBar" />
 	    
-		<TextView android:id="@+id/textAvailableAmount"
+		<android.support.v7.widget.AppCompatTextView android:id="@+id/textAvailableAmount"
             android:layout_width="40dp"
             android:layout_height="15dp"
             android:layout_above="@+id/textAvailableBar"
@@ -141,7 +136,7 @@
             android:textStyle="bold"
             android:textSize="13sp"/>
          
-        <TextView android:id="@+id/textSpentAmount"
+        <android.support.v7.widget.AppCompatTextView android:id="@+id/textSpentAmount"
             android:layout_width="40dp"
             android:layout_height="15dp"
             android:layout_above="@+id/textSpentBar"
@@ -152,7 +147,7 @@
             android:textStyle="bold"
             android:textSize="13sp"/>
         
-        <TextView android:id="@+id/textForecastAmount"
+        <android.support.v7.widget.AppCompatTextView android:id="@+id/textForecastAmount"
             android:layout_width="40dp"
             android:layout_height="15dp"
             android:layout_above="@+id/textForecastBar"

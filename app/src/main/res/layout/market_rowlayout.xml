@@ -14,8 +14,7 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="wrap_content" 
-        android:layout_gravity="center"
-        style="@style/textListItem" />
+        android:layout_gravity="center" />
     
     <ImageView android:id="@+id/imageColorPicker"
         android:layout_width="30dp"

@@ -17,7 +17,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.householdplanner.shoppingapp.cross.ExpenseStructure;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.WalletRepository;
 
@@ -104,10 +103,7 @@ public class TicketActivity extends AppCompatActivity {
 	
 	private void setDefaultValues() {
 		AppCompatButton btnDate = (AppCompatButton) findViewById(R.id.btnTicketDate);
-		btnDate.setTypeface(font.getButtonFont(this));
 		btnDate.setText(util.getFormattedDate());
-		EditText editTextExpense = (EditText) findViewById(R.id.edtExpense);
-		editTextExpense.setTypeface(font.getEditTextFont(this));
 	}
 	
 	private void ShowValidationErrorMessage() {

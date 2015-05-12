@@ -35,7 +35,6 @@ import com.householdplanner.shoppingapp.WalletActivity.ConfirmationDialog;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.ColorPickerDialog;
 import com.householdplanner.shoppingapp.cross.ColorPickerDialog.OnColorChangedListener;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.stores.MarketStore;
@@ -58,7 +57,6 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
-        setUpFont();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         loadMarkets();
@@ -178,11 +176,6 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
         edMarketName.setText(cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME)));
         mCurrentPosition = position;
         mRenamingMarket = true;
-    }
-
-    private void setUpFont() {
-        EditText edMarketName = (EditText) findViewById(R.id.edMarketName);
-        edMarketName.setTypeface(font.getEditTextFont(this));
     }
 
     public void doPositiveClick() {
@@ -323,7 +316,6 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
 
             mCursor.moveToPosition(position);
             String marketName = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
-            viewHolder.text.setTypeface(font.getListItemFont(MarketActivity.this));
             viewHolder.text.setText(util.capitalize(marketName));
             if (mSelectedItems.get(position)) {
                 convertView.setBackgroundColor(getResources().getColor(R.color.rowSelected));

@@ -14,11 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
@@ -148,7 +148,6 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
 				}
     		});
     		mCursor.moveToPosition(position);
-    		viewHolder.textName.setTypeface(font.getListItemFont(getActivity()));
     		viewHolder.textName.setText(util.getCompleteProductRow(mContext, mCursor, false));
     		return convertView;
     	}

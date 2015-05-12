@@ -33,7 +33,6 @@ import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.WalletRepository;
 import com.householdplanner.shoppingapp.stores.BudgetStore;
@@ -370,15 +369,10 @@ public class WalletActivity extends AppCompatActivity implements
     			convertView = inflater.inflate(R.layout.wallet_rowlayout, parent, false);
     			viewHolder = new ViewHolder();
     			viewHolder.textMonth = (TextView) convertView.findViewById(R.id.textMonthName);
-    			viewHolder.textMonth.setTypeface(font.getMessageFont(WalletActivity.this));
     			viewHolder.textAvailable = (TextView) convertView.findViewById(R.id.textBudgetAvailable);
-    			viewHolder.textAvailable.setTypeface(font.getMessageFont(WalletActivity.this));
     			viewHolder.textTarget = (TextView) convertView.findViewById(R.id.textBudgetTarget);
-    			viewHolder.textTarget.setTypeface(font.getMessageFont(WalletActivity.this));
     			viewHolder.textWithDrawn = (TextView) convertView.findViewById(R.id.textWithDrawn);
-    			viewHolder.textWithDrawn.setTypeface(font.getMessageFont(WalletActivity.this));
     			viewHolder.textWallet = (TextView) convertView.findViewById(R.id.textWalletMoney);
-    			viewHolder.textWallet.setTypeface(font.getMessageFont(WalletActivity.this));
     			viewHolder.textAvailableBar = (TextView) convertView.findViewById(R.id.textAvailableBar);
     			viewHolder.textSpentBar = (TextView) convertView.findViewById(R.id.textSpentBar);
     			viewHolder.textForecastBar = (TextView) convertView.findViewById(R.id.textForecastBar);

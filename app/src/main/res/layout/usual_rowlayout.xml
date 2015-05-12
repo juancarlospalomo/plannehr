@@ -22,8 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="@+id/label" 
-        android:layout_weight="0.6"
-        style="@style/textListItem" />
+        android:layout_weight="0.6" />
     
     <ImageView
         android:id="@+id/imageCheck"

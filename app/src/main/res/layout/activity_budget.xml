@@ -13,9 +13,8 @@
         android:entries="@array/month_array"
         android:prompt="@string/monthName" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textBudgetAvailable"
-        style="@style/textMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/spMonth"
@@ -31,9 +30,8 @@
         android:hint="@string/budgetAvailable"
         android:inputType="numberDecimal" />
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textBudgetTarget"
-        style="@style/textMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/edtTarget"
@@ -58,6 +56,7 @@
         android:layout_below="@id/edtTarget"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:theme="@style/Widget.ApplilandiaButton"
         android:text="@string/btnSave" />
 
 </RelativeLayout>

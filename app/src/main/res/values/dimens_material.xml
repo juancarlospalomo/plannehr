@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Metrics for avatar in list item -->
+    <dimen name="list_primary_action_avatar_height">56dp</dimen>
+    <dimen name="list_primary_action_avatar_width">56dp</dimen>
+    <!-- Padding right action icon -->
+    <dimen name="padding_action_icon">4dp</dimen>
+    <dimen name="list_item_height">56dp</dimen>
+    <dimen name="list_item_padding_horizontal_material">16dp</dimen>
+    <dimen name="list_avatar_horizontal_padding">16dp</dimen>
+    <dimen name="list_avatar_vertical_padding">8dp</dimen>
+    <dimen name="list_item_text_padding_top">16dp</dimen>
+</resources>

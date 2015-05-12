@@ -8,34 +8,31 @@
 	 android:layout_height="match_parent"
      android:orientation="vertical">
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textHelpSharing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_gravity="center"
-        style="@style/textTitleMessage"
         android:text="@string/textSharingHelpKeyNotes" />
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textHelpSharingKeyNote1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_gravity="center"
-        style="@style/textMessage"
         android:text="@string/textSharingHelpKeyNote1" />
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textHelpSharingKeyNote2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
         android:layout_gravity="center"
-        style="@style/textMessage"
         android:text="@string/textSharingHelpKeyNote2" />
     
     <ImageView android:id="@+id/imageHelpSharingKeyNote2" 
@@ -44,13 +41,12 @@
 			android:layout_height="wrap_content"
 			android:src="@drawable/google_account"  />
     
-	<com.householdplanner.shoppingapp.views.TextViewRoboto 
+	<android.support.v7.widget.AppCompatTextView
 	    android:id="@+id/textHelpSharingKeyNote3"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="20dp"
         android:layout_marginLeft="10dp"
-	    style="@style/textMessage"
 	    android:text="@string/textSharingHelpKeyNote3" />
     
     <ImageView android:id="@+id/imageHelpSharingKeyNote3" 

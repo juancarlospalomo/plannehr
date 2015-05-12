@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.AppCompatTextView;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.repositories.WalletRepository;
 import com.householdplanner.shoppingapp.stores.BudgetStore;
 
@@ -38,7 +38,6 @@ public class BudgetActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_budget);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setUpFont();
 		getIntentData();
 		createButtonHandlers();
 		if (mMode == NEW_MODE) {
@@ -92,8 +91,8 @@ public class BudgetActivity extends AppCompatActivity {
 	
 	private boolean validate() {
 		boolean availableValidated = false, targetValidated = false;
-		TextView textViewAvailable = (TextView) findViewById(R.id.edtAvailable);
-		TextView textViewTarget = (TextView) findViewById(R.id.edtTarget);
+		AppCompatTextView textViewAvailable = (AppCompatTextView) findViewById(R.id.edtAvailable);
+		AppCompatTextView textViewTarget = (AppCompatTextView) findViewById(R.id.edtTarget);
 		String sAvailable = textViewAvailable.getText().toString().trim();
 		String sTarget = textViewTarget.getText().toString().trim();
 		
@@ -152,19 +151,7 @@ public class BudgetActivity extends AppCompatActivity {
 			spinnerBudget.setSelection(getMonthToSelect());
 		}
 	}
-	
-	private void setUpFont() {
-		EditText editTextData = (EditText) findViewById(R.id.edtAvailable);
-		editTextData.setTypeface(font.getEditTextFont(this));
-		editTextData = (EditText) findViewById(R.id.edtTarget);
-		editTextData.setTypeface(font.getEditTextFont(this));
-		
-		TextView textTitle = (TextView) findViewById(R.id.textBudgetAvailable);
-		textTitle.setTypeface(font.getMessageFont(this));
-		textTitle = (TextView) findViewById(R.id.textBudgetTarget);
-		textTitle.setTypeface(font.getMessageFont(this));
-	}
-	
+
 	private int getMonthToSelect() {
 		int monthId = mMonthId;
 		if (monthId == -1) {

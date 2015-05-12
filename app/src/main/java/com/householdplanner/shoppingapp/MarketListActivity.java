@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.stores.MarketStore;
@@ -99,7 +98,6 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
 				}
 			});
 			TextView textCheckNoMarket = (TextView)findViewById(R.id.textImageCheckShowProductNotSet);
-			textCheckNoMarket.setTypeface(font.getMessageFont(this));
 		} else {
 			View layout = findViewById(R.id.layoutProductNotSet);
 			layout.setVisibility(View.GONE);
@@ -111,7 +109,6 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
 		} else {
 			textViewNone.setText(R.string.textProductsWithoutSupermarket);
 		}
-		textViewNone.setTypeface(font.getButtonFont(this));
 		textViewNone.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -196,7 +193,6 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
 				textViewMessage.setVisibility(View.GONE);
 			} else {
 				textImageSelectNoMarkets.setVisibility(View.GONE);
-				textViewMessage.setTypeface(font.getMessageFont(this));
 				textViewMessage.setVisibility(View.VISIBLE);
 			}
 			mAdapter.swapCursor(cursor);
@@ -261,7 +257,6 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
 					viewHolder.text.setBackground(drawable);
 				}
 			}
-			viewHolder.text.setTypeface(font.getButtonFont(MarketListActivity.this));
     		viewHolder.text.setText(util.capitalize(marketName));
     		viewHolder.text.setOnClickListener(new View.OnClickListener() {
 				@Override

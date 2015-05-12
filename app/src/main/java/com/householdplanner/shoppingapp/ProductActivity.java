@@ -18,7 +18,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 
 import com.householdplanner.shoppingapp.cross.AppPreferences;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
@@ -52,7 +51,6 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_product);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setUpFont();
 		getIntentData();
 		if (mMode==EDIT_MODE) {
 			setUIProductData();
@@ -131,14 +129,7 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
 		spinnerMeasure.setSelection(mMeasureId);
 		spinnerCategory.setSelection(mCategoryId);
 	}
-	
-	private void setUpFont() {
-		EditText editProductName = (EditText) findViewById(R.id.edProductName);
-		EditText editAmount = (EditText) findViewById(R.id.edAmount);
-		editProductName.setTypeface(font.getEditTextFont(this));
-		editAmount.setTypeface(font.getEditTextFont(this));
-	}
-	
+
 	private void addListenerOnSpinnerMeasureItemSelection() {
 		AppCompatSpinner spinnerMeasure = (AppCompatSpinner) findViewById(R.id.spMeasure);
 		spinnerMeasure.setOnItemSelectedListener(new MeasureOnItemSelectedListener());

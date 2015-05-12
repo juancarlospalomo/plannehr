@@ -31,7 +31,6 @@ import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
@@ -295,7 +294,6 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<Curs
     			viewHolder.imageStar.setImageResource(android.R.drawable.btn_star_big_off);
     		}
    			viewHolder.imageCheck.setImageResource(R.drawable.ic_check_off);
-   			viewHolder.textName.setTypeface(font.getListItemFont(getActivity()));
    			viewHolder.textName.setText(util.getCompleteHistoryRow(mContext, mCursor, false));
 			if (mSelectedItems.get(position)) {
 				convertView.setBackgroundColor(getResources().getColor(R.color.rowSelected));

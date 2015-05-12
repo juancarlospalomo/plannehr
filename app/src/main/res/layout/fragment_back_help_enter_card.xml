@@ -8,13 +8,12 @@
 	 android:layout_height="match_parent"
      android:orientation="vertical" >
 
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textTitleEnterCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        style="@style/textTitleMessage"
         android:text="@string/textTitleEnterCard" />
     
 	<LinearLayout
@@ -23,7 +22,7 @@
 	    android:layout_marginTop="50dp"
 	    android:orientation="horizontal" >
 	    
-	    <com.householdplanner.shoppingapp.views.TextViewRoboto
+	    <android.support.v7.widget.AppCompatTextView
 	        android:id="@+id/text1EnterProductHelp"
 	        android:layout_width="0dp"
 	        android:layout_weight="0.25"
@@ -31,7 +30,6 @@
 	        android:layout_marginLeft="5dp"
 	        android:layout_marginRight="5dp"
 	        android:gravity="center"
-	        style="@style/textMessage"
 	        android:text="@string/text1EnterProductHelp" />
 	    
 	    <LinearLayout android:id="@+id/layoutEnterProductIcons"
@@ -66,14 +64,13 @@
          
 	    </LinearLayout>
 	    
-	    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+	    <android.support.v7.widget.AppCompatTextView
 	        android:id="@+id/text2EnterProductHelp"
 	        android:layout_width="0dp"
 	        android:layout_weight="0.25"
 	        android:layout_height="wrap_content"
 	        android:layout_marginLeft="5dp"
 	        android:layout_marginRight="5dp"
-	        style="@style/textMessage"
 	        android:gravity="center"
 	        android:text="@string/text2EnterProductHelp" />
 	

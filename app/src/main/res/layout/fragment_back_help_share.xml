@@ -8,16 +8,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"  >
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textTitleShare"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        style="@style/textTitleMessage"
         android:text="@string/textTitleShare" />
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto  
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text1ShareHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +37,7 @@
         android:layout_marginTop="5dp"
         android:src="@drawable/google_account" />
         
-    <com.householdplanner.shoppingapp.views.TextViewRoboto
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text2ShareHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

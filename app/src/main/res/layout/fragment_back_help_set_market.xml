@@ -8,16 +8,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/textTitleSetMarket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_gravity="center"
-        style="@style/textTitleMessage"
         android:text="@string/textTitleSetMarket" />
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text1SetMarketHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,7 +30,7 @@
         android:layout_gravity="center"
         android:src="@drawable/market" />
     
-    <com.householdplanner.shoppingapp.views.TextViewRoboto 
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text2SetMarketHelp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
