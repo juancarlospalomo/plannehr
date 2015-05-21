@@ -18,7 +18,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		ShoppingListStore.onCreate(database);
 		ProductHistoryStore.onCreate(database);
 		BudgetStore.onCreate(database);
-		TicketStore.onCreate(database);
 		MarketCategoryStore.onCreate(database);
 		MarketStore.onCreate(database);
 	}
@@ -26,9 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
 		ProductHistoryStore.onUpgrade(database, oldVersion, newVersion);
 		ShoppingListStore.onUpgrade(database, oldVersion, newVersion);
-		WalletStore.onUpgrade(database, oldVersion, newVersion); 
 		BudgetStore.onUpgrade(database, oldVersion, newVersion);
-		TicketStore.onUpgrade(database, oldVersion, newVersion);
 		MarketCategoryStore.onUpgrade(database, oldVersion, newVersion);
 		MarketStore.onUpgrade(database, oldVersion, newVersion);
 	}

@@ -220,7 +220,7 @@
 
     <!-- Hints -->
     <string name="hint_edit_text_supermarket">Supermarket name</string>
-
+    product_name
     <!-- Error messages -->
     <string name="error_text_market_exist">Supermarket already exists</string>
     <string name="error_text_market_name_mandatory">Market name is mandatory</string>

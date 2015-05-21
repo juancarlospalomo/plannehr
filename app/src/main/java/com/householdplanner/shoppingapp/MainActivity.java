@@ -16,7 +16,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
@@ -283,11 +282,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         super.onOptionsItemSelected(item);
         Intent intent;
         switch (item.getItemId()) {
-
-            case android.R.id.home:
-                Log.v(LOG_TAG, "home button");
-                return true;
-
             case R.id.action_productAddByVoice:
                 showForVoiceRecognition();
                 return true;
