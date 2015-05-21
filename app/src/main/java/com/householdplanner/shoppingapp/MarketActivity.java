@@ -2,8 +2,9 @@ package com.householdplanner.shoppingapp;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Paint;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -25,17 +27,14 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.householdplanner.shoppingapp.WalletActivity.ConfirmationDialog;
+import com.applilandia.widget.ValidationField;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
-import com.householdplanner.shoppingapp.cross.ColorPickerDialog;
-import com.householdplanner.shoppingapp.cross.ColorPickerDialog.OnColorChangedListener;
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.stores.MarketStore;
 
@@ -44,14 +43,19 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
 
     private static final int LOADER_ID = 1;
 
+    //Request Codes
+    private static final int REQUEST_CODE_COLOR = 1;
+
     public static final String BITMAP_FILE_NAME = "Markets.png";
 
     private static int mCurrentPosition = 0;
-    private boolean mDataChanged = false;
     private static boolean mRenamingMarket = false;
     private MarketListAdapter mAdapter;
     private ListView mListView;
     private ActionMode mActionMode;
+
+    private ValidationField mMarketValidationField;
+    private AppCompatButton mButtonAddMarket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,17 +63,29 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
         setContentView(R.layout.activity_market);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        //Inflate Views
+        inflateViews();
+        //Init view handlers
+        createButtonHandlers();
+        //Load list of markets
         loadMarkets();
     }
 
+    private void inflateViews() {
+        mMarketValidationField = (ValidationField) findViewById(R.id.validationViewMarket);
+        mButtonAddMarket = (AppCompatButton) findViewById(R.id.buttonAddMarket);
+    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mDataChanged) {
-            getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-            mDataChanged = false;
-        }
+    /**
+     * Create the handlers for the buttons
+     */
+    private void createButtonHandlers() {
+        mButtonAddMarket.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addMarket();
+            }
+        });
     }
 
     @Override
@@ -88,14 +104,49 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_CODE_COLOR) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    Bundle extras = data.getExtras();
+                    int marketId = extras.getInt(ColorPickerActivity.EXTRA_MARKET_ID);
+                    int color = extras.getInt(ColorPickerActivity.EXTRA_CURRENT_COLOR);
+                    saveMarketColor(marketId, color);
+                }
+            }
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position,
                             long id) {
         if (mActionMode != null)
-            onListItemSelect(position);
+            onListItemSelect(view, position);
     }
 
-    private void onListItemSelect(int position) {
+    private void saveMarketColor(int marketId, int color) {
+        MarketRepository marketRepository = new MarketRepository(MarketActivity.this);
+        marketRepository.setColor(marketId, color);
+        marketRepository.close();
+        getSupportLoaderManager().restartLoader(LOADER_ID, null, MarketActivity.this);
+        getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+    }
+
+    /**
+     * Manage the list item click functionality
+     *
+     * @param position row
+     */
+    private void onListItemSelect(View view, int position) {
         mAdapter.toggleSelection(position);
+        if (mAdapter.isSelected(position)) {
+            view.setBackgroundResource(R.drawable.list_row_background_selected);
+        } else {
+            view.setBackgroundResource(R.drawable.list_row_background);
+        }
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
 
         if (hasCheckedItems && mActionMode == null) {
@@ -117,29 +168,56 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
 
     }
 
+    /**
+     * Delete the selected markets if the user confirm it
+     */
     private void deleteMarkets() {
-        ConfirmationDialog confirmationDialog = new ConfirmationDialog();
-        String message = getResources().getString(R.string.textMarketDeleteWarningMessage);
-        Bundle args = new Bundle();
-        args.putString("message", message);
-        args.putString("title", getResources().getString(R.string.textMarketDeleteWarningTitle));
-        confirmationDialog.setArguments(args);
-        confirmationDialog.callback = this;
-        confirmationDialog.show(getSupportFragmentManager(), "dialog");
+        AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.delete_supermarket_dialog_title),
+                "", getResources().getString(R.string.delete_supermarket_dialog_cancel_text),
+                getResources().getString(R.string.delete_supermarket_dalog_ok_text));
+
+        alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == AlertDialogFragment.INDEX_BUTTON_YES) {
+                    Cursor cursor = (Cursor) mAdapter.getCursor();
+                    if (cursor != null) {
+                        SparseBooleanArray selectedItems = mAdapter.getSelectedIds();
+                        MarketRepository marketRepository = new MarketRepository(MarketActivity.this);
+                        for (int index = 0; index < cursor.getCount(); index++) {
+                            if (cursor.moveToPosition(index)) {
+                                if (selectedItems.get(index)) {
+                                    int marketId = cursor.getInt(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_ID));
+                                    String marketName = cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
+                                    marketRepository.deleteMarketItem(marketId, marketName);
+                                    getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+                                }
+                            }
+                        }
+                        marketRepository.close();
+                        getSupportLoaderManager().restartLoader(LOADER_ID, null, MarketActivity.this);
+                    }
+                    if (mActionMode != null) mActionMode.finish();
+                }
+            }
+        });
+        alertDialog.show(getSupportFragmentManager(), "confirmationDialog");
     }
 
+    /**
+     * Disable the view to enter data
+     */
     private void disableEntryData() {
-        EditText edMarketName = (EditText) findViewById(R.id.edMarketName);
-        Button buttonAccept = (Button) findViewById(R.id.btnAddMarket);
-        edMarketName.setEnabled(false);
-        buttonAccept.setEnabled(false);
+        mMarketValidationField.setEnabled(false);
+        mButtonAddMarket.setEnabled(false);
     }
 
+    /**
+     * Enable the view to enter data
+     */
     private void enableEntryData() {
-        EditText edMarketName = (EditText) findViewById(R.id.edMarketName);
-        Button buttonAccept = (Button) findViewById(R.id.btnAddMarket);
-        edMarketName.setEnabled(true);
-        buttonAccept.setEnabled(true);
+        mMarketValidationField.setEnabled(true);
+        mButtonAddMarket.setEnabled(true);
     }
 
     /**
@@ -148,9 +226,8 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
      * @param position position beloging to the market to rename
      */
     private void renameMarket(int position) {
-        EditText edMarketName = (EditText) findViewById(R.id.edMarketName);
         Cursor cursor = mAdapter.getCursor();
-        String marketName = edMarketName.getText().toString();
+        String marketName = mMarketValidationField.getText();
         if (!TextUtils.isEmpty(marketName)) {
             cursor.moveToPosition(position);
             int marketId = cursor.getInt(cursor.getColumnIndex(MarketStore.COLUMN_ID));
@@ -158,10 +235,9 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
             MarketRepository marketRepository = new MarketRepository(this);
             marketRepository.renameMarket(marketId, oldMarket, marketName);
             marketRepository.close();
-            edMarketName.setText("");
+            mMarketValidationField.setText("");
             mRenamingMarket = false;
             getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-            mDataChanged = true;
             if (mActionMode != null) mActionMode.finish();
         } else {
             util.showAlertErrorMessage(this, R.string.textErrorMessageMarketNameMandatory);
@@ -169,58 +245,38 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void setMarketToRename(int position) {
-        EditText edMarketName = (EditText) findViewById(R.id.edMarketName);
         enableEntryData();
         Cursor cursor = mAdapter.getCursor();
         cursor.moveToPosition(position);
-        edMarketName.setText(cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME)));
+        mMarketValidationField.setText(cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME)));
         mCurrentPosition = position;
         mRenamingMarket = true;
     }
 
-    public void doPositiveClick() {
-        Cursor cursor = (Cursor) mAdapter.getCursor();
-        if (cursor != null) {
-            SparseBooleanArray selectedItems = mAdapter.getSelectedIds();
-            MarketRepository marketRepository = new MarketRepository(this);
-            for (int index = 0; index < cursor.getCount(); index++) {
-                if (cursor.moveToPosition(index)) {
-                    if (selectedItems.get(index)) {
-                        int marketId = cursor.getInt(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_ID));
-                        String marketName = cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
-                        marketRepository.deleteMarketItem(marketId, marketName);
-                        mDataChanged = true;
-                    }
-                }
-            }
-            marketRepository.close();
-            getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-        }
-        if (mActionMode != null) mActionMode.finish();
-    }
-
-    public void btnAddMarket_onClick(View view) {
+    /**
+     * Add market to the list
+     */
+    private void addMarket() {
         if (mRenamingMarket) {
             renameMarket(mCurrentPosition);
         } else {
             String marketName;
             int categories = getResources().getStringArray(R.array.category_array).length;
-            EditText edMarketName = (EditText) findViewById(R.id.edMarketName);
-            marketName = edMarketName.getText().toString();
+            marketName = mMarketValidationField.getText();
             if (!TextUtils.isEmpty(marketName)) {
+                mMarketValidationField.setError("");
                 MarketRepository marketRepository = new MarketRepository(this);
                 if (marketRepository.getMarketId(marketName) == 0) {
                     marketRepository.createMarketItem(marketName, categories);
-                    edMarketName.setText("");
+                    mMarketValidationField.setText("");
                     getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
                     if (mActionMode != null) mActionMode.finish();
-                    mDataChanged = true;
                 } else {
-                    util.showAlertErrorMessage(this, R.string.textErrorMessageMarketExist);
+                    mMarketValidationField.setError(R.string.error_text_market_exist);
                 }
                 marketRepository.close();
             } else {
-                util.showAlertErrorMessage(this, R.string.textErrorMessageMarketNameMandatory);
+                mMarketValidationField.setError(R.string.error_text_market_name_mandatory);
             }
         }
     }
@@ -242,7 +298,7 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     if (mActionMode == null) {
-                        onListItemSelect(position);
+                        onListItemSelect(view, position);
                         return true;
                     } else {
                         return false;
@@ -318,11 +374,11 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
             String marketName = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
             viewHolder.text.setText(util.capitalize(marketName));
             if (mSelectedItems.get(position)) {
-                convertView.setBackgroundColor(getResources().getColor(R.color.rowSelected));
+                convertView.setBackgroundResource(R.drawable.list_row_background_selected);
             } else {
-                convertView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                convertView.setBackgroundResource(R.drawable.list_row_background);
             }
-            String color = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_COLOR));
+            final String color = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_COLOR));
             if (color != null) {
                 viewHolder.imagePicker.setImageDrawable(null);
                 GradientDrawable drawable = (GradientDrawable) getResources().getDrawable(R.drawable.square_blue);
@@ -340,21 +396,14 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
             viewHolder.imagePicker.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Paint paint;
-                    paint = new Paint();
-                    // on button click
-                    ColorPickerDialog colorPickerDialog = new ColorPickerDialog(MarketActivity.this,
-                            new OnColorChangedListener() {
-                                @Override
-                                public void colorChanged(int color) {
-                                    MarketRepository marketRepository = new MarketRepository(MarketActivity.this);
-                                    marketRepository.setColor(marketId, color);
-                                    marketRepository.close();
-                                    getSupportLoaderManager().restartLoader(LOADER_ID, null, MarketActivity.this);
-                                    mDataChanged = true;
-                                }
-                            }, paint.getColor());
-                    colorPickerDialog.show();
+                    Intent intent = new Intent(MarketActivity.this, ColorPickerActivity.class);
+                    if (color == null) {
+                        intent.putExtra(ColorPickerActivity.EXTRA_OLD_COLOR, 0);
+                    } else {
+                        intent.putExtra(ColorPickerActivity.EXTRA_OLD_COLOR, Integer.parseInt(color));
+                    }
+                    intent.putExtra(ColorPickerActivity.EXTRA_MARKET_ID, marketId);
+                    startActivityForResult(intent, REQUEST_CODE_COLOR);
                 }
             });
             return convertView;
@@ -366,13 +415,31 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
             return super.swapCursor(c);
         }
 
+        /**
+         * Revert the selection or unselection
+         *
+         * @param position row
+         */
         public void toggleSelection(int position) {
             selectView(position, !mSelectedItems.get(position));
         }
 
+        /**
+         * Clear all rows selected
+         */
         public void removeSelection() {
             mSelectedItems = new SparseBooleanArray();
             notifyDataSetChanged();
+        }
+
+        /**
+         * Return if the row in one position is selected or not
+         *
+         * @param position row
+         * @return
+         */
+        public boolean isSelected(int position) {
+            return mSelectedItems.get(position);
         }
 
         public void selectView(int position, boolean value) {
@@ -380,7 +447,6 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
                 mSelectedItems.put(position, value);
             else
                 mSelectedItems.delete(position);
-            notifyDataSetChanged();
         }
 
         public int getSelectedCount() {

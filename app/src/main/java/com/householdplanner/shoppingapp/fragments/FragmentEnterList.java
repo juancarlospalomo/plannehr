@@ -1,58 +1,60 @@
 package com.householdplanner.shoppingapp.fragments;
 
 import android.animation.Animator;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 
+import com.applilandia.widget.CircleView;
 import com.householdplanner.shoppingapp.MarketListActivity;
 import com.householdplanner.shoppingapp.ProductActivity;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
-import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.help.HelpActivityFrame;
+import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
+import com.householdplanner.shoppingapp.loaders.ProductLoader;
+import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 import com.householdplanner.shoppingapp.views.HelpView;
 import com.householdplanner.shoppingapp.views.HelpView.OnHelpViewClick;
 import com.householdplanner.shoppingapp.views.HelpView.TypeView;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class FragmentEnterList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-        OnItemClickListener, OnFragmentProgress {
+public class FragmentEnterList extends Fragment implements LoaderManager.LoaderCallbacks<List<Product>>,
+        OnFragmentProgress {
+
+    private static final String LOG_TAG = FragmentEnterList.class.getSimpleName();
 
     public static final String TAG_FRAGMENT = "fragmentEnterList";
 
@@ -64,7 +66,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
     private static String mSelectItemName = null;
     private EnterListAdapter mAdapter;
-    private ListView mListView;
+    private RecyclerView mProductRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
     private ActionMode mActionMode;
     private ArrayList<Integer> mItemsSelected = null;
     private OnLoadData mCallback = null;
@@ -91,11 +94,13 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setHasOptionsMenu(true);
         if (savedInstanceState != null) {
             mItemsSelected = savedInstanceState.getIntegerArrayList(KEY_ITEMS_SELECTED);
             mSelectItemName = savedInstanceState.getString(KEY_SELECT_ITEM);
         }
-        LoadProductList();
+        initRecyclerView();
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     @Override
@@ -119,118 +124,97 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    private void initRecyclerView() {
+        mProductRecyclerView = (RecyclerView) getView().findViewById(R.id.recyclerViewProductList);
+        //Change in content will not change the layout size of the recycler view
+        //Of this way, we improve the performance
+        mProductRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this.getActivity());
+        mProductRecyclerView.setLayoutManager(mLayoutManager);
+        mProductRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mProductRecyclerView.addItemDecoration(new EnterListItemDecoration());
+
+        mProductRecyclerView.addOnItemTouchListener(new RecyclerViewClickListener(getActivity(),
+                        new RecyclerViewClickListener.RecyclerViewOnItemClickListener() {
+
+                            @Override
+                            public void onItemClick(View view, int position) {
+                                if (mActionMode != null) {
+                                    onListItemSelect(view, position);
+                                }
+                            }
+
+                            @Override
+                            public void onItemSecondaryActionClick(View view, int position) {
+                                EditProduct(position);
+                            }
+
+                            @Override
+                            public void onItemLongClick(View view, int position) {
+                                if (mActionMode == null) {
+                                    onListItemSelect(view, position);
+                                }
+                            }
+                        })
+        );
+    }
+
     @Override
     public void setOnLoadData(OnLoadData callback) {
         mCallback = callback;
     }
 
+    /**
+     * Start the activity for selecting a market for the selected products
+     */
     private void actionMoveSelectedToTarget() {
         showTargetMarket();
     }
 
-    private ArrayList<Integer> getProductsSelected() {
-        SparseBooleanArray selected = mAdapter.getSelectedIds();
-        ArrayList<Integer> items = null;
-        Cursor cursor = mAdapter.getCursor();
-        if (cursor != null) {
-            int total = cursor.getCount();
-            if (selected.size() > 0) items = new ArrayList<Integer>();
-            for (int index = 0; index < total; index++) {
-                cursor.moveToPosition(index);
-                if (selected.get(index)) {
-                    int id = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_ID));
-                    items.add((Integer) id);
+    /**
+     * Start the deletion of the selected products
+     */
+    private void deleteProducts() {
+        AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.delete_product_dialog_title),
+                "", getResources().getString(R.string.delete_product_dialog_cancel_text),
+                getResources().getString(R.string.delete_product_dalog_ok_text));
+
+        alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == AlertDialogFragment.INDEX_BUTTON_YES) {
+                    AsyncProductList asyncProductList = new AsyncProductList();
+                    asyncProductList.execute();
                 }
             }
-        }
-        return items;
+        });
+        alertDialog.show(getFragmentManager(), "confirmationDialog");
     }
 
-    private int getItemPosition(Cursor cursor, String name) {
-        int result = 0;
-        if (cursor != null) {
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                String productName = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-                if (productName.equals(name)) {
-                    result = cursor.getPosition();
-                    break;
-                }
-                cursor.moveToNext();
-            }
-        }
-        return result;
-    }
-
-    private void DeleteProduct(int position) {
-        Cursor cursor = (Cursor) mAdapter.getItem(position);
-        int id = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_ID));
-        ConfirmationDialog confirmationDialog = new ConfirmationDialog();
-        Bundle args = new Bundle();
-        args.putInt("id", id);
-        String message = getResources().getString(R.string.textProductDeleteWarning);
-        args.putString("message", message);
-        String title = getResources().getString(R.string.deleteProduct);
-        title += " " + cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-        args.putString("title", title);
-        confirmationDialog.setArguments(args);
-        confirmationDialog.callback = this;
-        confirmationDialog.show(getFragmentManager(), "dialog");
-    }
-
-    public void doPositiveClick(int id) {
-        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(getActivity());
-        if (shoppingListRepository.deleteProductItem(id)) {
-            getActivity().getContentResolver().notifyChange(AppPreferences.URI_HISTORY_TABLE, null);
-            getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-        }
-        shoppingListRepository.close();
-    }
-
+    /**
+     * Edit the product set in one position
+     *
+     * @param position position of the row
+     */
     private void EditProduct(int position) {
-        Cursor cursor = (Cursor) mAdapter.getItem(position);
-        if (cursor != null) {
+        Product product = mAdapter.mProductListData.get(position);
+        if (product != null) {
             Intent intent = new Intent(this.getActivity(), ProductActivity.class);
-            intent.putExtra(ProductActivity.EXTRA_PRODUCT_ID, cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_ID)));
-            intent.putExtra(ProductActivity.EXTRA_PRODUCT_NAME, cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME)));
-            intent.putExtra(ProductActivity.EXTRA_MARKET_NAME, cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET)));
-            intent.putExtra(ProductActivity.EXTRA_AMOUNT, cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_AMOUNT)));
-            intent.putExtra(ProductActivity.EXTRA_UNIT_ID, cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_UNIT_ID)));
-            intent.putExtra(ProductActivity.EXTRA_CATEGORY, cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_CATEGORY)));
+            intent.putExtra(ProductActivity.EXTRA_PRODUCT_ID, product._id);
+            intent.putExtra(ProductActivity.EXTRA_PRODUCT_NAME, product.name);
+            intent.putExtra(ProductActivity.EXTRA_MARKET_NAME, product.marketName);
+            intent.putExtra(ProductActivity.EXTRA_AMOUNT, product.amount);
+            intent.putExtra(ProductActivity.EXTRA_UNIT_ID, product.unitId);
+            intent.putExtra(ProductActivity.EXTRA_CATEGORY, product.categoryId);
             startActivityForResult(intent, EDIT_PRODUCT);
         }
     }
 
-    private void LoadProductList() {
-        String[] fields = new String[]{ShoppingListStore.COLUMN_PRODUCT_NAME};
-        int[] listViewColumns = new int[]{R.id.label};
-
-        try {
-            mListView = (ListView) getView().findViewById(R.id.listview01);
-            LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(LOADER_ID, null, this);
-            mAdapter = new EnterListAdapter(this.getActivity(), R.layout.rowlayout, null,
-                    fields, listViewColumns);
-            mListView.setAdapter(mAdapter);
-            mListView.setOnItemClickListener(this);
-            mListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent,
-                                               View view, int position, long id) {
-                    if (mActionMode == null) {
-                        onListItemSelect(position);
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            });
-
-        } catch (Exception e) {
-
-        }
-    }
-
+    /**
+     * Set the market to the selected products
+     *
+     * @param targetMarket market
+     */
     private void moveSelectedToTarget(String targetMarket) {
         if (mItemsSelected != null) {
             ShoppingListRepository listRepository = new ShoppingListRepository(getActivity());
@@ -244,15 +228,18 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if (mActionMode != null) {
-            onListItemSelect(position);
-        }
-    }
-
-    private void onListItemSelect(int position) {
+    /**
+     * Execute the right flow when one row is clicked
+     *
+     * @param position row position
+     */
+    private void onListItemSelect(View view, int position) {
         mAdapter.toggleSelection(position);
+        if (mAdapter.isSelected(position)) {
+            view.setBackgroundResource(R.drawable.list_row_background_selected);
+        } else {
+            view.setBackgroundResource(R.drawable.list_row_background);
+        }
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
 
         if (hasCheckedItems && mActionMode == null)
@@ -266,34 +253,46 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             mActionMode.setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
     }
 
+    /**
+     * Get the selected rows
+     *
+     * @return array with the selected product´s id
+     */
+    private ArrayList<Integer> getProductsSelected() {
+        SparseBooleanArray selected = mAdapter.mSelectedItems;
+        ArrayList<Integer> items = null;
+        List<Product> data = mAdapter.mProductListData;
+        if (data != null) {
+            int total = data.size();
+            if (selected.size() > 0) items = new ArrayList<Integer>();
+            for (int index = 0; index < total; index++) {
+                if (selected.get(index)) {
+                    int id = data.get(index)._id;
+                    items.add((Integer) id);
+                }
+            }
+        }
+        return items;
+    }
+
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
         if (mCallback != null) mCallback.onLoadStart();
-        return new ShoppingListCursorLoader(getActivity());
+        return new ProductLoader(getActivity());
     }
 
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(Loader<List<Product>> loader, List<Product> data) {
+        Log.v(LOG_TAG, "onLoadFinished");
         if (loader.getId() == LOADER_ID) {
-            mAdapter.swapCursor(cursor);
-            if (mSelectItemName != null) {
-                final int position = getItemPosition(cursor, mSelectItemName);
-                mListView.post(new Runnable() {
-                    //push at the end of queue message and will be processed
-                    //after listview is loaded.
-                    @Override
-                    public void run() {
-                        mListView.setSelection(position);
-                    }
-                });
-                mSelectItemName = null;
-            }
+            mAdapter = new EnterListAdapter(data);
+            mProductRecyclerView.setAdapter(mAdapter);
         }
         if (mCallback != null) {
             int items = 0;
-            if (cursor != null) {
-                items = cursor.getCount();
+            if (data != null) {
+                items = data.size();
                 HelpView helpView = (HelpView) getView().findViewById(R.id.viewCapsules);
                 if (items == 0) {
                     helpView.setVisibility(View.VISIBLE);
@@ -315,8 +314,9 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
+    public void onLoaderReset(Loader<List<Product>> loader) {
+        mProductRecyclerView.setAdapter(null);
+        mAdapter = null;
     }
 
     @Override
@@ -334,6 +334,9 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         mSelectItemName = name;
     }
 
+    /**
+     * Show the list of existing markets
+     */
     private void showTargetMarket() {
         Intent intent = new Intent(getActivity(), MarketListActivity.class);
         intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_ALL, true);
@@ -341,114 +344,151 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         startActivityForResult(intent, SELECT_MARKET_FOR_MOVE);
     }
 
-    static class ViewHolder {
-        public ImageView imageMarket;
-        public AppCompatTextView text;
-        public ImageView image;
-    }
+    /**
+     * RecyclerView adapter for product list
+     */
+    public class EnterListAdapter extends RecyclerView.Adapter<EnterListAdapter.ViewHolder> {
 
-    public class EnterListAdapter extends SimpleCursorAdapter {
-
-        Context mContext;
-        Cursor mCursor;
+        List<Product> mProductListData;
         private SparseBooleanArray mSelectedItems;
 
-        public EnterListAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
-            super(context, layout, c, from, to, 0);
-            mContext = context;
-            mCursor = c;
+        public EnterListAdapter(List<Product> data) {
+            mProductListData = data;
             mSelectedItems = new SparseBooleanArray();
         }
 
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public CircleView mImageAvatar;
+            public AppCompatTextView mText;
+            public ImageView mImageEdit;
 
-            final ViewHolder viewHolder;
-            final int pos = position;
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.rowlayout, parent, false);
-                viewHolder = new ViewHolder();
-                viewHolder.imageMarket = (ImageView) convertView.findViewById(R.id.imageSuperMarket);
-                viewHolder.text = (AppCompatTextView) convertView.findViewById(R.id.label);
-                viewHolder.image = (ImageView) convertView.findViewById(R.id.imageRightArrow);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
+            public ViewHolder(View itemView) {
+                super(itemView);
+                mImageAvatar = (CircleView) itemView.findViewById(R.id.imageAvatar);
+                mText = (AppCompatTextView) itemView.findViewById(R.id.textProduct);
+                mImageEdit = (ImageView) itemView.findViewById(R.id.imageSecondaryActionIcon);
             }
+        }
 
-            viewHolder.image.setOnClickListener(new View.OnClickListener() {
+        /**
+         * Create view holder
+         *
+         * @param viewGroup
+         * @param position
+         * @return
+         */
+        @Override
+        public EnterListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
+            View view = FragmentEnterList.this.getActivity().getLayoutInflater().inflate(R.layout.rowlayout, viewGroup, false);
+            ViewHolder viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }
+
+        /**
+         * Replace the contents of a list item when it is called from the LayoutManager
+         *
+         * @param viewHolder: ViewHolder containing the views
+         * @param position:   position from the Dataset to be showed
+         */
+        @Override
+        public void onBindViewHolder(EnterListAdapter.ViewHolder viewHolder, final int position) {
+
+            viewHolder.mImageEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    EditProduct(pos);
+                    EditProduct(position);
                 }
             });
 
-            mCursor.moveToPosition(position);
-            String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET));
-            viewHolder.imageMarket.setVisibility(View.VISIBLE);
+            Product product = mProductListData.get(position);
+            String marketName = product.marketName;
+
             if (marketName != null) {
                 MarketRepository marketRepository = new MarketRepository(getActivity());
                 Integer color = marketRepository.getMarketColor(marketName);
                 marketRepository.close();
                 if (color != null) {
-                    viewHolder.imageMarket.setImageDrawable(null);
-                    GradientDrawable gradientDrawable = (GradientDrawable) getResources().getDrawable(R.drawable.square_white);
-                    gradientDrawable.mutate();
-                    gradientDrawable.setColor(color);
-                    viewHolder.imageMarket.setImageDrawable(gradientDrawable);
+                    viewHolder.mImageAvatar.setColor(color);
                 } else {
-                    viewHolder.imageMarket.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_market));
+                    viewHolder.mImageAvatar.setColor(getResources().getColor(android.R.color.transparent));
                 }
             } else {
-                viewHolder.imageMarket.setImageDrawable(null);
-                GradientDrawable gradientDrawable = (GradientDrawable) getResources().getDrawable(R.drawable.square_white);
-                viewHolder.imageMarket.setImageDrawable(gradientDrawable);
+                viewHolder.mImageAvatar.setColor(getResources().getColor(android.R.color.transparent));
             }
 
-            viewHolder.text.setText(util.getCompleteProductRow(mContext, mCursor, false));
-            viewHolder.image.setImageResource(R.drawable.ic_action_edit);
+
+            viewHolder.mText.setText(product.name);
+            viewHolder.mImageEdit.setImageResource(R.drawable.ic_action_edit);
             if (mSelectedItems.get(position)) {
-                viewHolder.text.setTextColor(getResources().getColor(android.R.color.white));
-                convertView.setBackgroundColor(getResources().getColor(R.color.rowSelected));
+                viewHolder.itemView.setBackgroundResource(R.drawable.list_row_background_selected);
             } else {
-                viewHolder.text.setTextColor(getResources().getColor(android.R.color.black));
-                convertView.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+                viewHolder.itemView.setBackgroundResource(R.drawable.list_row_background);
             }
-            return convertView;
         }
 
         @Override
-        public Cursor swapCursor(Cursor c) {
-            mCursor = c;
-            return super.swapCursor(c);
+        public int getItemCount() {
+            if (mProductListData != null) {
+                return mProductListData.size();
+            } else {
+                return 0;
+            }
         }
 
+        /**
+         * Return if a row is selected or not
+         *
+         * @param position product list position
+         * @return true or false
+         */
+        public boolean isSelected(int position) {
+            if (mSelectedItems != null) {
+                return mSelectedItems.get(position);
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * Return the selected rows number
+         *
+         * @return
+         */
+        public int getSelectedCount() {
+            return mSelectedItems.size();
+        }
+
+        /**
+         * Toggle the selection of the row in a position
+         *
+         * @param position row to toggle the selection
+         */
         public void toggleSelection(int position) {
             selectView(position, !mSelectedItems.get(position));
         }
 
-        public void removeSelection() {
-            mSelectedItems = new SparseBooleanArray();
-            notifyDataSetChanged();
-        }
-
+        /**
+         * Set the item in the array as selected or not
+         *
+         * @param position row number
+         * @param value    set selected value
+         */
         public void selectView(int position, boolean value) {
             if (value)
                 mSelectedItems.put(position, value);
             else
                 mSelectedItems.delete(position);
+        }
+
+        /**
+         * Clear all selected items
+         */
+        public void clearSelection() {
+            mSelectedItems.clear();
+            mSelectedItems = new SparseBooleanArray();
             notifyDataSetChanged();
         }
 
-        public int getSelectedCount() {
-            return mSelectedItems.size();
-        }
-
-        public SparseBooleanArray getSelectedIds() {
-            return mSelectedItems;
-        }
     }
 
     private static class ShoppingListCursorLoader extends CursorLoader {
@@ -580,6 +620,28 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    public class EnterListItemDecoration extends android.support.v7.widget.RecyclerView.ItemDecoration {
+        Drawable mDivider;
+
+        public EnterListItemDecoration() {
+            mDivider = ResourcesCompat.getDrawable(getResources(), R.drawable.list_row_background, null);
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            if (parent.getChildLayoutPosition(view) < 1) return;
+            if (((LinearLayoutManager) parent.getLayoutManager()).getOrientation() == LinearLayout.VERTICAL) {
+                outRect.top = mDivider.getIntrinsicHeight();
+            } else {
+                return;
+            }
+        }
+    }
+
+    /**
+     * Callback for action bar
+     */
     private class ActionModeCallback implements ActionMode.Callback {
 
         @Override
@@ -597,57 +659,74 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
+                case R.id.deleteProduct:
+                    deleteProducts();
+                    return true;
+
                 case R.id.moveProduct:
                     mItemsSelected = getProductsSelected();
                     actionMoveSelectedToTarget();
                     mode.finish();
                     return true;
+
                 default:
                     return false;
             }
-
         }
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            // remove selection
-            mAdapter.removeSelection();
+            mAdapter.clearSelection();
             mActionMode = null;
         }
     }
 
-    public static class ConfirmationDialog extends DialogFragment {
+    /**
+     * Make a delete operation for a list of task in an asynchronous way
+     */
+    private class AsyncProductList extends AsyncTask<Void, Integer, Boolean> {
 
-        public Fragment callback;
-
-        public ConfirmationDialog() {
-            super();
+        private void deleteSelectedProducts() {
+            SparseBooleanArray selected = mAdapter.mSelectedItems;
+            if (mAdapter.mProductListData != null) {
+                int total = mAdapter.mProductListData.size();
+                ShoppingListRepository shoppingListRepository = new ShoppingListRepository(getActivity());
+                for (int index = total - 1; index >= 0; index--) {
+                    if (selected.get(index)) {
+                        int id = mAdapter.mProductListData.get(index)._id;
+                        shoppingListRepository.deletePermanentProductItem(id);
+                        publishProgress(new Integer(index));
+                    }
+                }
+                shoppingListRepository.close();
+            }
         }
 
         @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final int id = getArguments().getInt("id");
-            String message = getArguments().getString("message");
-            String title = getArguments().getString("title");
-            Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle(title);
-            alertDialogBuilder.setMessage(message);
-            alertDialogBuilder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ((FragmentEnterList) callback).doPositiveClick(id);
-                }
-            });
-            alertDialogBuilder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    getDialog().dismiss();
-                }
-            });
-
-            return alertDialogBuilder.create();
+        protected Boolean doInBackground(Void... params) {
+            deleteSelectedProducts();
+            return new Boolean(true);
         }
 
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            if (values != null) {
+                if (values.length > 0) {
+                    int position = values[0].intValue();
+                    mAdapter.mProductListData.remove(position);
+                    mAdapter.notifyItemRangeRemoved(position, 1);
+                }
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (mActionMode != null) {
+                mActionMode.finish();
+                mActionMode = null;
+            }
+            getActivity().getContentResolver().notifyChange(AppPreferences.URI_HISTORY_TABLE, null);
+        }
     }
 
 }

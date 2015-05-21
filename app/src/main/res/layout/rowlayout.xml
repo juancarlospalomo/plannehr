@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plannehr="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="?attr/listItemHeight"
@@ -12,28 +13,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/imageSuperMarket"
+    <com.applilandia.widget.CircleView
+        android:id="@+id/imageAvatar"
         android:layout_width="?attr/listPreferredListItemAvatarWidth"
         android:layout_height="?attr/listPreferredListItemAvatarHeight"
-        android:layout_gravity="center_vertical"
         android:paddingBottom="?attr/listPaddingVerticalAvatar"
         android:paddingEnd="?attr/listPaddingHorizontalAvatar"
         android:paddingRight="?attr/listPaddingHorizontalAvatar"
         android:paddingTop="?attr/listPaddingVerticalAvatar"
-        android:src="@drawable/ic_action_market"
-        android:visibility="gone" />
+        plannehr:background="@android:color/black" />
 
     <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/label"
+        android:id="@+id/textProduct"
+        style="?android:attr/textViewStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:theme="?android:attr/textViewStyle" />
+        android:layout_weight="1" />
 
     <ImageView
-        android:id="@+id/imageRightArrow"
+        android:id="@+id/imageSecondaryActionIcon"
         android:layout_width="?attr/touchableAssetLayoutWidth"
         android:layout_height="?attr/touchableAssetLayoutHeight"
         android:layout_gravity="center"

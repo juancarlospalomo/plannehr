@@ -149,7 +149,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
     			convertView = inflater.inflate(R.layout.rowlayout, parent, false);
     			viewHolder = new ViewHolder();
     			viewHolder.text = (TextView) convertView.findViewById(R.id.label);
-    			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageRightArrow);
+    			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageSecondaryActionIcon);
     			convertView.setTag(viewHolder);
     		} else {
     			viewHolder = (ViewHolder) convertView.getTag();

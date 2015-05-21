@@ -16,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
@@ -40,6 +41,8 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements Product.OnSaveProduct,
         OnLoadData {
+
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private static final String TAG_FRAGMENT_ENTER_DATA = "fragmentEnterData";
     private static final String TAG_FRAGMENT_DO_SHOPPING = "fragmentDoShopping";
@@ -158,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
 
     private void initActivity() {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private boolean moreThanOneSupermarket() {
@@ -278,12 +281,13 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        if (AppGlobalState.getInstance().isSyncNow(this)) {
-            util.showAlertInfoMessage(this, R.string.textInfoMessageSyncNow);
-            return true;
-        }
         Intent intent;
         switch (item.getItemId()) {
+
+            case android.R.id.home:
+                Log.v(LOG_TAG, "home button");
+                return true;
+
             case R.id.action_productAddByVoice:
                 showForVoiceRecognition();
                 return true;

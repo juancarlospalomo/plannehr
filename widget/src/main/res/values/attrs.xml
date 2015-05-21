@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- default font-family -->
+    <attr name="fontFamily" format="string" />
+
+    <!-- Circle View attributes -->
+    <attr name="circleViewStyle" format="reference" />
+    <attr name="strokeWidth" format="dimension" />
+    <attr name="strokeColor" format="color" />
+
+    <declare-styleable name="circleView">
+        <attr name="background" />
+        <attr name="strokeWidth" />
+        <attr name="strokeColor" />
+    </declare-styleable>
+
+    <!-- Color Picker attributes -->
+    <declare-styleable name="ColorPicker">
+        <attr name="color_wheel_radius" format="dimension" />
+        <attr name="color_wheel_thickness" format="dimension" />
+        <attr name="color_center_radius" format="dimension" />
+        <attr name="color_center_halo_radius" format="dimension"/>
+        <attr name="color_pointer_radius" format="dimension" />
+        <attr name="color_pointer_halo_radius" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="ColorBars">
+        <attr name="bar_thickness" format="dimension" />
+        <attr name="bar_length" format="dimension" />
+        <attr name="bar_pointer_radius" format="dimension" />
+        <attr name="bar_pointer_halo_radius" format="dimension" />
+        <attr name="bar_orientation_horizontal" format="boolean" />
+    </declare-styleable>
+
+    <!-- Validation Field attributes -->
+    <attr name="validationFieldStyle" format="reference" />
+    <attr name="validationView" format="reference"/>
+    <attr name="textValidationAppearance" format="reference"/>
+    <attr name="validationAppearance" format="reference"/>
+
+    <declare-styleable name="ValidationField">
+        <attr name="hint" format="string"/>
+        <attr name="background"/>
+        <attr name="android:inputType"/>
+        <attr name="viewType">
+            <enum name="EditText" value="0"/>
+            <enum name="TextView" value="1"/>
+        </attr>
+        <attr name="validationView"/>
+    </declare-styleable>
+
+    <declare-styleable name="validationView">
+        <attr name="android:textAppearance"/>
+        <attr name="android:layout_height"/>
+    </declare-styleable>
+
+</resources>
+
+

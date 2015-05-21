@@ -205,4 +205,24 @@
     <!-- SearchView Hint -->
     <string name="text_hint_search_view_product">Search product</string>
 
+    <!-- Delete Product Dialog -->
+    <string name="delete_product_dialog_title">Delete Product?</string>
+    <string name="delete_product_dialog_cancel_text">Cancel</string>
+    <string name="delete_product_dalog_ok_text">Delete</string>
+
+    <string name="activity_color_picker_title">Color Picker</string>
+    <string name="text_button_ok">OK</string>
+
+    <!-- Delete Supermarket Dialog -->
+    <string name="delete_supermarket_dialog_title">Delete Market?</string>
+    <string name="delete_supermarket_dialog_cancel_text">Cancel</string>
+    <string name="delete_supermarket_dalog_ok_text">Delete</string>
+
+    <!-- Hints -->
+    <string name="hint_edit_text_supermarket">Supermarket name</string>
+
+    <!-- Error messages -->
+    <string name="error_text_market_exist">Supermarket already exists</string>
+    <string name="error_text_market_name_mandatory">Market name is mandatory</string>
+
 </resources>

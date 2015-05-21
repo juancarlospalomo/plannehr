@@ -674,9 +674,6 @@ public class WalletActivity extends AppCompatActivity implements
 					if (callback instanceof WalletActivity) {
 						((WalletActivity) callback).doPositiveClick();
 					}
-					if (callback instanceof MarketActivity) {
-						((MarketActivity) callback).doPositiveClick();
-					}
 				}
 			});
 			alertDialogBuilder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

@@ -8,5 +8,8 @@
 	<color name="blue">#0071C5</color>
 	<color name="grey_light">#D3D3D3</color>
 	<color name="white">#FFFFFF</color>
+	<color name="list_item_background">#FAFAFA</color>
+    <color name="list_item_pressed">#ECEBEB</color>
+    <color name="list_item_selected">#BDBDBD</color>
 </resources>
 

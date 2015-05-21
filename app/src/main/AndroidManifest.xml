@@ -11,7 +11,8 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name">
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".SearchProductActivity" />
@@ -53,6 +54,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ColorPickerActivity"
+            android:parentActivityName=".MarketActivity"
+            android:label="@string/activity_color_picker_title"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.householdplanner.shoppingapp.MarketActivity" />
+        </activity>
 
         <activity
             android:name=".ProductActivity"
