@@ -5,4 +5,8 @@
     <!-- A light Holo shade of red -->
     <color name="holo_red_light">#ffff4444</color>
 
+    <!-- Snack bar colors -->
+    <color name="snack_bar_background_color">#323232</color>
+    <color name="action_color">#ff7080</color>
+
 </resources>

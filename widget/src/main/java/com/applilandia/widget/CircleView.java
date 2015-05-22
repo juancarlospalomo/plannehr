@@ -78,6 +78,7 @@ public class CircleView extends View {
             mSetStroke = true;
         } else {
             mSetStroke = false;
+            mPaintCircle.setStyle(Paint.Style.FILL);
             mPaintCircle.setColor(mBackground);
         }
         invalidate();

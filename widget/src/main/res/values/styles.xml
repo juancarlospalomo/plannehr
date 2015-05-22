@@ -25,4 +25,26 @@
         <item name="android:layout_height">16dp</item>
     </style>
 
+    <!-- Snack bar styles -->
+    <style name="ApplilandiaWidget.SnackBarStyle">
+        <item name="android:layout_height">@dimen/snack_bar_single_line_height</item>
+        <item name="android:background">@color/snack_bar_background_color</item>
+    </style>
+
+    <style name="ApplilandiaWidget.SnackBar" parent="@android:style/Widget.TextView"/>
+
+    <style name="ApplilandiaWidget.SnackBar.Text">
+        <item name="android:textSize">14sp</item>
+        <!-- Roboto regular -->
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+    </style>
+
+    <style name="ApplilandiaWidget.SnackBar.Action">
+        <item name="android:textSize">14sp</item>
+        <!-- Roboto medium -->
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/action_color</item>
+    </style>
+
 </resources>

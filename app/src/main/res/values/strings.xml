@@ -225,4 +225,7 @@
     <string name="error_text_market_exist">Supermarket already exists</string>
     <string name="error_text_market_name_mandatory">Market name is mandatory</string>
 
+    <!-- SnackBar -->
+    <string name="text_snack_bar_action">Undo</string>
+    <string name="text_snack_bar_move_myproduct">Moved to the list</string>
 </resources>

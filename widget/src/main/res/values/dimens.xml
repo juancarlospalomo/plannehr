@@ -16,6 +16,8 @@
     <dimen name="bar_pointer_radius">6dp</dimen>
     <dimen name="bar_pointer_halo_radius">14dp</dimen>
 
-
+    <!-- Snack bar -->
+    <dimen name="snack_bar_single_line_height">48dp</dimen>
+    <dimen name="snack_bar_padding">24dp</dimen>
 
 </resources>

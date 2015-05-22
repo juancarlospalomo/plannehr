@@ -24,9 +24,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.applilandia.widget.CircleView;
+import com.applilandia.widget.SnackBar;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
@@ -46,11 +46,17 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
     private static final int LOADER_ID = 1;
 
+    //Adapter for the Recycler View
     private MyProductsAdapter mAdapter = null;
     private RecyclerView mRecyclerViewMyProducts;
+    //Vertical Layout Manager
     private RecyclerView.LayoutManager mLayoutManager;
+    //Action Bar mode
     private ActionMode mActionMode;
+    //Callback to trigger the events
     private OnLoadData mCallback = null;
+    //SnackBar
+    private SnackBar mSnackBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -62,7 +68,18 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID, null, this);
+        //Inflate the views into the module vars
+        inflateViews();
+        //Init the recycler View
         initRecyclerView();
+    }
+
+    /**
+     * Inflate the existing views in the Fragment
+     */
+    private void inflateViews() {
+        mRecyclerViewMyProducts = (RecyclerView) getView().findViewById(R.id.recyclerViewMyProducts);
+        mSnackBar = (SnackBar) getView().findViewById(R.id.snackBarMyProducts);
     }
 
     @Override
@@ -71,8 +88,10 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * Init the recycler view
+     */
     private void initRecyclerView() {
-        mRecyclerViewMyProducts = (RecyclerView) getView().findViewById(R.id.recyclerViewMyProducts);
         //Change in content will not change the layout size of the recycler view
         //Of this way, we improve the performance
         mRecyclerViewMyProducts.setHasFixedSize(true);
@@ -92,18 +111,37 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                             }
 
                             @Override
-                            public void onItemSecondaryActionClick(View view, int position) {
-                                AppCompatCheckBox checkBoxActionIcon = (AppCompatCheckBox) view;
-                                checkBoxActionIcon.setChecked(!checkBoxActionIcon.isChecked());
-                                ProductHistory productHistory = mAdapter.mProductHistoryListData.get(position);
-                                if (productHistory != null) {
-                                    mAdapter.mProductHistoryListData.remove(position);
-                                    mAdapter.notifyItemRangeRemoved(position, 1);
-                                    UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
-                                    if (useCaseMyProducts.copyToShoppingList(productHistory)) {
-                                        getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-                                        Toast.makeText(getActivity(), R.string.textProductsAdded, Toast.LENGTH_SHORT).show();
-                                    }
+                            public void onItemSecondaryActionClick(View view, final int position) {
+                                final AppCompatCheckBox checkBoxActionIcon = (AppCompatCheckBox) view;
+                                if (mSnackBar.getVisibility() == View.GONE) {
+                                    //The snack bar is not displayed yet, so we have to show it
+                                    checkBoxActionIcon.setChecked(true);
+                                    mSnackBar.setOnSnackBarListener(new SnackBar.OnSnackBarListener() {
+                                        @Override
+                                        public void onClose() {
+                                            ProductHistory productHistory = mAdapter.mProductHistoryListData.get(position);
+                                            if (productHistory != null) {
+                                                mAdapter.mProductHistoryListData.remove(position);
+                                                mAdapter.notifyItemRangeRemoved(position, 1);
+                                                UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
+                                                if (useCaseMyProducts.copyToShoppingList(productHistory)) {
+                                                    getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onUndo() {
+                                            //User click on Undo action
+                                            checkBoxActionIcon.setChecked(false);
+                                        }
+                                    });
+                                    mSnackBar.show(R.string.text_snack_bar_move_myproduct);
+                                } else {
+                                    //SnackBar is visible, but the user instead pushing on UNDO action,
+                                    //Unchecked the checkbox, therefore the action has to be undone
+                                    checkBoxActionIcon.setChecked(false);
+                                    mSnackBar.undo();
                                 }
                             }
 
@@ -117,9 +155,19 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         );
     }
 
-
+    /**
+     * Manage the functionality when one row is clicked one
+     *
+     * @param view     row
+     * @param position row position
+     */
     private void onListItemSelect(View view, int position) {
         mAdapter.toggleSelection(position);
+        if (mAdapter.isSelected(position)) {
+            view.setBackgroundResource(R.drawable.list_row_background_selected);
+        } else {
+            view.setBackgroundResource(R.drawable.list_row_background);
+        }
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
 
         if (hasCheckedItems && mActionMode == null)

@@ -19,7 +19,7 @@
         <attr name="color_wheel_radius" format="dimension" />
         <attr name="color_wheel_thickness" format="dimension" />
         <attr name="color_center_radius" format="dimension" />
-        <attr name="color_center_halo_radius" format="dimension"/>
+        <attr name="color_center_halo_radius" format="dimension" />
         <attr name="color_pointer_radius" format="dimension" />
         <attr name="color_pointer_halo_radius" format="dimension" />
     </declare-styleable>
@@ -33,24 +33,35 @@
 
     <!-- Validation Field attributes -->
     <attr name="validationFieldStyle" format="reference" />
-    <attr name="validationView" format="reference"/>
-    <attr name="textValidationAppearance" format="reference"/>
-    <attr name="validationAppearance" format="reference"/>
+    <attr name="validationView" format="reference" />
+    <attr name="textValidationAppearance" format="reference" />
+    <attr name="validationAppearance" format="reference" />
 
     <declare-styleable name="ValidationField">
-        <attr name="hint" format="string"/>
-        <attr name="background"/>
-        <attr name="android:inputType"/>
+        <attr name="hint" format="string" />
+        <attr name="background" />
+        <attr name="android:inputType" />
         <attr name="viewType">
-            <enum name="EditText" value="0"/>
-            <enum name="TextView" value="1"/>
+            <enum name="EditText" value="0" />
+            <enum name="TextView" value="1" />
         </attr>
-        <attr name="validationView"/>
+        <attr name="validationView" />
     </declare-styleable>
 
     <declare-styleable name="validationView">
-        <attr name="android:textAppearance"/>
-        <attr name="android:layout_height"/>
+        <attr name="android:textAppearance" />
+        <attr name="android:layout_height" />
+    </declare-styleable>
+
+    <!-- SnackBar Styles -->
+    <attr name="snackBarStyle" format="reference" />
+    <attr name="snackBarText" format="reference" />
+    <attr name="snackBarAction" format="reference" />
+
+    <attr name="textAction" format="string" />
+
+    <declare-styleable name="snackBarView">
+        <attr name="textAction" />
     </declare-styleable>
 
 </resources>

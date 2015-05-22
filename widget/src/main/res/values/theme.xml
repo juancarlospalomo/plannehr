@@ -7,8 +7,12 @@
         <!-- Validation Field View -->
         <item name="validationFieldStyle">@style/ApplilandiaWidget.ValidationField</item>
         <item name="validationView">@style/ApplilandiaWidget.ValidationView</item>
-        <item name="textValidationAppearance">@style/ApplilandiaWidget.TextValidationAppearance
-        </item>
+        <item name="textValidationAppearance">@style/ApplilandiaWidget.TextValidationAppearance</item>
+
+        <!-- SnackBar -->
+        <item name="snackBarStyle">@style/ApplilandiaWidget.SnackBarStyle</item>
+        <item name="snackBarText">@style/ApplilandiaWidget.SnackBar.Text</item>
+        <item name="snackBarAction">@style/ApplilandiaWidget.SnackBar.Action</item>
     </style>
 
 </resources>
