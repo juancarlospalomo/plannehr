@@ -2,4 +2,5 @@
 <resources>
     <!--Toolbar colors -->
     <color name="color_toolbar_background">#99CC00</color>
+
 </resources>

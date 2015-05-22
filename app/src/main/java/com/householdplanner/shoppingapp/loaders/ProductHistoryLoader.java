@@ -5,43 +5,45 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
+
 import com.householdplanner.shoppingapp.cross.AppPreferences;
-import com.householdplanner.shoppingapp.models.Product;
-import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
+import com.householdplanner.shoppingapp.models.ProductHistory;
+import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
+
 import java.util.List;
 
 /**
  * Created by JuanCarlos on 21/05/2015.
  */
-public class ProductLoader extends AsyncTaskLoader<List<Product>> {
+public class ProductHistoryLoader extends AsyncTaskLoader<List<ProductHistory>> {
 
     private Context mContext;
-    private List<Product> mProductList;
-    private ProductObserver mObserver;
+    private List<ProductHistory> mProductList;
+    private ProductHistoryObserver mObserver;
 
-    public ProductLoader(Context context) {
+    public ProductHistoryLoader(Context context) {
         super(context);
         mContext = context;
-        mObserver = new ProductObserver(new Handler());
-        mContext.getContentResolver().registerContentObserver(AppPreferences.URI_LIST_TABLE, true, mObserver);
+        mObserver = new ProductHistoryObserver(new Handler());
+        mContext.getContentResolver().registerContentObserver(AppPreferences.URI_HISTORY_TABLE, true, mObserver);
     }
 
     @Override
-    public List<Product> loadInBackground() {
-        UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(mContext);
-        mProductList = useCaseShoppingList.getFullEnteredList();
+    public List<ProductHistory> loadInBackground() {
+        UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(mContext);
+        mProductList = useCaseMyProducts.getMyProductListNotEntered();
         return mProductList;
     }
 
     @Override
-    public void deliverResult(List<Product> data) {
+    public void deliverResult(List<ProductHistory> data) {
         if (isReset()) {
             onReleaseResources(data);
             return;
         }
         // Hold a reference to the old data so it doesn't get garbage collected.
         // We must protect it until the new data has been delivered.
-        List<Product> oldList = mProductList;
+        List<ProductHistory> oldList = mProductList;
         mProductList = data;
         if (isStarted()) {
             //Deliver result to the client as the loader is in started state
@@ -72,7 +74,7 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
     }
 
     @Override
-    public void onCanceled(List<Product> data) {
+    public void onCanceled(List<ProductHistory> data) {
         //Attempt to cancel the asynchronous load
         super.onCanceled(data);
     }
@@ -88,7 +90,7 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<Product> data) {
+    protected void onReleaseResources(List<ProductHistory> data) {
         if (data != null) {
             data.clear();
         }
@@ -98,14 +100,15 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
         }
     }
 
-    private final class ProductObserver extends ContentObserver {
+
+    private final class ProductHistoryObserver extends ContentObserver {
 
         /**
          * Creates a content observer.
          *
          * @param handler The handler to run {@link #onChange} on, or null if none.
          */
-        public ProductObserver(Handler handler) {
+        public ProductHistoryObserver(Handler handler) {
             super(handler);
         }
 
@@ -124,4 +127,5 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
             onContentChanged();
         }
     }
+
 }

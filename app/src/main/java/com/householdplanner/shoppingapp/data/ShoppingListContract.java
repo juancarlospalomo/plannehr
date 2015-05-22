@@ -33,20 +33,21 @@ public class ShoppingListContract {
         public static final String CONTENT_TYPE_ITEM = "vnd.android.cursor.item/" +
                 "vnd." + CONTENT_AUTHORITY + "." + PATH_PRODUCT;
         //Table name
-        public static final String TABLE_NAME = "list";
+        public static final String TABLE_NAME = "List";
         /**
          * Columns
          */
         //Product name
-        public static final String COLUMN_PRODUCT_NAME = "name";
+        public static final String COLUMN_PRODUCT_NAME = "Name";
         //Product amount
-        public static final String COLUMN_PRODUCT_AMOUNT = "amount";
+        public static final String COLUMN_PRODUCT_AMOUNT = "Amount";
         //Product measure unit id
-        public static final String COLUMN_UNIT_ID = "unit_id";
+        public static final String COLUMN_UNIT_ID = "UnitId";
         //Product category id
-        public static final String COLUMN_CATEGORY_ID = "category";
+        public static final String COLUMN_CATEGORY_ID = "Category";
         //Market name that product belongs to
         public static final String COLUMN_MARKET = "Market";
+
     }
 
     /**
@@ -67,11 +68,16 @@ public class ShoppingListContract {
          * Columns
          */
         //Product name
-        public static final String COLUMN_PRODUCT_NAME = "name";
+        public static final String COLUMN_PRODUCT_NAME = "Name";
         //Product category id
-        public static final String COLUMN_CATEGORY_ID = "category";
+        public static final String COLUMN_CATEGORY_ID = "Category";
         //Market name that product belongs to
         public static final String COLUMN_MARKET = "Market";
+
+        /**
+         *Alias for fields if they are needed
+         */
+        public static final String ALIAS_ID = TABLE_NAME + "_" + _ID;
 
         //Uri functions to manage the parameters
         /**
@@ -105,9 +111,9 @@ public class ShoppingListContract {
         //Generated Market Id
         public static final String COLUMN_MARKET_ID = "MarketId";
         //Market name
-        public static final String COLUMN_MARKET_NAME = "name";
+        public static final String COLUMN_MARKET_NAME = "Name";
         //Color for the market
-        public static final String COLUMN_COLOR = "color";
+        public static final String COLUMN_COLOR = "Color";
     }
 
     /**

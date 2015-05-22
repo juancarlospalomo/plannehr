@@ -9,7 +9,6 @@
         android:showAsAction="always|collapseActionView"
         android:title="@string/search_title"
         plannehr:actionViewClass="android.support.v7.widget.SearchView"
-        plannehr:queryHint="@string/product_name"
         plannehr:showAsAction="always|collapseActionView" />
 
     <item

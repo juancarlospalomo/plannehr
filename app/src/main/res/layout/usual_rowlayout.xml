@@ -1,35 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" 
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_height="?attr/listItemHeight"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="horizontal"
-    tools:context=".UsualProductActivity" >
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:orientation="horizontal">
 
-    <ImageView android:id="@+id/imageFavourite"
-        android:layout_width="0dp"
-        android:layout_weight="0.2"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@android:drawable/btn_star_big_on" />
-    
+    <com.applilandia.widget.CircleView
+        android:id="@+id/circleAvatar"
+        android:layout_width="?attr/listPreferredListItemAvatarWidth"
+        android:layout_height="?attr/listPreferredListItemAvatarHeight"
+        android:paddingBottom="?attr/listPaddingVerticalAvatar"
+        android:paddingEnd="?attr/listPaddingHorizontalAvatar"
+        android:paddingRight="?attr/listPaddingHorizontalAvatar"
+        android:paddingTop="?attr/listPaddingVerticalAvatar" />
+
     <TextView
-        android:id="@+id/label"
+        android:id="@+id/textProduct"
+        style="?android:attr/textViewStyle"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1" />
+
+    <android.support.v7.widget.AppCompatCheckBox
+        android:id="@+id/imageSecondaryActionIcon"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@+id/label" 
-        android:layout_weight="0.6" />
-    
-    <ImageView
-        android:id="@+id/imageCheck"
-        android:layout_width="0dp"
-        android:layout_weight="0.2"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_check_off" 
-        android:layout_gravity="center" />
+        android:padding="?attr/listPaddingActionIcon" />
 
 </LinearLayout> 

@@ -97,7 +97,7 @@ public class SearchProductActivity extends AppCompatActivity implements LoaderCa
     
     private void doQuery(String query) {
         String[] fields = new String[] { ProductHistoryStore.COLUMN_PRODUCT_NAME };
-        int[] listViewColumns = new int[] { R.id.label };
+        int[] listViewColumns = new int[] { R.id.textProduct };
                 
         try {
         	mListView = (ListView) findViewById(R.id.listViewProductsFiltered);
@@ -168,14 +168,13 @@ public class SearchProductActivity extends AppCompatActivity implements LoaderCa
     			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     			convertView = inflater.inflate(R.layout.usual_rowlayout, parent, false);
     			viewHolder = new ViewHolder();
-    			viewHolder.textName = (TextView) convertView.findViewById(R.id.label);
-    			viewHolder.imageCheck = (ImageView) convertView.findViewById(R.id.imageCheck);
+    			viewHolder.textName = (TextView) convertView.findViewById(R.id.textProduct);
+    			viewHolder.imageCheck = (ImageView) convertView.findViewById(R.id.imageSecondaryActionIcon);
     			convertView.setTag(viewHolder);
     		} else {
     			viewHolder = (ViewHolder) convertView.getTag();
     		}
-    		convertView.findViewById(R.id.imageFavourite).setVisibility(View.GONE);
-    		viewHolder.imageCheck.setOnClickListener(new View.OnClickListener() {
+     		viewHolder.imageCheck.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					viewHolder.imageCheck.setImageResource(R.drawable.ic_check_on);

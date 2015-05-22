@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.householdplanner.shoppingapp.R;
 
@@ -36,7 +35,7 @@ public class RecyclerViewClickListener implements RecyclerView.OnItemTouchListen
 
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                ImageView secondaryActionIcon = (ImageView) mView.findViewById(R.id.imageSecondaryActionIcon);
+                View secondaryActionIcon = mView.findViewById(R.id.imageSecondaryActionIcon);
                 if (secondaryActionIcon != null) {
                     //This is a workaround to get the icon coordinates
                     //because secondaryActionIcon is always the placed on the first raw, I don't know why

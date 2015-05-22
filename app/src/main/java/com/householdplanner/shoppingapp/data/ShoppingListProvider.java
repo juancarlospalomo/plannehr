@@ -5,6 +5,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
@@ -54,9 +55,14 @@ public class ShoppingListProvider extends ContentProvider {
      * Return the products on the history table
      */
     private Cursor getProductHistoryList(String[] projection, String selection, String[] selectionArgs, String orderBy) {
-        Cursor cursor = mDatabaseHelper.getReadableDatabase().query(ShoppingListContract.ProductHistoryEntry.TABLE_NAME,
-                projection, selection, selectionArgs, null, null, orderBy);
-        return cursor;
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+        //Build join
+        sqLiteQueryBuilder.setTables(ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " LEFT JOIN " +
+                ShoppingListContract.ProductEntry.TABLE_NAME + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." +
+                ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + "=" + ShoppingListContract.ProductEntry.TABLE_NAME + "." +
+                ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME);
+
+        return sqLiteQueryBuilder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, orderBy);
     }
 
     @Override
@@ -88,7 +94,18 @@ public class ShoppingListProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        return null;
+        //What kind of URI is it?
+        int code = mUriMatcher.match(uri);
+        switch (code) {
+            case PRODUCT:
+                return ShoppingListContract.ProductEntry.CONTENT_TYPE;
+            case PRODUCT_HISTORY:
+                return ShoppingListContract.ProductHistoryEntry.CONTENT_TYPE;
+            case PRODUCT_HISTORY_SUGGEST:
+                return ShoppingListContract.ProductHistoryEntry.CONTENT_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
     }
 
     @Override

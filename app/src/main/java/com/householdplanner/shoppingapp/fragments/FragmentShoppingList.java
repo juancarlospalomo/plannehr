@@ -63,7 +63,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 	
 	private void LoadProductList() {
         String[] fields = new String[] { ShoppingListStore.COLUMN_PRODUCT_NAME };
-        int[] listViewColumns = new int[] { R.id.label };
+        int[] listViewColumns = new int[] { R.id.textProduct };
                 
         try {
         	mListView = (ListView) getView().findViewById(R.id.listview01);
@@ -148,7 +148,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
     			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     			convertView = inflater.inflate(R.layout.rowlayout, parent, false);
     			viewHolder = new ViewHolder();
-    			viewHolder.text = (TextView) convertView.findViewById(R.id.label);
+    			viewHolder.text = (TextView) convertView.findViewById(R.id.textProduct);
     			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageSecondaryActionIcon);
     			convertView.setTag(viewHolder);
     		} else {
