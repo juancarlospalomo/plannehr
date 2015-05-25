@@ -7,13 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.repositories.WalletRepository;
 import com.householdplanner.shoppingapp.stores.BudgetStore;
@@ -37,7 +37,7 @@ public class BudgetActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_budget);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbar();
 		getIntentData();
 		createButtonHandlers();
 		if (mMode == NEW_MODE) {
@@ -53,6 +53,15 @@ public class BudgetActivity extends AppCompatActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		return true;
 	}
+
+    /**
+     * Init the toolbar
+     */
+	private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.budgetToolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
 	/**
 	 * Create the handlers for the button in the activity

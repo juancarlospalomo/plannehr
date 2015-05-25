@@ -16,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
@@ -68,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initActivity();
+        //Configure the toolbar
+        initToolbar();
         mStarted = false;
     }
 
@@ -126,18 +128,14 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
                         }
                     }, null);
         } else {
-            if (!AppGlobalState.getInstance().isSyncNow(this)) {
-                if (moreThanOneSupermarket()) {
-                    Intent intent = new Intent(this, MarketListActivity.class);
-                    intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_ALL, false);
-                    intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_CHECK_NO_MARKET, true);
-                    startActivityForResult(intent, SELECT_MARKET);
-                } else {
-                    AppGlobalState.getInstance().setMarket(MainActivity.this, 0, null);
-                    enterShoppingMode();
-                }
+            if (moreThanOneSupermarket()) {
+                Intent intent = new Intent(this, MarketListActivity.class);
+                intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_ALL, false);
+                intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_CHECK_NO_MARKET, true);
+                startActivityForResult(intent, SELECT_MARKET);
             } else {
-                util.showAlertInfoMessage(this, R.string.textInfoMessageSyncNow);
+                AppGlobalState.getInstance().setMarket(MainActivity.this, 0, null);
+                enterShoppingMode();
             }
         }
     }
@@ -158,7 +156,12 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         mActionMenu.findItem(R.id.action_doShopping).setVisible(false);
     }
 
-    private void initActivity() {
+    /**
+     * Configure the toolbar
+     */
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.productToolBar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }

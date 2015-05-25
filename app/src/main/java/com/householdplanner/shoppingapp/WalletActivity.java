@@ -19,6 +19,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
+import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,7 +61,7 @@ public class WalletActivity extends AppCompatActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wallet);
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        initToolbar();
 		LoadWalletData();
 	}
 
@@ -78,6 +79,19 @@ public class WalletActivity extends AppCompatActivity implements
 		getSupportLoaderManager().destroyLoader(LOADER_ID);
 	}
 
+    /**
+     * Init toolbar
+     */
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.productToolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+	/**
+	 * Return the configured Currency symbol
+	 * @return
+	 */
 	private String getCurrencySymbol() {
 		if (mCurrencySymbol==null) {
 			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

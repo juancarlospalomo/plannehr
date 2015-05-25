@@ -1,17 +1,16 @@
 package com.householdplanner.shoppingapp.cross;
 
+import android.content.Context;
+
+import com.householdplanner.shoppingapp.R;
+import com.householdplanner.shoppingapp.repositories.MarketRepository;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.repositories.MarketRepository;
-
-import android.annotation.SuppressLint;
-import android.content.Context;
 
 public class AppGlobalState {
 
@@ -61,54 +60,7 @@ public class AppGlobalState {
 	public synchronized void setActiveValue(boolean active) {
 		_isActive = active;
 	}
-	
-	public synchronized boolean isActive() {
-		return _isActive;
-	}
-	
-	public synchronized static void copyIntItems(Context context, ArrayList<Integer> items) {
-		String text = "";
-		int index = 0;
-		while (index<items.size()) {
-			text+=items.get(index).intValue() + ";";
-			index++;
-		}
-		copyToClipboard(context, text);
-	}
-	
-	public synchronized static ArrayList<Integer> pasteIntItems(Context context) {
-		ArrayList<Integer> result = new ArrayList<Integer>();
-		String text = readFromClipboard(context);
-		String[] values = text.split(";");
-		int index = 0;
-		while (index < values.length) {
-			result.add(Integer.valueOf(values[index]));
-			//result.put(index, Integer.parseInt(values[index]));
-			index++;
-		}
-		return result;
-	}
 
-	@SuppressLint("NewApi")
-	@SuppressWarnings("deprecation")
-	private static boolean copyToClipboard(Context context, String text) {
-        try {
-            android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-                    .getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(text);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-	}
-	
-	@SuppressWarnings("deprecation")
-    private static String readFromClipboard(Context context) {
-		android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-                .getSystemService(Context.CLIPBOARD_SERVICE);
-        return clipboard.getText().toString();
-    }
-	
 	public synchronized boolean isShoppingMode(Context context) {
 		if (_isShoppingMode==null) {
 			if (!existAppInfoFile(context)) {
@@ -128,27 +80,7 @@ public class AppGlobalState {
 		}
 		_isShoppingMode = Boolean.valueOf(value);
 	}
-	
-	public synchronized boolean isSyncNow(Context context) {
-		if (_isSyncNow == null) {
-			if (!existAppInfoFile(context)) {
-				writeAppState(context, StatusVar.SynchronizationState, 0);
-				_isSyncNow = Boolean.valueOf(false);
-			} else 
-				readAppState(context);
-		}
-		return _isSyncNow.booleanValue();
-	}
-	
-	public synchronized void setSyncNow(Context context, boolean value) {
-		if (value) {
-			writeAppState(context, StatusVar.SynchronizationState, 1);
-		} else {
-			writeAppState(context, StatusVar.SynchronizationState, 0);
-		}
-		_isSyncNow = Boolean.valueOf(value);
-	}
-	
+
 	public synchronized String getMarketName(Context context) {
 		if (_marketName==null) {
 			if (_marketId!=0){

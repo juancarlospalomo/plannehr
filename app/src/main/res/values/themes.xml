@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="@style/ApplilandiaThemeWidget.Light">
+        <!-- Needed for toolbar -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/color_toolbar_background</item>
-
         <item name="colorAccent">@color/accent_material_light</item>
         <!-- Text styles -->
         <item name="android:textColorPrimary">@color/primary_text_default_material_light</item>
@@ -15,15 +19,25 @@
         <item name="touchableAssetLayoutWidth">@dimen/touchable_grid_metric</item>
         <!-- List attributes -->
         <item name="listItemHeight">@dimen/list_item_height</item>
-        <item name="listPreferredListItemAvatarHeight">@dimen/list_primary_action_avatar_height</item>
+        <item name="listPreferredListItemAvatarHeight">@dimen/list_primary_action_avatar_height
+        </item>
         <item name="listPreferredListItemAvatarWidth">@dimen/list_primary_action_avatar_width</item>
         <item name="listPaddingActionIcon">@dimen/padding_action_icon</item>
-        <item name="listPreferredItemPaddingLeft">@dimen/list_item_padding_horizontal_material</item>
-        <item name="listPreferredItemPaddingRight">@dimen/list_item_padding_horizontal_material</item>
+        <item name="listPreferredItemPaddingLeft">@dimen/list_item_padding_horizontal_material
+        </item>
+        <item name="listPreferredItemPaddingRight">@dimen/list_item_padding_horizontal_material
+        </item>
         <item name="listPaddingHorizontalAvatar">@dimen/list_avatar_horizontal_padding</item>
         <item name="listPaddingVerticalAvatar">@dimen/list_avatar_vertical_padding</item>
         <item name="listItemPaddingTextTop">@dimen/list_item_text_padding_top</item>
         <!-- AppCompatTextView Style -->
         <item name="android:textViewStyle">@style/Widget.ApplilandiaTextView</item>
     </style>
-    </resources>
+
+    <style name="AppTheme.NoActionBar">
+        <!-- Both of these are needed -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+</resources>

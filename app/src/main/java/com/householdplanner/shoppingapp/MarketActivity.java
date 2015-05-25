@@ -15,6 +15,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -61,8 +62,8 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        initToolbar();
         //Inflate Views
         inflateViews();
         //Init view handlers
@@ -71,9 +72,21 @@ public class MarketActivity extends AppCompatActivity implements LoaderManager.L
         loadMarkets();
     }
 
+    /**
+     * Inflate the existing views in the activity
+     */
     private void inflateViews() {
         mMarketValidationField = (ValidationField) findViewById(R.id.validationViewMarket);
         mButtonAddMarket = (AppCompatButton) findViewById(R.id.buttonAddMarket);
+    }
+
+    /**
+     * Init the toolbar
+     */
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.productToolBar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
