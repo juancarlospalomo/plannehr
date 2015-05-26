@@ -93,7 +93,6 @@
     <string name="pref_GoogleAccount_Title">Google Account</string>
     <string name="summaryGoogleDriveAccount">Shared Google Drive account</string>
     <string name="textProductNameErrorMessage">Product name is mandatory</string>
-    <string name="actionSettings">Settings</string>
     <string name="textBudgetModificationWarningMessage">Already have inserted some expenses</string>
     <string name="textBudgetModificationWarningTitle">Don\'t allow to modify it</string>
     <string name="labelDeactivateScreenLock">Don\'t lock the screen</string>
@@ -228,4 +227,24 @@
     <!-- SnackBar -->
     <string name="text_snack_bar_action">Undo</string>
     <string name="text_snack_bar_move_myproduct">Moved to the list</string>
+
+    <!-- Drawer list -->
+    <string name="text_item_settings">Settings</string>
+    <string name="text_item_markets">Supermarkets</string>
+    <string name="text_item_expenses">Expenses</string>
+    <string name="text_accessibility_drawer_open">open</string>
+    <string name="text_accessibility_drawer_close">close</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+
 </resources>

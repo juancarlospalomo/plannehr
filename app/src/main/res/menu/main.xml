@@ -32,43 +32,5 @@
         android:title="@string/buttonDoShopping"
         plannehr:showAsAction="always" />
 
-    <item
-        android:id="@+id/dropdown_menu"
-        android:icon="@drawable/ic_action_overflow"
-        android:showAsAction="always"
-        android:title="@string/textOptions"
-        plannehr:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_superMarkets"
-                android:icon="@drawable/ic_action_market"
-                android:showAsAction="ifRoom"
-                android:title="@string/labelSupermarkets"
-                plannehr:showAsAction="ifRoom" />
-
-            <item
-                android:id="@+id/action_wallet"
-                android:icon="@drawable/ic_currency"
-                android:showAsAction="ifRoom"
-                android:title="@string/actionWallet"
-                plannehr:showAsAction="ifRoom" />
-
-            <item
-                android:id="@+id/action_settings"
-                android:icon="@drawable/ic_action_settings"
-                android:showAsAction="ifRoom"
-                android:title="@string/actionSettings"
-                plannehr:showAsAction="ifRoom" />
-
-            <item
-                android:id="@+id/action_help"
-                android:icon="@drawable/ic_action_help"
-                android:showAsAction="ifRoom"
-                android:title="@string/textHelp"
-                plannehr:showAsAction="ifRoom" />
-
-        </menu>
-    </item>
-
 </menu> 
 

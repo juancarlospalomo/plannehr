@@ -21,24 +21,21 @@ public class UseCaseShoppingList {
             ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT,
             ShoppingListContract.ProductEntry.COLUMN_UNIT_ID,
             ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID,
-            ShoppingListContract.ProductEntry.COLUMN_MARKET};
+            ShoppingListContract.ProductEntry.COLUMN_MARKET,
+            ShoppingListContract.ProductEntry.COLUMN_COMMITTED};
 
     public UseCaseShoppingList(Context context) {
         mContext = context;
     }
 
     /**
-     * Search all the entered product list
+     * Convert the cursor with products to a List for Product objects
      *
-     * @return List with all entered product list
+     * @param cursor contains the product cursor
+     * @return List of products
      */
-    public List<Product> getFullEnteredList() {
-        //Variable for returning
+    private List<Product> toList(Cursor cursor) {
         List<Product> productList = new ArrayList<Product>();
-
-        Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, null, null, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
-
         if ((cursor != null) && (cursor.moveToFirst())) {
             while (!cursor.isAfterLast()) {
                 Product product = new Product();
@@ -48,10 +45,43 @@ public class UseCaseShoppingList {
                 product.amount = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT));
                 product.unitId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID));
                 product.categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID));
+                product.committed = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_COMMITTED)) == 1;
                 productList.add(product);
                 cursor.moveToNext();
             }
         }
+        return productList;
+    }
+
+    /**
+     * Search all the entered product list
+     *
+     * @return List with all entered product list
+     */
+    public List<Product> getFullEnteredList() {
+        //Variable for returning product list
+        List<Product> productList = new ArrayList<Product>();
+
+        Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
+                mProjection, null, null, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
+        productList = toList(cursor);
+
+        return productList;
+    }
+
+    /**
+     * Get the current products in the basket
+     * @return list of products
+     */
+    public List<Product> getProductsInBasket() {
+        //Variable for returning product list
+        List<Product> productList = new ArrayList<Product>();
+        String selection = "ShoppingListStore.COLUMN_COMMITTED =?";
+        String[] selectionArgs = new String[]{"1"};
+        Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
+                mProjection, selection, selectionArgs, null);
+        productList = toList(cursor);
+
         return productList;
     }
 

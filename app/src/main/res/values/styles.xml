@@ -17,6 +17,24 @@
         <item name="android:textColor">@color/accent_material_light</item>
     </style>
 
+    <!-- Styles for Navigation Drawer -->
+    <style name="AppTheme.NavigationDrawerItem">
+        <item name="android:paddingRight">@dimen/drawer_item_horizontal_padding</item>
+        <item name="android:layout_height">@dimen/drawer_item_height</item>
+    </style>
+
+    <style name="AppTheme.NavigationDrawerItem.IconDrawer">
+        <item name="android:layout_marginLeft">@dimen/drawer_item_horizontal_padding</item>
+    </style>
+
+    <style name="AppTheme.NavigationDrawerItem.TextDrawerItem">
+        <item name="android:textSize">@dimen/text_size_body_1_material</item>
+        <item name="fontFamily">@string/font_family_title_material</item>
+        <item name="android:textColor">?attr/textDrawerItemColor</item>
+        <item name="android:paddingLeft">@dimen/drawer_item_text_left_padding</item>
+        <item name="android:layout_gravity">left</item>
+    </style>
+
     <style name="TransparentProgressDialog" parent="@style/Theme.AppCompat.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@color/transparent</item>

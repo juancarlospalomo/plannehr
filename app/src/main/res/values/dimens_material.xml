@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- overwritten -->
+    <dimen name="text_size_body_1_material">14sp</dimen>
     <!-- Metrics for avatar in list item -->
     <dimen name="list_primary_action_avatar_height">56dp</dimen>
     <dimen name="list_primary_action_avatar_width">56dp</dimen>
@@ -10,4 +12,9 @@
     <dimen name="list_avatar_horizontal_padding">16dp</dimen>
     <dimen name="list_avatar_vertical_padding">8dp</dimen>
     <dimen name="list_item_text_padding_top">16dp</dimen>
+    <!-- Navigation drawer -->
+    <dimen name="drawer_item_horizontal_padding">16dp</dimen>
+    <dimen name="drawer_item_height">48dp</dimen>
+    <dimen name="drawer_icon_size">48dp</dimen>
+    <dimen name="drawer_item_text_left_padding">8dp</dimen>
 </resources>

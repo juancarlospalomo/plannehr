@@ -14,4 +14,6 @@
     <attr name="listPaddingVerticalAvatar" format="dimension" />
     <attr name="listItemPaddingTextTop" format="dimension" />
     <attr name="listItemPaddingTextBottom" format="dimension" />
+    <!-- Navigation drawer -->
+    <attr name="textDrawerItemColor" format="reference|color" />
 </resources>

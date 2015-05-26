@@ -32,12 +32,8 @@
         <item name="listItemPaddingTextTop">@dimen/list_item_text_padding_top</item>
         <!-- AppCompatTextView Style -->
         <item name="android:textViewStyle">@style/Widget.ApplilandiaTextView</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <!-- Both of these are needed -->
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+        <!-- Navigation Drawer -->
+        <item name="textDrawerItemColor">@color/text_drawer_item</item>
     </style>
 
 </resources>

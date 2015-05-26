@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 
 import com.householdplanner.shoppingapp.R;
+import com.householdplanner.shoppingapp.fragments.FragmentSetting;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 
@@ -198,14 +199,14 @@ public class util {
 	}
 
 	public static boolean getShowProductsNotSet(Context context) {
-		boolean result = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(AppPreferences.PREF_SHOW_PRODUCTS_NOT_SET, false);
+		boolean result = PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FragmentSetting.PREF_SHOW_PRODUCTS_NOT_SET, false);
 		return result;
 	}
 	
 	public static void setShowProductsNotSet(Context context, boolean value) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		Editor editor = prefs.edit();
-		editor.putBoolean(AppPreferences.PREF_SHOW_PRODUCTS_NOT_SET, value);
+		editor.putBoolean(FragmentSetting.PREF_SHOW_PRODUCTS_NOT_SET, value);
 		editor.commit();
 	}
 }

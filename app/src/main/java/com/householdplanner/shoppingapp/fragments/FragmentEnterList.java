@@ -31,9 +31,9 @@ import com.applilandia.widget.CircleView;
 import com.householdplanner.shoppingapp.MarketListActivity;
 import com.householdplanner.shoppingapp.ProductActivity;
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
 import com.householdplanner.shoppingapp.loaders.ProductLoader;
@@ -274,7 +274,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     @Override
     public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
         if (mCallback != null) mCallback.onLoadStart();
-        return new ProductLoader(getActivity());
+        return new ProductLoader(getActivity(), ProductLoader.TypeProducts.All);
     }
 
 
@@ -590,7 +590,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 mActionMode.finish();
                 mActionMode = null;
             }
-            getActivity().getContentResolver().notifyChange(AppPreferences.URI_HISTORY_TABLE, null);
+            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
         }
     }
 

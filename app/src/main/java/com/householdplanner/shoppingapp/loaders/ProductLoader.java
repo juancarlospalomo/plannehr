@@ -5,9 +5,11 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
+
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
+
 import java.util.List;
 
 /**
@@ -15,21 +17,35 @@ import java.util.List;
  */
 public class ProductLoader extends AsyncTaskLoader<List<Product>> {
 
+    public enum TypeProducts {
+        All,
+        BySupermarket,
+        InBasket
+    }
+
     private Context mContext;
+    private TypeProducts mTypeProducts;
     private List<Product> mProductList;
     private ProductObserver mObserver;
 
-    public ProductLoader(Context context) {
+    public ProductLoader(Context context, TypeProducts typeProducts) {
         super(context);
         mContext = context;
+        mTypeProducts = typeProducts;
         mObserver = new ProductObserver(new Handler());
-        mContext.getContentResolver().registerContentObserver(AppPreferences.URI_LIST_TABLE, true, mObserver);
+        mContext.getContentResolver().registerContentObserver(ShoppingListContract.ProductEntry.CONTENT_URI, true, mObserver);
     }
 
     @Override
     public List<Product> loadInBackground() {
         UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(mContext);
-        mProductList = useCaseShoppingList.getFullEnteredList();
+        if (mTypeProducts == TypeProducts.All) {
+            mProductList = useCaseShoppingList.getFullEnteredList();
+        } else if (mTypeProducts == TypeProducts.BySupermarket) {
+
+        } else if (mTypeProducts == TypeProducts.InBasket) {
+            mProductList = useCaseShoppingList.getProductsInBasket();
+        }
         return mProductList;
     }
 

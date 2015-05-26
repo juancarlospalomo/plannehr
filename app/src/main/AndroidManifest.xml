@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.householdplanner.shoppingapp"
     android:versionCode="12"
-    android:versionName="1.5.1">
+    android:versionName="1.5.1" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -12,7 +12,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".SearchProductActivity" />
@@ -24,31 +24,33 @@
             android:name=".MainActivity"
             android:icon="@drawable/ic_launcher"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
-
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ColorPickerActivity"
-            android:parentActivityName=".MarketActivity"
             android:label="@string/activity_color_picker_title"
-            android:screenOrientation="portrait">
+            android:parentActivityName=".MarketActivity"
+            android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.householdplanner.shoppingapp.MarketActivity" />
         </activity>
-
+        <activity
+            android:name=".SettingActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" >
+        </activity>
         <activity
             android:name=".ProductActivity"
             android:label="@string/title_product"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.householdplanner.shoppingapp.MainActivity" />
@@ -57,14 +59,14 @@
         <provider
             android:name=".data.ShoppingListProvider"
             android:authorities="com.householdplanner.shoppingapp"
-            android:exported="false"></provider>
+            android:exported="false" />
 
         <activity
             android:name=".WalletActivity"
             android:label="@string/title_activity_wallet"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -76,7 +78,7 @@
             android:label="@string/title_activity_budget"
             android:parentActivityName=".WalletActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -88,7 +90,7 @@
             android:label="@string/title_activity_ticket"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -98,7 +100,7 @@
         <activity
             android:name=".cross.AppPreferences"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -109,7 +111,7 @@
             android:name=".MarketActivity"
             android:label="@string/title_activity_market"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="com.householdplanner.shoppingapp.MarketActivityView" />
 
@@ -119,19 +121,17 @@
         <activity
             android:name=".HelpActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".MarketListActivity"
             android:label="@string/title_activity_market_list"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".help.HelpActivityFrame"
             android:label="@string/title_help_activity_frame"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
-
-
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

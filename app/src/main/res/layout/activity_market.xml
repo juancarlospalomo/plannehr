@@ -5,44 +5,16 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/productToolBar"
+        android:id="@+id/toolbar_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         plannehr:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
 
-    <LinearLayout
-        android:id="@+id/layoutAddMarket"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <com.applilandia.widget.ValidationField
-            android:id="@+id/validationViewMarket"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            plannehr:hint="@string/hint_edit_text_supermarket"
-            plannehr:viewType="EditText"
-            android:inputType="textCapSentences">
-        </com.applilandia.widget.ValidationField>
-
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/buttonAddMarket"
-            android:layout_width="?attr/touchableAssetLayoutWidth"
-            android:layout_height="?attr/touchableAssetLayoutHeight"
-            android:layout_gravity="center"
-            android:background="@drawable/ic_navigation_accept"
-            android:padding="?attr/listPaddingActionIcon" />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/listViewMarket"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="5dp"
-        android:listSelector="@drawable/list_selector" />
+        android:layout_height="wrap_content"></FrameLayout>
 
 </LinearLayout>

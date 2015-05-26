@@ -18,7 +18,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 
-import com.householdplanner.shoppingapp.cross.AppPreferences;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
@@ -170,8 +170,8 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
             shoppingListRepository.updateProductItem(mId, mName, mMarketName, mAmount, mMeasureId, mCategoryId);
             shoppingListRepository.close();
         }
-        getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-        getContentResolver().notifyChange(AppPreferences.URI_HISTORY_TABLE, null);
+        getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+        getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
     }
 
     public void setFieldValuesFromUI() {

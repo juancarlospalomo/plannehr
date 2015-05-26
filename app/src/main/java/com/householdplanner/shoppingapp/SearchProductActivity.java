@@ -21,8 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
@@ -87,8 +87,8 @@ public class SearchProductActivity extends AppCompatActivity implements LoaderCa
 			int sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
 			if (listRepository.createProductItem(productName, market, "", 0, categoryId, sequence)) {
 				Toast.makeText(SearchProductActivity.this, R.string.textProductsAdded, Toast.LENGTH_SHORT).show();
-				getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-				getContentResolver().notifyChange(AppPreferences.URI_HISTORY_TABLE, null);
+				getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+				getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
 			}
 		}
 		listRepository.close();
@@ -190,8 +190,8 @@ public class SearchProductActivity extends AppCompatActivity implements LoaderCa
 						int sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
 						if (listRepository.createProductItem(productName, market, "", 0, categoryId, sequence)) {
 							Toast.makeText(SearchProductActivity.this, R.string.textProductsAdded, Toast.LENGTH_SHORT).show();
-							getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-							getContentResolver().notifyChange(AppPreferences.URI_HISTORY_TABLE, null);
+							getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+							getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
 							new Handler().postDelayed(new Runnable() {
 								@Override
 								public void run() {

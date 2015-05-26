@@ -2,5 +2,6 @@
 <resources>
     <!--Toolbar colors -->
     <color name="color_toolbar_background">#99CC00</color>
-
+    <!-- Navigation drawer -->
+    <color name="text_drawer_item">#E5000000</color>
 </resources>

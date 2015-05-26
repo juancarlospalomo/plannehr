@@ -16,4 +16,6 @@ public class Product {
     public int unitId;
     //Category id
     public int categoryId;
+    //Hold if the product is in the basket
+    public boolean committed;
 }

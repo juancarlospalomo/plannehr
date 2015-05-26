@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    style="@style/AppTheme.NavigationDrawerItem">
+
+    <ImageView android:id="@+id/imageDrawerAction"
+        android:layout_width="@dimen/drawer_icon_size"
+        android:layout_height="@dimen/drawer_icon_size"
+        style="@style/AppTheme.NavigationDrawerItem.IconDrawer" />
+
+    <TextView android:id="@+id/textViewDrawerAction"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        style="@style/AppTheme.NavigationDrawerItem.TextDrawerItem"/>
+
+</LinearLayout>

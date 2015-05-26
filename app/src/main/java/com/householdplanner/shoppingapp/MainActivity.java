@@ -5,7 +5,9 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,12 +16,21 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.householdplanner.shoppingapp.asynctasks.BasketTask;
@@ -31,12 +42,11 @@ import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.fragments.FragmentDoShopping;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterData;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterList;
-import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.views.HelpView.TypeView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements Product.OnSaveProduct,
@@ -60,6 +70,11 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     private Menu mActionMenu = null;
     private ProgressCircle mProgressDialog = null;
     private ProgressHandler mHandler = null;
+    private DrawerLayout mDrawerLayout;
+    //List where the items of drawer menu will be drawn
+    private ListView mDrawerList;
+    //Link action bar to DrawerLayout
+    private ActionBarDrawerToggle mDrawerToggle;
 
     /*
      * For getting log from apk on device:
@@ -71,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         setContentView(R.layout.activity_main);
         //Configure the toolbar
         initToolbar();
+        createNavigationDrawer();
         mStarted = false;
     }
 
@@ -82,9 +98,80 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
             mStarted = true;
         } else {
             if (!AppGlobalState.getInstance().isShoppingMode(this)) {
-                setShoppingMenu();
+                //TODO: Review it
+                //setShoppingMenu();
             }
         }
+    }
+
+    /**
+     * Create and init the navigation drawer
+     */
+    private void createNavigationDrawer() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        mDrawerList.setAdapter(new DrawerListAdapter(this));
+        mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent;
+                switch (position) {
+                    case DrawerListAdapter.SUPERMARKET_INDEX:
+                        intent = new Intent(MainActivity.this, MarketActivity.class);
+                        startActivity(intent);
+                        break;
+                    case DrawerListAdapter.EXPENSES_INDEX:
+                        intent = new Intent(MainActivity.this, WalletActivity.class);
+                        startActivityForResult(intent, WALLET);
+                        break;
+                    case DrawerListAdapter.SETTINGS_INDEX:
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1) {
+                            intent = new Intent(MainActivity.this, SettingActivity.class);
+                        } else {
+                            intent = new Intent(MainActivity.this, AppPreferences.class);
+                        }
+                        startActivity(intent);
+                        break;
+                }
+                mDrawerLayout.closeDrawers();
+            }
+        });
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.text_accessibility_drawer_open,
+                R.string.text_accessibility_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+                syncState();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+                syncState();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+    }
+
+    /**
+     * Executed once instance state has been restored
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newChange) {
+        super.onConfigurationChanged(newChange);
+        mDrawerToggle.onConfigurationChanged(newChange);
     }
 
     private void setFragment() {
@@ -164,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private boolean moreThanOneSupermarket() {
@@ -192,7 +280,8 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         if (!AppGlobalState.getInstance().isShoppingMode(this)) {
             if ((source != null) && (source.equals(FragmentEnterList.TAG_FRAGMENT))) {
                 mCurrentItems = items;
-                setShoppingMenu();
+                //TODO: Review shopping mode
+                //setShoppingMenu();
             }
         }
     }
@@ -280,7 +369,8 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
+
+/*  @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         Intent intent;
@@ -319,6 +409,21 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
                 startActivity(intent);
                 return true;
 
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
+                    mDrawerLayout.closeDrawer(mDrawerList);
+                } else {
+                    mDrawerLayout.openDrawer(mDrawerList);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -443,9 +548,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         if (mActionMenu != null) {
             mActionMenu.findItem(R.id.action_productAddByVoice).setVisible(false);
             mActionMenu.findItem(R.id.action_productAdd).setVisible(false);
-            mActionMenu.findItem(R.id.action_superMarkets).setVisible(false);
-            mActionMenu.findItem(R.id.action_wallet).setVisible(false);
-            mActionMenu.findItem(R.id.action_settings).setVisible(false);
             mActionMenu.findItem(R.id.action_search).setVisible(false);
             MenuItem item = mActionMenu.findItem(R.id.action_doShopping);
             item.setIcon(R.drawable.ic_action_endshopping);
@@ -460,9 +562,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         if (mActionMenu != null) {
             mActionMenu.findItem(R.id.action_productAddByVoice).setVisible(false);
             mActionMenu.findItem(R.id.action_productAdd).setVisible(false);
-            mActionMenu.findItem(R.id.action_superMarkets).setVisible(false);
-            mActionMenu.findItem(R.id.action_wallet).setVisible(false);
-            mActionMenu.findItem(R.id.action_settings).setVisible(false);
             mActionMenu.findItem(R.id.action_search).setVisible(false);
             MenuItem item = mActionMenu.findItem(R.id.action_doShopping);
             item.setIcon(R.drawable.ic_action_endshopping);
@@ -476,9 +575,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         if (mActionMenu != null) {
             mActionMenu.findItem(R.id.action_productAddByVoice).setVisible(true);
             mActionMenu.findItem(R.id.action_productAdd).setVisible(true);
-            mActionMenu.findItem(R.id.action_superMarkets).setVisible(true);
-            mActionMenu.findItem(R.id.action_wallet).setVisible(true);
-            mActionMenu.findItem(R.id.action_settings).setVisible(true);
             mActionMenu.findItem(R.id.action_search).setVisible(true);
             MenuItem item = mActionMenu.findItem(R.id.action_doShopping);
             item.setIcon(R.drawable.ic_action_doshopping);
@@ -521,6 +617,59 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
                     }
                 }
             }
+        }
+    }
+
+    private class DrawerItem {
+        public int iconResId;
+        public int textResId;
+
+        private DrawerItem(int iconResId, int textResId) {
+            this.iconResId = iconResId;
+            this.textResId = textResId;
+        }
+    }
+
+    private class DrawerListAdapter extends ArrayAdapter<DrawerItem> {
+
+        public final static int SUPERMARKET_INDEX = 0;
+        public final static int EXPENSES_INDEX = 1;
+        public final static int SETTINGS_INDEX = 2;
+        public final static int HELP_INDEX = 3;
+
+        private List<DrawerItem> mDrawerListItems;
+
+        private DrawerListAdapter(Context context) {
+            super(context, R.layout.drawer_list_item);
+            mDrawerListItems = new ArrayList<>();
+            mDrawerListItems.add(new DrawerItem(R.drawable.ic_action_market, R.string.text_item_markets));
+            mDrawerListItems.add(new DrawerItem(R.drawable.ic_currency, R.string.text_item_expenses));
+            mDrawerListItems.add(new DrawerItem(R.drawable.ic_action_settings, R.string.text_item_settings));
+        }
+
+        @Override
+        public int getCount() {
+            return mDrawerListItems.size();
+        }
+
+        @Override
+        public DrawerItem getItem(int position) {
+            return mDrawerListItems.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = getLayoutInflater().inflate(R.layout.drawer_list_item, parent, false);
+            ImageView imageView = (ImageView) convertView.findViewById(R.id.imageDrawerAction);
+            TextView textView = (TextView) convertView.findViewById(R.id.textViewDrawerAction);
+            imageView.setImageResource(mDrawerListItems.get(position).iconResId);
+            textView.setText(mDrawerListItems.get(position).textResId);
+            return convertView;
         }
     }
 

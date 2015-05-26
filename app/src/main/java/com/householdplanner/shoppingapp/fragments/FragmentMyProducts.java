@@ -28,9 +28,9 @@ import android.widget.TextView;
 import com.applilandia.widget.CircleView;
 import com.applilandia.widget.SnackBar;
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
 import com.householdplanner.shoppingapp.loaders.ProductHistoryLoader;
 import com.householdplanner.shoppingapp.models.ProductHistory;
@@ -125,7 +125,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                                 mAdapter.notifyItemRangeRemoved(position, 1);
                                                 UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
                                                 if (useCaseMyProducts.copyToShoppingList(productHistory)) {
-                                                    getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                                 }
                                             }
                                         }
@@ -467,7 +467,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                 mActionMode.finish();
                 mActionMode = null;
             }
-            getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
         }
     }
 

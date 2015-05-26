@@ -20,10 +20,10 @@ import android.widget.Toast;
 
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.MarketCategoryStore;
@@ -177,7 +177,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 		        	  }
 		        	  shoppingListRepository.commitProduct(id);
 		        	  shoppingListRepository.close();
-		        	  getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+		        	  getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
 		        	  Toast.makeText(mContext, getResources().getString(R.string.textMovedToTicket) + ": " + productName, Toast.LENGTH_SHORT).show();
 				}
 			});
@@ -234,7 +234,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 	        	mCursor.registerContentObserver(this.mObserver);
 	            // this make sure this loader will be notified when
 	            // a notifyChange is called on the URI_MY_TABLE
-	            mCursor.setNotificationUri(getContext().getContentResolver(), AppPreferences.URI_LIST_TABLE);
+	            //mCursor.setNotificationUri(getContext().getContentResolver(), AppPreferences.URI_LIST_TABLE);
 	        }
 			return mCursor;
 		}

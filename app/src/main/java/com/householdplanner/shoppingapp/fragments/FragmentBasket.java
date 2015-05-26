@@ -16,10 +16,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 
@@ -144,7 +144,7 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
 	            	  int id = mCursor.getInt(mCursor.getColumnIndex(ShoppingListStore.COLUMN_ID));
 	            	  shoppingListRepository.rollbackProduct(id);
 	            	  shoppingListRepository.close();
-	            	  getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
+	            	  getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
 				}
     		});
     		mCursor.moveToPosition(position);
@@ -193,7 +193,7 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
 	        	mCursor.registerContentObserver(this.mObserver);
 	            // this make sure this loader will be notified when
 	            // a notifyChange is called on the URI_MY_TABLE
-	            mCursor.setNotificationUri(getContext().getContentResolver(), AppPreferences.URI_LIST_TABLE);
+	            //mCursor.setNotificationUri(getContext().getContentResolver(), AppPreferences.URI_LIST_TABLE);
 	        }
 			return mCursor;
 		}

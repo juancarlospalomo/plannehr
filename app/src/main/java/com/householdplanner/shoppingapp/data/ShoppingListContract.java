@@ -47,7 +47,8 @@ public class ShoppingListContract {
         public static final String COLUMN_CATEGORY_ID = "Category";
         //Market name that product belongs to
         public static final String COLUMN_MARKET = "Market";
-
+        //Is Product in the basket?
+        public static final String COLUMN_COMMITTED = "Comitted";
     }
 
     /**

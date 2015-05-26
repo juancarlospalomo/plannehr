@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.v4.content.AsyncTaskLoader;
 
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.models.ProductHistory;
 import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
 
@@ -25,7 +24,7 @@ public class ProductHistoryLoader extends AsyncTaskLoader<List<ProductHistory>> 
         super(context);
         mContext = context;
         mObserver = new ProductHistoryObserver(new Handler());
-        mContext.getContentResolver().registerContentObserver(AppPreferences.URI_HISTORY_TABLE, true, mObserver);
+        //mContext.getContentResolver().registerContentObserver(AppPreferences.URI_HISTORY_TABLE, true, mObserver);
     }
 
     @Override
