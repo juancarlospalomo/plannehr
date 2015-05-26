@@ -1,68 +1,20 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:plannehr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/budgetToolBar"
+        android:id="@+id/toolbar_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         plannehr:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"></android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.AppCompatSpinner
-        android:id="@+id/spMonth"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/budgetToolBar"
-        android:entries="@array/month_array"
-        android:prompt="@string/monthName" />
+        android:layout_height="wrap_content"></FrameLayout>
 
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/textBudgetAvailable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/spMonth"
-        android:layout_below="@+id/spMonth"
-        android:text="@string/budgetAvailable" />
-
-    <EditText
-        android:id="@+id/edtAvailable"
-        style="@style/editTextData"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textBudgetAvailable"
-        android:hint="@string/budgetAvailable"
-        android:inputType="numberDecimal" />
-
-    <android.support.v7.widget.AppCompatTextView
-        android:id="@+id/textBudgetTarget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/edtTarget"
-        android:layout_alignTop="@+id/textBudgetAvailable"
-        android:layout_toRightOf="@+id/textBudgetAvailable"
-        android:text="@string/budgetTarget" />
-
-    <EditText
-        android:id="@+id/edtTarget"
-        style="@style/editTextData"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/edtAvailable"
-        android:layout_toRightOf="@+id/edtAvailable"
-        android:hint="@string/budgetTarget"
-        android:inputType="numberDecimal" />
-
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/btnSaveBudget"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/edtTarget"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:theme="@style/Widget.ApplilandiaButton"
-        android:text="@string/btnSave" />
-
-</RelativeLayout>
+</LinearLayout>

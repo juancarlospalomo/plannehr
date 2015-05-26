@@ -209,6 +209,7 @@
     <string name="delete_product_dialog_cancel_text">Cancel</string>
     <string name="delete_product_dalog_ok_text">Delete</string>
 
+    <!-- Color picker activity -->
     <string name="activity_color_picker_title">Color Picker</string>
     <string name="text_button_ok">OK</string>
 
@@ -217,12 +218,23 @@
     <string name="delete_supermarket_dialog_cancel_text">Cancel</string>
     <string name="delete_supermarket_dalog_ok_text">Delete</string>
 
+    <!-- Delete Budget Dialog -->
+    <string name="delete_budget_dialog_title">Delete Product?</string>
+    <string name="delete_budget_dialog_cancel_text">Cancel</string>
+    <string name="delete_budget_dalog_ok_text">Delete</string>
+
     <!-- Hints -->
     <string name="hint_edit_text_supermarket">Supermarket name</string>
-    product_name
+
     <!-- Error messages -->
     <string name="error_text_market_exist">Supermarket already exists</string>
     <string name="error_text_market_name_mandatory">Market name is mandatory</string>
+    <string name="error_text_budget_available_mandatory">Available is mandatory</string>
+    <string name="error_text_budget_target_mandatory">Target is mandatory</string>
+    <!-- Info messages -->
+    <string name="info_budget_title">Information</string>
+    <string name="info_budget_modification_message">Can\'t be modified. Has already inserted some expenses</string>
+    <string name="info_button_ok">OK</string>
 
     <!-- SnackBar -->
     <string name="text_snack_bar_action">Undo</string>

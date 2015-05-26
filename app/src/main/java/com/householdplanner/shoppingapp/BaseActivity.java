@@ -1,9 +1,15 @@
 package com.householdplanner.shoppingapp;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * Created by JuanCarlos on 25/05/2015.
@@ -25,19 +31,93 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     //Hold if the toolbar is in contextual mode
-    private boolean mIsContextualMode = false;
+    protected boolean mIsContextualMode = false;
     //Activity toolbar
     protected Toolbar mActionBarToolbar = null;
     //Toolbar Contextual Mode callback
     private ToolbarContextualMode mToolbarModeCallback = null;
     //Hold the current activity title for restoring later when contextual mode is finished
     private String mToolbarTitle;
+    //Set if if has to show the title in the Toolbar
+    private boolean mShowTitle = true;
+    //Navigation drawer
+    private DrawerLayout mDrawerLayout;
+    //Drawer listener linked to the ActionBar
+    private ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
         initToolbarActionBar();
+    }
 
+    /**
+     * To set the title or not on the toolbar
+     *
+     * @param value
+     */
+    protected void setTitleVisible(boolean value) {
+        mShowTitle = value;
+    }
+
+    /**
+     * Check if this activity has navigation drawer
+     *
+     * @return
+     */
+    private boolean hasNavigationDrawer() {
+        return mDrawerLayout != null;
+    }
+
+    //Close the drawers opened in the drawer layout
+    protected void closeDrawers() {
+        if (mDrawerLayout!=null)
+            mDrawerLayout.closeDrawers();
+    }
+
+    /**
+     * Create the navigation drawer
+     */
+    protected void createNavigationDrawer() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.text_accessibility_drawer_open,
+                R.string.text_accessibility_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+                syncState();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+                syncState();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+    }
+
+    /**
+     * Executed once instance state has been restored
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (mDrawerToggle != null)
+            mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newChange) {
+        super.onConfigurationChanged(newChange);
+        if (mDrawerToggle != null)
+            mDrawerToggle.onConfigurationChanged(newChange);
     }
 
     @Override
@@ -45,7 +125,11 @@ public class BaseActivity extends AppCompatActivity {
         if (mIsContextualMode) {
             mActionBarToolbar.setNavigationIcon(R.drawable.ic_action_down);
         } else {
-            mActionBarToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            if (hasNavigationDrawer()) {
+                mDrawerToggle.syncState();
+            } else {
+                mActionBarToolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+            }
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -57,7 +141,16 @@ public class BaseActivity extends AppCompatActivity {
                 if (mIsContextualMode) {
                     finishToolbarContextualActionMode();
                 } else {
-                    finish();
+                    if (!hasNavigationDrawer()) {
+                        finish();
+                    } else {
+                        if (mDrawerLayout.isDrawerOpen(Gravity.START)) {
+                            mDrawerLayout.closeDrawer(Gravity.START);
+                        } else {
+                            mDrawerLayout.openDrawer(Gravity.START);
+                        }
+                        return super.onOptionsItemSelected(item);
+                    }
                 }
                 return true;
             default:
@@ -73,6 +166,8 @@ public class BaseActivity extends AppCompatActivity {
         mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(mActionBarToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(mShowTitle);
     }
 
     /**
@@ -98,7 +193,9 @@ public class BaseActivity extends AppCompatActivity {
     public void startToolbarContextualActionMode(ToolbarContextualMode mode) {
         mToolbarModeCallback = mode;
         mIsContextualMode = true;
-        mToolbarTitle = mActionBarToolbar.getTitle().toString();
+        if (mShowTitle) {
+            mToolbarTitle = mActionBarToolbar.getTitle().toString();
+        }
         if (mToolbarModeCallback != null) {
             mToolbarModeCallback.onCreateToolbarContextualMode();
             invalidateOptionsMenu();
@@ -110,9 +207,13 @@ public class BaseActivity extends AppCompatActivity {
      */
     public void finishToolbarContextualActionMode() {
         mIsContextualMode = false;
-        if (mToolbarModeCallback!=null) {
+        if (mToolbarModeCallback != null) {
             mToolbarModeCallback.onFinishToolbarContextualMode();
-            mActionBarToolbar.setTitle(mToolbarTitle);
+            if (mShowTitle) {
+                mActionBarToolbar.setTitle(mToolbarTitle);
+            } else {
+                mActionBarToolbar.setTitle("");
+            }
             invalidateOptionsMenu();
         }
     }

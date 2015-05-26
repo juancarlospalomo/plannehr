@@ -27,7 +27,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import com.applilandia.widget.ValidationField;
 import com.householdplanner.shoppingapp.BaseActivity;
 import com.householdplanner.shoppingapp.ColorPickerActivity;
@@ -50,6 +49,7 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
     //Hold the row that contains the supermarket name being updated
     private static int mCurrentPosition = 0;
     private static boolean mRenamingMarket = false;
+    //To save if the Toolbar is in contextual mode
     private boolean mContextualMode = false;
     //List View to show the Supermarkets list
     private ListView mListView;

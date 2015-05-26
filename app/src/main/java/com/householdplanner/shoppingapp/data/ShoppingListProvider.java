@@ -22,6 +22,7 @@ public class ShoppingListProvider extends ContentProvider {
     private final static int PRODUCT = 100;
     private final static int PRODUCT_HISTORY = 200;
     private final static int PRODUCT_HISTORY_SUGGEST = 201;
+    private final static int BUDGET = 300;
 
     private DatabaseHelper mDatabaseHelper;
 
@@ -34,6 +35,7 @@ public class ShoppingListProvider extends ContentProvider {
         mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_PRODUCT_HISTORY, PRODUCT_HISTORY);
         mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_PRODUCT_HISTORY + "/" +
                 SearchManager.SUGGEST_URI_PATH_QUERY + "/*", PRODUCT_HISTORY_SUGGEST);
+        mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_BUDGET, BUDGET);
     }
 
     @Override
@@ -85,6 +87,11 @@ public class ShoppingListProvider extends ContentProvider {
                 cursor = productHistoryRepository.getProductSuggestions(pattern);
                 break;
 
+            case BUDGET:
+                cursor = mDatabaseHelper.getReadableDatabase().query(ShoppingListContract.BudgetEntry.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -103,6 +110,8 @@ public class ShoppingListProvider extends ContentProvider {
                 return ShoppingListContract.ProductHistoryEntry.CONTENT_TYPE;
             case PRODUCT_HISTORY_SUGGEST:
                 return ShoppingListContract.ProductHistoryEntry.CONTENT_TYPE;
+            case BUDGET:
+                return ShoppingListContract.BudgetEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

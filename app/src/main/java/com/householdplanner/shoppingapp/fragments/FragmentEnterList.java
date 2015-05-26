@@ -12,8 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.applilandia.widget.CircleView;
+import com.householdplanner.shoppingapp.BaseActivity;
 import com.householdplanner.shoppingapp.MarketListActivity;
 import com.householdplanner.shoppingapp.ProductActivity;
 import com.householdplanner.shoppingapp.R;
@@ -60,11 +60,12 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     private static final String KEY_ITEMS_SELECTED = "items";
     private static final String KEY_SELECT_ITEM = "selectItem";
 
+    //To save if the Toolbar is in contextual mode
+    private boolean mContextualMode = false;
     private static String mSelectItemName = null;
     private EnterListAdapter mAdapter;
     private RecyclerView mProductRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ActionMode mActionMode;
     private ArrayList<Integer> mItemsSelected = null;
     private OnLoadData mCallback = null;
     /**
@@ -108,6 +109,33 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (mContextualMode) {
+            inflater.inflate(R.menu.current_list, menu);
+        } else {
+            super.onCreateOptionsMenu(menu, inflater);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.deleteProduct:
+                deleteProducts();
+                return true;
+
+            case R.id.moveProduct:
+                mItemsSelected = getProductsSelected();
+                actionMoveSelectedToTarget();
+                ((BaseActivity)getActivity()).finishToolbarContextualActionMode();
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case SELECT_MARKET_FOR_MOVE:
@@ -135,7 +163,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
                             @Override
                             public void onItemClick(View view, int position) {
-                                if (mActionMode != null) {
+                                if (mContextualMode) {
                                     onListItemSelect(view, position);
                                 }
                             }
@@ -147,7 +175,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
                             @Override
                             public void onItemLongClick(View view, int position) {
-                                if (mActionMode == null) {
+                                if (!mContextualMode) {
                                     onListItemSelect(view, position);
                                 }
                             }
@@ -237,16 +265,15 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             view.setBackgroundResource(R.drawable.list_row_background);
         }
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
-
-        if (hasCheckedItems && mActionMode == null)
+        BaseActivity baseActivity = (BaseActivity) getActivity();
+        if (hasCheckedItems && !mContextualMode)
             // there are some selected items, start the actionMode
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
-        else if (!hasCheckedItems && mActionMode != null)
+            baseActivity.startToolbarContextualActionMode(new ToolbarContextualMode());
+        else if (!hasCheckedItems && mContextualMode)
             // there no selected items, finish the actionMode
-            mActionMode.finish();
-
-        if (mActionMode != null)
-            mActionMode.setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
+            baseActivity.finishToolbarContextualActionMode();
+        if (mContextualMode)
+            baseActivity.getActionBarToolbar().setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
     }
 
     /**
@@ -505,44 +532,19 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     }
 
     /**
-     * Callback for action bar
+     * Toolbar Contextual Mode Callback
      */
-    private class ActionModeCallback implements ActionMode.Callback {
+    private class ToolbarContextualMode implements BaseActivity.ToolbarContextualMode {
 
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // inflate contextual menu
-            mode.getMenuInflater().inflate(R.menu.current_list, menu);
-            return true;
+        public void onCreateToolbarContextualMode() {
+            mContextualMode = true;
         }
 
         @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.deleteProduct:
-                    deleteProducts();
-                    return true;
-
-                case R.id.moveProduct:
-                    mItemsSelected = getProductsSelected();
-                    actionMoveSelectedToTarget();
-                    mode.finish();
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
+        public void onFinishToolbarContextualMode() {
+            mContextualMode = false;
             mAdapter.clearSelection();
-            mActionMode = null;
         }
     }
 
@@ -586,9 +588,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (mActionMode != null) {
-                mActionMode.finish();
-                mActionMode = null;
+            if (mContextualMode) {
+                ((BaseActivity)getActivity()).finishToolbarContextualActionMode();
             }
             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
         }

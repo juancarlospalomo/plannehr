@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,11 +15,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,14 +38,16 @@ import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.fragments.FragmentDoShopping;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterData;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterList;
+import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
+import com.householdplanner.shoppingapp.views.HelpView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements Product.OnSaveProduct,
+public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         OnLoadData {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -70,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     private Menu mActionMenu = null;
     private ProgressCircle mProgressDialog = null;
     private ProgressHandler mHandler = null;
-    private DrawerLayout mDrawerLayout;
     //List where the items of drawer menu will be drawn
     private ListView mDrawerList;
     //Link action bar to DrawerLayout
@@ -83,10 +80,10 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitleVisible(false);
         setContentView(R.layout.activity_main);
-        //Configure the toolbar
-        initToolbar();
         createNavigationDrawer();
+        setDrawerItems();
         mStarted = false;
     }
 
@@ -105,10 +102,9 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     }
 
     /**
-     * Create and init the navigation drawer
+     * Create the drawer items for the navigation drawer
      */
-    private void createNavigationDrawer() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+    private void setDrawerItems() {
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
         mDrawerList.setAdapter(new DrawerListAdapter(this));
         mDrawerList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -133,45 +129,9 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
                         startActivity(intent);
                         break;
                 }
-                mDrawerLayout.closeDrawers();
+                closeDrawers();
             }
         });
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.text_accessibility_drawer_open,
-                R.string.text_accessibility_drawer_close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-                syncState();
-            }
-
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu();
-                syncState();
-            }
-        };
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
-    }
-
-    /**
-     * Executed once instance state has been restored
-     *
-     * @param savedInstanceState
-     */
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newChange) {
-        super.onConfigurationChanged(newChange);
-        mDrawerToggle.onConfigurationChanged(newChange);
     }
 
     private void setFragment() {
@@ -243,17 +203,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
         mActionMenu.findItem(R.id.action_doShopping).setVisible(false);
     }
 
-    /**
-     * Configure the toolbar
-     */
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.productToolBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
     private boolean moreThanOneSupermarket() {
         boolean result = false;
         ShoppingListRepository shoppingListRepository = new ShoppingListRepository(this);
@@ -310,69 +259,70 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        mActionMenu = menu;
-        if (AppGlobalState.getInstance().isShoppingMode(this)) {
-            restartShoppingMode();
-        } else {
-            final MenuItem searchItem = menu.findItem(R.id.action_search);
-            SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-            searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-            SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setQueryHint(getString(R.string.text_hint_search_view_product));
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        if (!mIsContextualMode) {
+            getMenuInflater().inflate(R.menu.main, menu);
+            mActionMenu = menu;
+            if (AppGlobalState.getInstance().isShoppingMode(this)) {
+                restartShoppingMode();
+            } else {
+                final MenuItem searchItem = menu.findItem(R.id.action_search);
+                SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+                searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+                SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+                searchView.setQueryHint(getString(R.string.text_hint_search_view_product));
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
-                @Override
-                public boolean onQueryTextSubmit(String s) {
-                    if (mProgressDialog == null) {
-                        mProgressDialog = new ProgressCircle(MainActivity.this);
-                        mProgressDialog.show();
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        if (mProgressDialog == null) {
+                            mProgressDialog = new ProgressCircle(MainActivity.this);
+                            mProgressDialog.show();
+                        }
+                        return false;
                     }
-                    return false;
-                }
 
-                @Override
-                public boolean onQueryTextChange(String s) {
-                    return false;
-                }
-            });
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                });
 
-            searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-                @Override
-                public boolean onSuggestionSelect(int i) {
-                    return false;
-                }
+                searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+                    @Override
+                    public boolean onSuggestionSelect(int i) {
+                        return false;
+                    }
 
-                @Override
-                public boolean onSuggestionClick(int i) {
-                    MenuItemCompat.collapseActionView(searchItem);
-                    showActionBarIcons();
-                    return false;
-                }
-            });
+                    @Override
+                    public boolean onSuggestionClick(int i) {
+                        MenuItemCompat.collapseActionView(searchItem);
+                        showActionBarIcons();
+                        return false;
+                    }
+                });
 
-            MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
-                @Override
-                public boolean onMenuItemActionExpand(MenuItem item) {
-                    hideActionBarIcons();
-                    return true;
-                }
+                MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
+                    @Override
+                    public boolean onMenuItemActionExpand(MenuItem item) {
+                        hideActionBarIcons();
+                        return true;
+                    }
 
-                @Override
-                public boolean onMenuItemActionCollapse(MenuItem item) {
-                    showActionBarIcons();
-                    return true;
-                }
-            });
+                    @Override
+                    public boolean onMenuItemActionCollapse(MenuItem item) {
+                        showActionBarIcons();
+                        return true;
+                    }
+                });
+            }
         }
         return super.onCreateOptionsMenu(menu);
     }
 
 
-/*  @Override
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
         Intent intent;
         switch (item.getItemId()) {
             case R.id.action_productAddByVoice:
@@ -388,16 +338,6 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
                 executeActionDoShopping();
                 return true;
 
-            case R.id.action_superMarkets:
-                intent = new Intent(this, MarketActivity.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.action_wallet:
-                intent = new Intent(this, WalletActivity.class);
-                startActivityForResult(intent, WALLET);
-                return true;
-
             case R.id.action_settings:
                 intent = new Intent(this, AppPreferences.class);
                 startActivityForResult(intent, SETTINGS);
@@ -405,25 +345,10 @@ public class MainActivity extends AppCompatActivity implements Product.OnSavePro
 
             case R.id.action_help:
                 intent = new Intent(this, HelpActivityFrame.class);
-                intent.putExtra(HelpActivityFrame.EXTRA_INITIAL_CAPSULE, TypeView.EnterProducts.getValue());
+                intent.putExtra(HelpActivityFrame.EXTRA_INITIAL_CAPSULE, HelpView.TypeView.EnterProducts.getValue());
                 startActivity(intent);
                 return true;
 
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (mDrawerLayout.isDrawerOpen(mDrawerList)) {
-                    mDrawerLayout.closeDrawer(mDrawerList);
-                } else {
-                    mDrawerLayout.openDrawer(mDrawerList);
-                }
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

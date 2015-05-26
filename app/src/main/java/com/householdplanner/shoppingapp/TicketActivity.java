@@ -28,7 +28,7 @@ public class TicketActivity extends AppCompatActivity {
 
 	public static final String EXTRA_HAS_PRODUCTS = "hasProducts";
 	
-	private static final int CREATE_BUDGET = 1;
+	private static final int REQUEST_CODE_CREATE_BUDGET = 1;
 	
 	boolean mHasProducts = false;
 	String mTicketDate = "";
@@ -75,8 +75,8 @@ public class TicketActivity extends AppCompatActivity {
 		int month = util.getMonth(mTicketDate);
 		if (!wallet.existBudget(month)) {
 			Intent intent = new Intent(this, BudgetActivity.class);
-			intent.putExtra("MonthId", month);
-			startActivityForResult(intent, CREATE_BUDGET);
+			intent.putExtra(BudgetActivity.EXTRA_MONTH_ID, month);
+			startActivityForResult(intent, REQUEST_CODE_CREATE_BUDGET);
 		} else {
 			Save();
 		}
@@ -85,7 +85,7 @@ public class TicketActivity extends AppCompatActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch(requestCode) {
-			case CREATE_BUDGET:
+			case REQUEST_CODE_CREATE_BUDGET:
 				if (resultCode == Activity.RESULT_OK) {
 					Save();
 				}

@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -213,6 +214,22 @@ public class ValidationField extends LinearLayout {
             return ((AppCompatEditText) mContentView).getText().toString();
         } else {
             return (String) ((TextView) mContentView).getText();
+        }
+    }
+
+    /**
+     * Check if the text is empty in EditText View
+     * @return true if EditText is empty
+     */
+    public boolean isEmpty() {
+        if (mViewType==TypeView.EditText) {
+            if (TextUtils.isEmpty(getText())) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            throw new UnsupportedOperationException("Unsupported in TextView");
         }
     }
 

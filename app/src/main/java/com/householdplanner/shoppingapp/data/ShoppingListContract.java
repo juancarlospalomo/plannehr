@@ -146,7 +146,5 @@ public class ShoppingListContract {
         //Wallet money
         public static final String COLUMN_WALLET = "Wallet";
         public static final String COLUMN_LAST_WALLET = "LWallet";
-        public static final String COLUMN_DEVICE_WITHDRAWN = "DeviceWithDrawn";
-        public static final String COLUMN_DEVICE_WALLET = "DeviceWallet";
     }
 }
