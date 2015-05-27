@@ -199,6 +199,7 @@ public class WalletActivity extends BaseActivity implements
                 intent.putExtra(BudgetActivity.EXTRA_AVAILABLE, budget.available);
                 intent.putExtra(BudgetActivity.EXTRA_TARGET, budget.target);
                 startActivityForResult(intent, REQUEST_CODE_BUDGET_MODIFY);
+                finishToolbarContextualActionMode();
             }
         }
     }

@@ -98,8 +98,8 @@ public class FragmentBudget extends Fragment {
         if (args != null) {
             mBudget._id = args.getInt(KEY_ID);
             mBudget.monthId = args.getInt(KEY_MONTH_ID);
-            mBudget.available = args.getInt(KEY_AVAILABLE);
-            mBudget.target = args.getInt(KEY_TARGET);
+            mBudget.available = args.getFloat(KEY_AVAILABLE);
+            mBudget.target = args.getFloat(KEY_TARGET);
         }
     }
 

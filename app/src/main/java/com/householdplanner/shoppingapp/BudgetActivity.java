@@ -55,11 +55,13 @@ public class BudgetActivity extends BaseActivity {
     private void getIntentData() {
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        mId = bundle.getInt(EXTRA_BUDGET_ID);
-        if (mId > 0) {
-            mMonthId = bundle.getInt(EXTRA_MONTH_ID);
-            mAvailable = bundle.getFloat(EXTRA_AVAILABLE);
-            mTarget = bundle.getFloat(EXTRA_TARGET);
+        if (bundle!=null) {
+            mId = bundle.getInt(EXTRA_BUDGET_ID);
+            if (mId > 0) {
+                mMonthId = bundle.getInt(EXTRA_MONTH_ID);
+                mAvailable = bundle.getFloat(EXTRA_AVAILABLE);
+                mTarget = bundle.getFloat(EXTRA_TARGET);
+            }
         }
     }
 }

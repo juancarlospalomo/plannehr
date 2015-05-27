@@ -213,6 +213,9 @@
     <string name="activity_color_picker_title">Color Picker</string>
     <string name="text_button_ok">OK</string>
 
+    <!-- Dialog -->
+    <string name="dialog_cancel">Cancel</string>
+
     <!-- Delete Supermarket Dialog -->
     <string name="delete_supermarket_dialog_title">Delete Market?</string>
     <string name="delete_supermarket_dialog_cancel_text">Cancel</string>
@@ -222,6 +225,9 @@
     <string name="delete_budget_dialog_title">Delete Product?</string>
     <string name="delete_budget_dialog_cancel_text">Cancel</string>
     <string name="delete_budget_dalog_ok_text">Delete</string>
+
+    <!-- Product Dialog -->
+    <string name="product_add_existing_text">Add</string>
 
     <!-- Hints -->
     <string name="hint_edit_text_supermarket">Supermarket name</string>

@@ -1,15 +1,12 @@
 package com.householdplanner.shoppingapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatSpinner;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,14 +15,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.EditText;
 
+import com.applilandia.widget.ValidationField;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
+import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 
-import java.util.ArrayList;
-
-public class ProductActivity extends AppCompatActivity implements DialogInterface.OnClickListener {
+public class ProductActivity extends BaseActivity {
 
     private static final int NEW_MODE = 1;
     private static final int EDIT_MODE = 2;
@@ -47,13 +44,16 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
     private int mMeasureId = 0;
     private int mCategoryId = 0;
 
+    private ValidationField mValidationFieldProductName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
 
-        initToolbar();
         getIntentData();
+        inflateViews();
+
         if (mMode == EDIT_MODE) {
             setUIProductData();
         }
@@ -61,6 +61,13 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
         createButtonHandlers();
         addListenerOnSpinnerMeasureItemSelection();
         addListenerOnSpinnerCategoryItemSelection();
+    }
+
+    /**
+     * Inflate views from activity layout
+     */
+    private void inflateViews() {
+        mValidationFieldProductName = (ValidationField) findViewById(R.id.validationFieldProductName);
     }
 
     @Override
@@ -76,15 +83,6 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * Configure toolbar
-     */
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.productToolBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     /**
@@ -116,6 +114,7 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mValidationFieldProductName.setError("");
                 setFieldValuesFromUI();
                 if (validate()) {
                     if (mMode == NEW_MODE) {
@@ -128,18 +127,17 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
                         saveAndFinish();
                     }
                 } else {
-                    showValidationErrorMessage();
+                    mValidationFieldProductName.setError(R.string.textProductNameErrorMessage);
                 }
             }
         });
     }
 
     private void setUIProductData() {
-        EditText editProductName = (EditText) findViewById(R.id.edProductName);
         EditText editAmount = (EditText) findViewById(R.id.edAmount);
         AppCompatSpinner spinnerMeasure = (AppCompatSpinner) findViewById(R.id.spMeasure);
         AppCompatSpinner spinnerCategory = (AppCompatSpinner) findViewById(R.id.spCategory);
-        editProductName.setText(mName);
+        mValidationFieldProductName.setText(mName);
         editAmount.setText(mAmount);
         spinnerMeasure.setSelection(mMeasureId);
         spinnerCategory.setSelection(mCategoryId);
@@ -175,9 +173,8 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
     }
 
     public void setFieldValuesFromUI() {
-        EditText editTextName = (EditText) findViewById(R.id.edProductName);
         EditText editAmount = (EditText) findViewById(R.id.edAmount);
-        mName = editTextName.getText().toString().trim();
+        mName = mValidationFieldProductName.getText().trim();
         mAmount = editAmount.getText().toString().trim();
     }
 
@@ -205,39 +202,27 @@ public class ProductActivity extends AppCompatActivity implements DialogInterfac
         finish();
     }
 
-    private void showValidationErrorMessage() {
-        ArrayList<String> messageList = new ArrayList<String>();
-        String[] message;
-        messageList.add(getResources().getString(R.string.textProductNameErrorMessage));
-        ValidationDialog alertDialog = new ValidationDialog();
-        Bundle args = new Bundle();
-        message = new String[messageList.size()];
-        message = messageList.toArray(message);
-        args.putStringArray("message", message);
-        args.putString("title", getResources().getString(R.string.title_activity_product));
-        alertDialog.setArguments(args);
-        alertDialog.show(getSupportFragmentManager(), "dialog");
-    }
-
+    /**
+     * Ask if add to the list one existing product on it
+     */
     private void showAskDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setMessage(getResources().getString(R.string.textDuplicateProductWarningMessage));
-        alertDialog.setTitle(getResources().getString(R.string.textDuplicateProductWarningTitle));
-        alertDialog.setPositiveButton(android.R.string.ok, this);
-        alertDialog.setNegativeButton(android.R.string.cancel, this);
-        alertDialog.create().show();
-    }
+        AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.textDuplicateProductWarningTitle),
+                getResources().getString(R.string.textDuplicateProductWarningMessage),
+                getResources().getString(R.string.dialog_cancel),
+                getResources().getString(R.string.product_add_existing_text)
+        );
+        alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case AlertDialogFragment.INDEX_BUTTON_YES:
+                        saveAndFinish();
+                        break;
+                }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case AlertDialog.BUTTON_POSITIVE:
-                saveAndFinish();
-                break;
-            case AlertDialog.BUTTON_NEGATIVE:
-                dialog.dismiss();
-                break;
-        }
+            }
+        });
+        alertDialog.show(getSupportFragmentManager(), "confirmationDialog");
     }
 
     public class MeasureOnItemSelectedListener implements OnItemSelectedListener {

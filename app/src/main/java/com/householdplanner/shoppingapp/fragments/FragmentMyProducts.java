@@ -9,8 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ActionMode;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +26,7 @@ import android.widget.TextView;
 
 import com.applilandia.widget.CircleView;
 import com.applilandia.widget.SnackBar;
+import com.householdplanner.shoppingapp.BaseActivity;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
@@ -46,13 +46,15 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
     private static final int LOADER_ID = 1;
 
+    //To save if the Toolbar is in contextual mode
+    private boolean mContextualMode = false;
     //Adapter for the Recycler View
     private MyProductsAdapter mAdapter = null;
     private RecyclerView mRecyclerViewMyProducts;
     //Vertical Layout Manager
     private RecyclerView.LayoutManager mLayoutManager;
     //Action Bar mode
-    private ActionMode mActionMode;
+
     //Callback to trigger the events
     private OnLoadData mCallback = null;
     //SnackBar
@@ -67,11 +69,13 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, this);
+        setHasOptionsMenu(true);
         //Inflate the views into the module vars
         inflateViews();
         //Init the recycler View
         initRecyclerView();
+        //Init the load
+        getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
     /**
@@ -105,7 +109,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
                             @Override
                             public void onItemClick(View view, int position) {
-                                if (mActionMode != null) {
+                                if (mContextualMode) {
                                     onListItemSelect(view, position);
                                 }
                             }
@@ -147,7 +151,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
                             @Override
                             public void onItemLongClick(View view, int position) {
-                                if (mActionMode == null) {
+                                if (!mContextualMode) {
                                     onListItemSelect(view, position);
                                 }
                             }
@@ -170,15 +174,38 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         }
         boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
 
-        if (hasCheckedItems && mActionMode == null)
-            // there are some selected items, start the actionMode
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new ActionModeCallback());
-        else if (!hasCheckedItems && mActionMode != null)
-            // there no selected items, finish the actionMode
-            mActionMode.finish();
+        BaseActivity baseActivity = (BaseActivity) getActivity();
 
-        if (mActionMode != null)
-            mActionMode.setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
+        if (hasCheckedItems && !mContextualMode)
+            // there are some selected items, start the actionMode
+            baseActivity.startToolbarContextualActionMode(new ToolbarContextualMode());
+        else if (!hasCheckedItems && mContextualMode)
+            // there no selected items, finish the actionMode
+            baseActivity.finishToolbarContextualActionMode();
+
+        if (mContextualMode)
+            baseActivity.getActionBarToolbar().setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (mContextualMode) {
+            inflater.inflate(R.menu.history_context_menu, menu);
+        } else {
+            super.onCreateOptionsMenu(menu, inflater);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.deleteProduct:
+                deleteProducts();
+                return true;
+
+            default:
+                return false;
+        }
     }
 
     /**
@@ -360,7 +387,6 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         public void clearSelection() {
             mSelectedItems.clear();
             mSelectedItems = new SparseBooleanArray();
-            notifyDataSetChanged();
         }
     }
 
@@ -386,40 +412,20 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         }
     }
 
-
-    private class ActionModeCallback implements ActionMode.Callback {
+    /**
+     * Toolbar Contextual Mode Callback
+     */
+    private class ToolbarContextualMode implements BaseActivity.ToolbarContextualMode {
 
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            // inflate contextual menu
-            mode.getMenuInflater().inflate(R.menu.history_context_menu, menu);
-            return true;
+        public void onCreateToolbarContextualMode() {
+            mContextualMode = true;
         }
 
         @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-            switch (item.getItemId()) {
-                case R.id.deleteProduct:
-                    deleteProducts();
-                    return true;
-
-                default:
-                    return false;
-            }
-
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            // remove selection
+        public void onFinishToolbarContextualMode() {
+            mContextualMode = false;
             mAdapter.clearSelection();
-            mActionMode = null;
         }
     }
 
@@ -463,9 +469,8 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (mActionMode != null) {
-                mActionMode.finish();
-                mActionMode = null;
+            if (mContextualMode) {
+                ((BaseActivity)getActivity()).finishToolbarContextualActionMode();
             }
             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
         }

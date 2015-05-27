@@ -1,6 +1,5 @@
 package com.householdplanner.shoppingapp.fragments;
 
-import android.animation.Animator;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -68,16 +67,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     private RecyclerView.LayoutManager mLayoutManager;
     private ArrayList<Integer> mItemsSelected = null;
     private OnLoadData mCallback = null;
-    /**
-     * Hold a reference to the current animator, so that it can be canceled mid-way.
-     */
-    private Animator mCurrentAnimator;
-
-    /**
-     * The system "short" animation time duration, in milliseconds. This duration is ideal for
-     * subtle animations or animations that occur very frequently.
-     */
-    private int mShortAnimationDuration;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
