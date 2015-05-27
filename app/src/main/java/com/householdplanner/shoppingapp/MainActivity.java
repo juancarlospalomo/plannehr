@@ -267,6 +267,7 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
             } else {
                 final MenuItem searchItem = menu.findItem(R.id.action_search);
                 SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
                 searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
                 SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
