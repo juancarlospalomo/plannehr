@@ -79,10 +79,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
      */
     private int mShortAnimationDuration;
 
-    public FragmentEnterList() {
-        super();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_enter_list, container, false);

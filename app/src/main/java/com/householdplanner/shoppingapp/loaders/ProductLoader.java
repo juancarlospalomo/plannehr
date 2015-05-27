@@ -19,12 +19,16 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
 
     public enum TypeProducts {
         All,
-        BySupermarket,
+        InShoppingList,
+        InShoppingListBySupermarket,
         InBasket
     }
 
     private Context mContext;
+    //Products set to get
     private TypeProducts mTypeProducts;
+    //Market name
+    private String mMarket;
     private List<Product> mProductList;
     private ProductObserver mObserver;
 
@@ -36,13 +40,27 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
         mContext.getContentResolver().registerContentObserver(ShoppingListContract.ProductEntry.CONTENT_URI, true, mObserver);
     }
 
+    /**
+     * Constructor to receive the current market
+     *
+     * @param context
+     * @param typeProducts product set
+     * @param market       market name
+     */
+    public ProductLoader(Context context, TypeProducts typeProducts, String market) {
+        this(context, typeProducts);
+        mMarket = market;
+    }
+
     @Override
     public List<Product> loadInBackground() {
         UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(mContext);
         if (mTypeProducts == TypeProducts.All) {
             mProductList = useCaseShoppingList.getFullEnteredList();
-        } else if (mTypeProducts == TypeProducts.BySupermarket) {
-
+        } else if (mTypeProducts == TypeProducts.InShoppingList) {
+            mProductList = useCaseShoppingList.getShoppingListProducts();
+        } else if (mTypeProducts == TypeProducts.InShoppingListBySupermarket) {
+            mProductList = useCaseShoppingList.getShoppingListProducts(mMarket);
         } else if (mTypeProducts == TypeProducts.InBasket) {
             mProductList = useCaseShoppingList.getProductsInBasket();
         }

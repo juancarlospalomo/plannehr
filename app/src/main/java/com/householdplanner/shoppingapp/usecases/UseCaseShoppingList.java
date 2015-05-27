@@ -5,6 +5,7 @@ import android.database.Cursor;
 
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.models.Product;
+import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,18 +72,65 @@ public class UseCaseShoppingList {
 
     /**
      * Get the current products in the basket
+     *
      * @return list of products
      */
     public List<Product> getProductsInBasket() {
         //Variable for returning product list
         List<Product> productList = new ArrayList<Product>();
-        String selection = "ShoppingListStore.COLUMN_COMMITTED =?";
+        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "?";
         String[] selectionArgs = new String[]{"1"};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
                 mProjection, selection, selectionArgs, null);
         productList = toList(cursor);
 
         return productList;
+    }
+
+    /**
+     * Get the products to include in the shopping list to buy
+     *
+     * @return List of products
+     */
+    public List<Product> getShoppingListProducts() {
+        //Variable for returning product list
+        List<Product> productList = new ArrayList<Product>();
+        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
+        String[] selectionArgs = new String[]{"0"};
+        Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
+                mProjection, selection, selectionArgs, null);
+        productList = toList(cursor);
+
+        return productList;
+    }
+
+    /**
+     * Get the products in a market to include in the shopping list to buy
+     *
+     * @param market market name
+     * @return List of products
+     */
+    public List<Product> getShoppingListProducts(String market) {
+        //Variable for returning product list
+        List<Product> productList = new ArrayList<Product>();
+        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=? AND " +
+                ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_MARKET + "=?";
+        String[] selectionArgs = new String[]{"0", market};
+        Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
+                mProjection, selection, selectionArgs, null);
+        productList = toList(cursor);
+
+        return productList;
+    }
+
+    /**
+     * Commit a product for moving it to basket
+     * @param product product to move
+     */
+    public void moveToBasket(Product product) {
+        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
+        shoppingListRepository.commitProduct(product._id);
+        shoppingListRepository.close();
     }
 
 }
