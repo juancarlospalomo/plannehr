@@ -78,7 +78,7 @@ public class UseCaseShoppingList {
     public List<Product> getProductsInBasket() {
         //Variable for returning product list
         List<Product> productList = new ArrayList<Product>();
-        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "?";
+        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
         String[] selectionArgs = new String[]{"1"};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
                 mProjection, selection, selectionArgs, null);
@@ -130,6 +130,16 @@ public class UseCaseShoppingList {
     public void moveToBasket(Product product) {
         ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
         shoppingListRepository.commitProduct(product._id);
+        shoppingListRepository.close();
+    }
+
+    /**
+     * Get out a produc from the cart
+     * @param product product to remove
+     */
+    public void removeFromBasket(Product product) {
+        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
+        shoppingListRepository.rollbackProduct(product._id);
         shoppingListRepository.close();
     }
 

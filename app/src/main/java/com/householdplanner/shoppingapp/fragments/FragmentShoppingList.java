@@ -16,9 +16,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.applilandia.widget.SnackBar;
 import com.householdplanner.shoppingapp.R;
@@ -55,7 +53,6 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID, null, this);
         //Inflate the views into the module vars
         inflateViews();
         //Init the recycler View
@@ -235,13 +232,6 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
             }
         }
     }
-
-    static class ViewHolder {
-        public TextView text;
-        public ImageView image;
-    }
-
-
 
     /**
      * Inner class for recycler view item decoration
