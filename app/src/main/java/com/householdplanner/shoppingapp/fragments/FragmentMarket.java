@@ -202,7 +202,7 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
     private void deleteMarkets() {
         AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.delete_supermarket_dialog_title),
                 "", getResources().getString(R.string.delete_supermarket_dialog_cancel_text),
-                getResources().getString(R.string.delete_supermarket_dalog_ok_text));
+                getResources().getString(R.string.delete_supermarket_dalog_ok_text), null);
 
         alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
             @Override

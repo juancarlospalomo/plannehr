@@ -186,7 +186,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     private void deleteProducts() {
         AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.delete_product_dialog_title),
                 "", getResources().getString(R.string.delete_product_dialog_cancel_text),
-                getResources().getString(R.string.delete_product_dalog_ok_text));
+                getResources().getString(R.string.delete_product_dalog_ok_text), null);
 
         alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
             @Override

@@ -34,7 +34,7 @@ import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
-import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.fragments.FragmentDoShopping;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterData;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterList;
@@ -146,34 +146,44 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         }
     }
 
+    /**
+     * Execute the action to start doing shopping or ending it
+     */
     private void executeActionDoShopping() {
         if (AppGlobalState.getInstance().isShoppingMode(this)) {
-            util.showAlertInfoMessage(this, R.string.textAskWriteExpense,
-                    R.string.textButtonYes, R.string.textButtonNo,
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean hasProducts = hasBasketProducts();
-                            Intent intent = new Intent(MainActivity.this, TicketActivity.class);
-                            intent.putExtra(TicketActivity.EXTRA_HAS_PRODUCTS, hasProducts);
-                            startActivityForResult(intent, EXPENSES_ACTIVITY);
+
+            AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.textAskWriteExpense),
+                    null, getResources().getString(R.string.dialog_no),
+                    getResources().getString(R.string.enter_expense_dialog_text),
+                    getResources().getString(R.string.dialog_cancel));
+
+            alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == AlertDialogFragment.INDEX_BUTTON_YES) {
+                        boolean hasProducts = hasBasketProducts();
+                        Intent intent = new Intent(MainActivity.this, TicketActivity.class);
+                        intent.putExtra(TicketActivity.EXTRA_HAS_PRODUCTS, hasProducts);
+                        startActivityForResult(intent, EXPENSES_ACTIVITY);
+                    }
+                    //Check if finish and do not enter expenses
+                    if (which == AlertDialogFragment.INDEX_BUTTON_NO) {
+                        BasketTask basketTask = new BasketTask(MainActivity.this);
+                        if (mProgressDialog == null) {
+                            mProgressDialog = new ProgressCircle(MainActivity.this);
+                            mProgressDialog.show();
+                            mHandler = new ProgressHandler(MainActivity.this);
+                        } else {
+                            mHandler = null;
                         }
-                    },
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            BasketTask basketTask = new BasketTask(MainActivity.this);
-                            if (mProgressDialog == null) {
-                                mProgressDialog = new ProgressCircle(MainActivity.this);
-                                mProgressDialog.show();
-                                mHandler = new ProgressHandler(MainActivity.this);
-                            } else {
-                                mHandler = null;
-                            }
-                            basketTask.execute(mHandler);
-                            exitShoppingMode();
-                        }
-                    }, null);
+                        basketTask.execute(mHandler);
+                        exitShoppingMode();
+                    }
+                }
+            });
+
+            alertDialog.show(getSupportFragmentManager(), "expenseDialog");
+
         } else {
             if (moreThanOneSupermarket()) {
                 Intent intent = new Intent(this, MarketListActivity.class);

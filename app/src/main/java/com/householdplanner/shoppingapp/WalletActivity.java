@@ -210,7 +210,7 @@ public class WalletActivity extends BaseActivity implements
     private void deleteBudgets() {
         AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.delete_budget_dialog_title),
                 "", getResources().getString(R.string.delete_budget_dialog_cancel_text),
-                getResources().getString(R.string.delete_budget_dalog_ok_text));
+                getResources().getString(R.string.delete_budget_dalog_ok_text), null);
 
         alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
             @Override
@@ -234,7 +234,7 @@ public class WalletActivity extends BaseActivity implements
         boolean result = true;
         if ((budget.withDrawn > 0) || (budget.wallet > 0)) {
             AlertDialogFragment alertDialogFragment = AlertDialogFragment.newInstance(getString(R.string.info_budget_title),
-                    getString(R.string.info_budget_modification_message), null, getString(R.string.info_button_ok));
+                    getString(R.string.info_budget_modification_message), null, getString(R.string.info_button_ok), null);
             alertDialogFragment.show(getSupportFragmentManager(), "errorDialog");
             result = false;
         }

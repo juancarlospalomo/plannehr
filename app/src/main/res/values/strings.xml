@@ -215,6 +215,7 @@
 
     <!-- Dialog -->
     <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_no">No</string>
 
     <!-- Delete Supermarket Dialog -->
     <string name="delete_supermarket_dialog_title">Delete Market?</string>
@@ -228,6 +229,9 @@
 
     <!-- Product Dialog -->
     <string name="product_add_existing_text">Add</string>
+
+    <!-- Expense Dialog -->
+    <string name="enter_expense_dialog_text">Enter</string>
 
     <!-- Hints -->
     <string name="hint_edit_text_supermarket">Supermarket name</string>

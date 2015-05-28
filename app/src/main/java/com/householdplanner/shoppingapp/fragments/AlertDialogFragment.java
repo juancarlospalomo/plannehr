@@ -18,14 +18,17 @@ public class AlertDialogFragment extends DialogFragment {
     private final static String KEY_CONTENT = "key_content";
     private final static String KEY_CANCEL_TEXT = "key_cancel_text";
     private final static String KEY_OK_TEXT = "key_ok_text";
+    private final static String KEY_THIRD_BUTTON_TEXT = "key_third_button_text";
     //Buttons index
     public final static int INDEX_BUTTON_YES = -1;
     public final static int INDEX_BUTTON_NO = -2;
+    public final static int INDEX_BUTTON_NEUTRAL = -3;
 
     private String mTitle;
     private String mContent;
     private String mCancelText;
     private String mOkText;
+    private String mThirdButtonText;
 
     private DialogInterface.OnClickListener mOnClickListener;
 
@@ -38,19 +41,21 @@ public class AlertDialogFragment extends DialogFragment {
      * @param okText
      * @return
      */
-    public static AlertDialogFragment newInstance(String title, String content, String cancelText, String okText) {
+    public static AlertDialogFragment newInstance(String title, String content, String cancelText, String okText, String thirdText) {
         AlertDialogFragment alertDialog = new AlertDialogFragment();
         Bundle args = new Bundle();
         args.putString(KEY_TITLE, title);
         args.putString(KEY_CONTENT, content);
         args.putString(KEY_CANCEL_TEXT, cancelText);
         args.putString(KEY_OK_TEXT, okText);
+        args.putString(KEY_THIRD_BUTTON_TEXT, thirdText);
         alertDialog.setArguments(args);
         return alertDialog;
     }
 
     /**
      * Create an Alert Dialog
+     *
      * @param savedInstanceState
      * @return Dialog
      */
@@ -84,11 +89,22 @@ public class AlertDialogFragment extends DialogFragment {
                 }
             });
         }
+        if (!TextUtils.isEmpty((mThirdButtonText))) {
+            builder.setNeutralButton(mThirdButtonText, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (mOnClickListener != null) {
+                        mOnClickListener.onClick(dialog, which);
+                    }
+                }
+            });
+        }
         return builder.create();
     }
 
     /**
      * Set the buttons listener
+     *
      * @param l
      */
     public void setButtonOnClickListener(DialogInterface.OnClickListener l) {
@@ -105,6 +121,7 @@ public class AlertDialogFragment extends DialogFragment {
             mContent = args.getString(KEY_CONTENT);
             mCancelText = args.getString(KEY_CANCEL_TEXT);
             mOkText = args.getString(KEY_OK_TEXT);
+            mThirdButtonText = args.getString(KEY_THIRD_BUTTON_TEXT);
         }
     }
 }

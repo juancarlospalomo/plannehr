@@ -1,8 +1,6 @@
 package com.householdplanner.shoppingapp.cross;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -11,7 +9,6 @@ import android.preference.PreferenceManager;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.fragments.FragmentSetting;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
-import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,19 +18,6 @@ import java.util.Date;
 import java.util.Locale;
 
 public class util {
-
-    public static String getCompleteProductRow(Context context, Cursor cursor, boolean includeMarket) {
-        String itemText;
-        itemText = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-        if (includeMarket) {
-            String marketName = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET));
-            if (marketName != null) itemText += " " + capitalize(marketName);
-        }
-        String amount = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_AMOUNT));
-        itemText += " " + cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_AMOUNT));
-        itemText += " " + util.getMeasureUnitName(context, cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_UNIT_ID)), amount);
-        return itemText;
-    }
 
     public static String getCompleteHistoryRow(Context context, Cursor cursor, boolean includeMarket) {
         String itemText;
@@ -149,46 +133,6 @@ public class util {
         }
 
         return result;
-    }
-
-    public static void showAlertErrorMessage(Context context, int messageId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(messageId);
-        builder.setTitle(R.string.textErrorTitle);
-        builder.setInverseBackgroundForced(true);
-        builder.create().show();
-    }
-
-    public static void showAlertInfoMessage(Context context, int messageId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(messageId);
-        builder.setTitle(R.string.textInfoTitle);
-        builder.setInverseBackgroundForced(true);
-        builder.create().show();
-    }
-
-    public static void showAlertInfoMessage(Context context, int messageId, int messagePositiveId, int messageNegativeId, DialogInterface.OnClickListener positiveHandler,
-                                            DialogInterface.OnClickListener negativeHandler) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(messageId);
-        builder.setTitle(R.string.textInfoTitle);
-        builder.setInverseBackgroundForced(true);
-        builder.setPositiveButton(context.getResources().getString(messagePositiveId), positiveHandler);
-        builder.setNegativeButton(context.getResources().getString(messageNegativeId), negativeHandler);
-        builder.create().show();
-    }
-
-    public static void showAlertInfoMessage(Context context, int messageId, int messagePositiveId, int messageNegativeId, DialogInterface.OnClickListener positiveHandler,
-                                            DialogInterface.OnClickListener negativeHandler,
-                                            DialogInterface.OnClickListener cancelHandler) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(messageId);
-        builder.setTitle(R.string.textInfoTitle);
-        builder.setInverseBackgroundForced(true);
-        builder.setPositiveButton(context.getResources().getString(messagePositiveId), positiveHandler);
-        builder.setNeutralButton(context.getResources().getString(messageNegativeId), negativeHandler);
-        builder.setNegativeButton(R.string.btnCancel, cancelHandler);
-        builder.create().show();
     }
 
     public static String capitalize(String word) {

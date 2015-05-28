@@ -209,7 +209,7 @@ public class ProductActivity extends BaseActivity {
         AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(getResources().getString(R.string.textDuplicateProductWarningTitle),
                 getResources().getString(R.string.textDuplicateProductWarningMessage),
                 getResources().getString(R.string.dialog_cancel),
-                getResources().getString(R.string.product_add_existing_text)
+                getResources().getString(R.string.product_add_existing_text), null
         );
         alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
             @Override
