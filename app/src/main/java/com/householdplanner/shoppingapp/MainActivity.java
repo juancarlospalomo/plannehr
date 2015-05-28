@@ -38,9 +38,7 @@ import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.fragments.FragmentDoShopping;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterData;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterList;
-import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.views.HelpView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -347,17 +345,6 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
 
             case R.id.action_doShopping:
                 executeActionDoShopping();
-                return true;
-
-            case R.id.action_settings:
-                intent = new Intent(this, AppPreferences.class);
-                startActivityForResult(intent, SETTINGS);
-                return true;
-
-            case R.id.action_help:
-                intent = new Intent(this, HelpActivityFrame.class);
-                intent.putExtra(HelpActivityFrame.EXTRA_INITIAL_CAPSULE, HelpView.TypeView.EnterProducts.getValue());
-                startActivity(intent);
                 return true;
 
             default:

@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.applilandia.widget.SnackBar;
@@ -137,6 +138,20 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
         );
     }
 
+    /**
+     * Show or hide the empty list image
+     *
+     * @param value true will show the empty list image
+     */
+    private void setVisibleEmptyList(boolean value) {
+        ImageView imageViewEmptyList = (ImageView) getView().findViewById(R.id.imageViewEmptyList);
+        if (value) {
+            imageViewEmptyList.setVisibility(View.VISIBLE);
+        } else {
+            imageViewEmptyList.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
         if (mCallback != null) mCallback.onLoadStart();
@@ -163,6 +178,11 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                 // the queried Cursor with the SimpleCursorAdapter.
                 mAdapter = new ShoppingListAdapter(data);
                 mRecyclerViewShoppingList.setAdapter(mAdapter);
+                if (data.size() == 0) {
+                    setVisibleEmptyList(true);
+                } else {
+                    setVisibleEmptyList(false);
+                }
                 break;
         }
     }

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -24,7 +23,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class TicketActivity extends AppCompatActivity {
+public class TicketActivity extends BaseActivity {
 
 	public static final String EXTRA_HAS_PRODUCTS = "hasProducts";
 	

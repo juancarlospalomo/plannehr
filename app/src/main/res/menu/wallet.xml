@@ -8,10 +8,5 @@
         android:showAsAction="always"
         plannehr:showAsAction="always"
         android:title="@string/productAdd" />
-    <item
-        android:id="@+id/action_help"
-        android:icon="@drawable/ic_action_help"
-        android:showAsAction="always"
-        plannehr:showAsAction="always"
-        android:title="@string/textHelp" />
+
 </menu>

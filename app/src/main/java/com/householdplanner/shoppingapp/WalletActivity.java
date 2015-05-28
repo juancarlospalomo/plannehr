@@ -152,14 +152,6 @@ public class WalletActivity extends BaseActivity implements
                 startActivityForResult(intent, BUDGET_ADD);
                 return true;
 
-            case R.id.action_help:
-                if (!mIsHelpInActivity) {
-                    intent = new Intent(this, HelpActivity.class);
-                    intent.putExtra(HelpActivity.EXTRA_HELP_SCREEN, HelpActivity.PARAM_WALLET_SCREEN);
-                    startActivity(intent);
-                }
-                return true;
-
             case R.id.editBudget:
                 if (mAdapter.getSelectedCount() == 1) {
                     int position = mAdapter.getSelectedIds().keyAt(0);

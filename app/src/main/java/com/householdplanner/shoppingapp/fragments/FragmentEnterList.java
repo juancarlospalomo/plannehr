@@ -33,15 +33,11 @@ import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
-import com.householdplanner.shoppingapp.help.HelpActivityFrame;
 import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
 import com.householdplanner.shoppingapp.loaders.ProductLoader;
 import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.views.HelpView;
-import com.householdplanner.shoppingapp.views.HelpView.OnHelpViewClick;
-import com.householdplanner.shoppingapp.views.HelpView.TypeView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -300,30 +296,33 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             int items = 0;
             if (data != null) {
                 items = data.size();
-                HelpView helpView = (HelpView) getView().findViewById(R.id.viewCapsules);
                 if (items == 0) {
-                    helpView.setVisibility(View.VISIBLE);
-                    helpView.setOnHelpViewClick(new OnHelpViewClick() {
-                        @Override
-                        public void onCapsuleClick(TypeView capsule) {
-                            Intent intent = new Intent(getActivity(), HelpActivityFrame.class);
-                            intent.putExtra(HelpActivityFrame.EXTRA_INITIAL_CAPSULE, capsule.getValue());
-                            startActivity(intent);
-                        }
-                    });
+                    setVisibleEmptyList(true);
                 } else {
-                    helpView.setVisibility(View.GONE);
+                    setVisibleEmptyList(false);
                 }
             }
             mCallback.onLoadFinish(items, TAG_FRAGMENT);
         }
     }
 
-
     @Override
     public void onLoaderReset(Loader<List<Product>> loader) {
         mProductRecyclerView.setAdapter(null);
         mAdapter = null;
+    }
+
+    /**
+     * Show or hide the empty list image
+     * @param value true will show the empty list image
+     */
+    private void setVisibleEmptyList(boolean value) {
+        ImageView imageViewEmptyList = (ImageView) getView().findViewById(R.id.imageViewEmptyList);
+        if (value) {
+            imageViewEmptyList.setVisibility(View.VISIBLE);
+        } else {
+            imageViewEmptyList.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -575,6 +574,9 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         protected void onPostExecute(Boolean result) {
             if (mContextualMode) {
                 ((BaseActivity)getActivity()).finishToolbarContextualActionMode();
+            }
+            if (mAdapter.mProductListData.size()==0) {
+                setVisibleEmptyList(true);
             }
             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
         }

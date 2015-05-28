@@ -2,15 +2,10 @@
 <resources>
 
     <string name="app_name">PlanneHr</string>
-    <string name="app_Domain">com.household.shoppping</string>
     <string name="productAdd">Add</string>
-    <string name="actionWallet">Expenses</string>
-    <string name="ticket">Basket</string>
     <string name="product_name">Product</string>
     <string name="amount">Amount</string>
     <string name="measureunit">Measure</string>
-    <string name="productList">List</string>
-    <string name="textHelp">Help</string>
 
     <string-array name="measure_array">
         <item>Measure Unit</item>
@@ -39,8 +34,6 @@
     </string-array>
 
     <string name="btnSave">Save</string>
-    <string name="btnCancel">Cancel</string>
-    <string name="btnCloseTicket">Finish</string>
     <string name="title_activity_wallet">Expenses</string>
     <string name="textWalletMoney">Unexpected Expense</string>
     <string name="title_activity_budget">Expenses</string>
@@ -70,98 +63,40 @@
     <string name="textBudgetTarget">Target</string>
     <string name="textBudgetWithDrawn">Planned Expense</string>
     <string name="title_activity_ticket">Basket Cost</string>
-    <string name="title_activity_product">Product</string>
     <string name="atTicketDate">Date</string>
     <string name="hintTicketExpense">Expense</string>
     <string name="textTicketDateErrorMessage">Date is mandatory</string>
     <string name="textTicketValueErrorMessage">Purchase price is mandatory</string>
-    <string name="textBudgetAvailableErrorMessage">Available is mandatory</string>
-    <string name="textBudgetTargetErrorMessage">Target is mandatory</string>
-    <string name="editProduct">Edit</string>
     <string name="deleteProduct">Delete</string>
-    <string name="textProductDeleteWarning">Delete product?</string>
-    <string name="textProductsDeleteWarning">Delete selected products?</string>
     <string name="textDuplicateProductWarningTitle">Add the product anyway?</string>
     <string name="textDuplicateProductWarningMessage">The product is already on the list</string>
     <string name="title_product">Product</string>
-    <string name="googleAcount">Google Account</string>
     <string name="labelCurrencySymbol">Currency</string>
     <string name="summaryCurrencySymbol">Currency symbol for the expenses</string>
     <string name="pref_CurrencySymbol_DefaultValue">€</string>
     <string name="pref_WalletCategory_Title">Expenses</string>
-    <string name="pref_DriveCategory_Title">Share</string>
-    <string name="pref_GoogleAccount_Title">Google Account</string>
-    <string name="summaryGoogleDriveAccount">Shared Google Drive account</string>
     <string name="textProductNameErrorMessage">Product name is mandatory</string>
-    <string name="textBudgetModificationWarningMessage">Already have inserted some expenses</string>
-    <string name="textBudgetModificationWarningTitle">Don\'t allow to modify it</string>
-    <string name="labelDeactivateScreenLock">Don\'t lock the screen</string>
-    <string name="summaryDeactivateScreenLock">Deactivate the locked screen</string>
-    <string name="deviceNotSupported">Device not supported</string>
-    <string name="googlePlayServiceNeeded">Google Play Service must be installed</string>
-    <string name="textBudgetDeleteWarningMessage">Selected budget will be deleted</string>
-    <string name="textBudgetsDeleteWarningMessage">Selected budgets will be deleted</string>
-    <string name="textBudgetDeleteWarningTitle">Budget</string>
     <string name="textAvailableBarLegend">Available</string>
     <string name="textSpentBarLegend">Expense</string>
     <string name="textForecastBarLegend">Forecasted Saving</string>
     <string name="title_activity_market">Supermarkets</string>
-    <string name="textSupermarketName">Supermarket</string>
     <string name="deleteMarket">Deleted</string>
-    <string name="editMarketCategory">Change Aisles Order</string>
-    <string name="title_activity_market_category_list">Aisles List</string>
-    <string name="textMarketDeleteWarningMessage">Supermarket will be deleted. Products will stay.</string>
-    <string name="textMarketDeleteWarningTitle">Supermarkets</string>
     <string name="labelSupermarkets">Supermarkets</string>
-    <string name="summarySupermarkets">Create a Supermarket</string>
-    <string name="labelPrefClearCache">Delete temporary files</string>
-    <string name="summaryPrefClearCache">Delete files from cache</string>
-    <string name="confirmMessageClearedCache">Files deleted from cache</string>
     <string name="textBackPressed">Press again to exit</string>
-    <string name="actionViewMarketCategories">Aisles Order</string>
-    <string name="labelRecalculateOrder">Recalculate Aisles Order</string>
-    <string name="summaryRecalculateOrder">Recalculate the Aisles order as you go shopping</string>
-    <string name="textMovedToTicket">Taken to basket</string>
-    <string name="actionShoppingMode">Shopping Mode</string>
-    <string name="titleUsualTab">Usual</string>
-    <string name="titleUnusualTab">Occasional</string>
-
-    <string name="buttonTextAdd">Add to List</string>
     <string name="textProductsAdded">Products added to the list</string>
     <string name="buttonDoShopping">Do Shopping</string>
     <string name="btnEndShopping">Finish</string>
-    <string name="textErrorMessageInternetConnection">No Internet connection available</string>
-    <string name="textErrorTitle">Error</string>
-    <string name="textInfoTitle">Information</string>
-    <string name="textInfoMessageSyncNow">Data are being synchronized</string>
-    <string name="textInfoMessageSyncSettings">To be able to share data, you must have the same Google Drive account configured in every device</string>
-    <string name="textNoAccount">Not Sharing</string>
-    <string name="textErrorMessageMarketNameMandatory">You must enter a Supermarket name</string>
-    <string name="textButtonYes">Yes</string>
-    <string name="textButtonNo">No</string>
     <string name="textAskWriteExpense">Enter Expense?</string>
-    <string name="textButtonReturn">Back</string>
     <string name="textAllSupermarkets">All</string>
     <string name="renameMarket">Rename</string>
-    <string name="copyProduct">Copy</string>
-    <string name="moveProduct">Move</string>
     <string name="textSelected">Selecteds</string>
-    <string name="textSupermarketPlaced">The current Supermarket is</string>
-    <string name="textOptions">Options</string>
-    <string name="title_activity_help">Help</string>
-    <string name="textSharingHelpKeyNotes"><b>PlanneHr USES GOOGLE DRIVE TO ALLOW YOU TO SHARE YOUR DATA</b></string>
-    <string name="textSharingHelpKeyNote1">To be able to share them, the devices must have the same <b>Google</b> account configured</string>
-    <string name="textSharingHelpKeyNote2">Select your account in</string>
-    <string name="textSharingHelpKeyNote3">or create a new one and later select it, touching on</string>
     <string name="textExpensesHelpKeyNotes">EXPENDITURE CONTROL</string>
-    <string name="textExpensesHelpKeyNote1"><b>Available:</b> Household available money for this month</string>
-    <string name="textExpensesHelpKeyNote2"><b>Objetivo:</b> Household target money</string>
+    <string name="textExpensesHelpKeyNote1"><b>Available:</b></string>
+    <string name="textExpensesHelpKeyNote2"><b>Target:</b></string>
     <string name="textExpensesHelpKeyNote3"><b>Planned Expense:</b> Total expense money with products in basket</string>
     <string name="textExpensesHelpKeyNote4"><b>Unexpected Expense:</b> Total expense money without products in basket</string>
     <string name="textExpensesHelpKeyNote5"><b>Estimated Savings:</b> Estimated money to save</string>
-    <string name="textCacheDeleteWarning">Reset cache?</string>
     <string name="textImageCheckShowProductNotSet">Show products without supermarket assigned too</string>
-    <string name="textPushNotificationMessage">New shared data</string>
 
     <!-- NEW STRINGS  -->
     <string name="title_activity_market_list">Market List</string>
@@ -174,32 +109,8 @@
     <string name="textFragmentMyProductsTitle">My Products Database</string>
     <string name="textFragmentShoppingListTitle">Products to Buy</string>
     <string name="textFragmentBasketTitle">In the Shopping Cart</string>
-    <string name="textCapsule1">Products</string>
-    <string name="textCapsule2">Market</string>
-    <string name="textCapsule3">Buy</string>
-    <string name="textCapsule4">Expenses</string>
-    <string name="textCapsule5">Share</string>
-    <string name="textMarketAdd">Add Market</string>
     <string name="textMessageThereAreNotSupermarkets">You don\'t have supermarkets. You can create them</string>
-	<string name="textTitlePickColor">Pick a color</string>
-	<string name="text1EnterProductHelp">Use any of the available methods</string>
-	<string name="text2EnterProductHelp">to enter products in your shopping list</string>
-	<string name="title_help_activity_frame">Help</string>
-	<string name="text1SetMarketHelp">Create your markets</string>
-	<string name="text2SetMarketHelp">Select products to set market</string>
-	<string name="text1StartBuyHelp">Cart icon will be showed when list contains products</string>
-	<string name="text2StartBuyHelp">When take a product touch on green tick icon. Order of the zones will be suited when you take the products with aisle</string>
-	<string name="text1WriteExpenseHelp">To finish your shopping touch on</string>
-	<string name="text2WriteExpenseHelp">Enter your expense</string>
-	<string name="text1ShareHelp">Set your google account</string>
-	<string name="text2ShareHelp">Touch on</string>
-	<string name="textErrorMessageMarketExist">Supermarket already exists</string>
 	<string name="textMessageThereAreNotProducts">There\'s not products starting by</string>
-	<string name="textTitleEnterCard">PREPARE YOUR LIST</string>
-	<string name="textTitleSetMarket">ASSIGN PRODUCTS TO SUPERMARKET</string>
-	<string name="textTitleStartBuy">START TO BUY IN SUPERMARKET</string>
-	<string name="textTitleWriteExpense">END SHOPPING &amp; WRITE EXPENSE</string>
-	<string name="textTitleShare">SHARE YOUR DATA IN YOUR DEVICES</string>
 
     <!-- SearchView Hint -->
     <string name="text_hint_search_view_product">Search product</string>
@@ -255,18 +166,6 @@
     <string name="text_item_markets">Supermarkets</string>
     <string name="text_item_expenses">Expenses</string>
     <string name="text_accessibility_drawer_open">open</string>
-    <string name="text_accessibility_drawer_close">close</string>
-    <string name="title_activity_main2">Main2Activity</string>
-
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
-    <string name="action_example">Example action</string>
-
-    <string name="action_settings">Settings</string>
+    <string name="text_accessibility_drawer_close">Cerrar</string>
 
 </resources>

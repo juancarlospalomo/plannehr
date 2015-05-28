@@ -131,17 +131,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HelpActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".MarketListActivity"
             android:label="@string/title_activity_market_list"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".help.HelpActivityFrame"
-            android:label="@string/title_help_activity_frame"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
     </application>

@@ -2,65 +2,58 @@
 <resources>
 
     <string name="app_name">PlanneHr</string>
-    <string name="app_Domain">com.household.shoppping</string>
     <string name="productAdd">Añadir</string>
-    <string name="actionWallet">Gastos</string>
-    <string name="ticket">Cesta</string>
     <string name="product_name">Producto</string>
     <string name="amount">Cantidad</string>
     <string name="measureunit">Medida</string>
-    <string name="productList">Lista</string>
-    <string name="textHelp">Ayuda</string>
 
     <string-array name="measure_array">
-        <item>Unidad de medida</item>
-        <item>gramos</item>
-        <item>kilogramos</item>
-        <item>litros</item>
-        <item>mililitros</item>
-        <item>unidad</item>
-        <item>paquete</item>
+        <item>Measure Unit</item>
+        <item>grams</item>
+        <item>kilograms</item>
+        <item>litres</item>
+        <item>milliliters</item>
+        <item>unit</item>
+        <item>package</item>
     </string-array>
 
     <string name="categoryId">Categoría</string>
 
     <string-array name="category_array">
-        <item>Zona</item>
-        <item>Limpieza, higiene y utensilios</item>
-        <item>Bebidas, licores y aperitivos</item>
-        <item>Carne y charcutería</item>
-        <item>Lacteos y huevos</item>
-        <item>Pescadería y congelados</item>
-        <item>Frutas y verduras</item>
-        <item>Panadería y bollería</item>
-        <item>Legumbres, conservas y precocinados</item>
-        <item>Aceite, vinagre y salsas</item>
-        <item>Otra</item>
+        <item>Aisle</item>
+        <item>Household</item>
+        <item>Drinks</item>
+        <item>Meat &amp; Poultry</item>
+        <item>Cheese &amp; Yogurts</item>
+        <item>Fish &amp; Frozen Food</item>
+        <item>Vegetables</item>
+        <item>Bakery</item>
+        <item>Food cupboard</item>
+        <item>Health &amp; beauty</item>
+        <item>Special</item>
     </string-array>
 
-    <string name="btnSave">Guardar</string>
-    <string name="btnCancel">Cancelar</string>
-    <string name="btnCloseTicket">Terminar</string>
+    <string name="btnSave">Grabar</string>
     <string name="title_activity_wallet">Gastos</string>
-    <string name="textWalletMoney">Gasto imprevisto</string>
+    <string name="textWalletMoney">Gasto Inexperado</string>
     <string name="title_activity_budget">Gastos</string>
     <string name="budgetAvailable">Disponible</string>
     <string name="budgetTarget">Objetivo</string>
     <string name="monthName">Mes</string>
 
     <string-array name="month_array">
-        <item>Enero</item>
-        <item>Febrero</item>
-        <item>Marzo</item>
-        <item>Abril</item>
-        <item>Mayo</item>
-        <item>Junio</item>
-        <item>Julio</item>
-        <item>Agosto</item>
-        <item>Septiembre</item>
-        <item>Octubre</item>
-        <item>Noviembre</item>
-        <item>Diciembre</item>
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
     </string-array>
 
     <string name="editBudget">Editar</string>
@@ -68,141 +61,111 @@
     <string name="textBudgetMonthName">Mes</string>
     <string name="textBudgetAvailable">Disponible</string>
     <string name="textBudgetTarget">Objetivo</string>
-    <string name="textBudgetWithDrawn">Gasto planificado</string>
-    <string name="title_activity_ticket">Gasto en la cesta</string>
-    <string name="title_activity_product">Producto</string>
+    <string name="textBudgetWithDrawn">Gasto Planificado</string>
+    <string name="title_activity_ticket">Coste de la Cesta</string>
     <string name="atTicketDate">Fecha</string>
     <string name="hintTicketExpense">Gasto</string>
-    <string name="textTicketDateErrorMessage">Es necesario introducir la fecha</string>
-    <string name="textTicketValueErrorMessage">Es necesario introducir el importe</string>
-    <string name="textBudgetAvailableErrorMessage">Es necesario introducir el disponible</string>
-    <string name="textBudgetTargetErrorMessage">Es necesario introducir el objetivo</string>
-    <string name="editProduct">Editar</string>
+    <string name="textTicketDateErrorMessage">Fecha es obligatoria</string>
+    <string name="textTicketValueErrorMessage">Precio de compra es obligatorio</string>
     <string name="deleteProduct">Eliminar</string>
-    <string name="textProductDeleteWarning">¿Está seguro de eliminar el producto?</string>
-    <string name="textProductsDeleteWarning">¿Está seguro de eliminar los productos seleccionados?</string>
-    <string name="textDuplicateProductWarningTitle">¿desea añadir el producto?</string>
-    <string name="textDuplicateProductWarningMessage">El producto ya lo tiene en la compra</string>
+    <string name="textDuplicateProductWarningTitle">¿Añadir el producto?</string>
+    <string name="textDuplicateProductWarningMessage">El producto ya está en la lista</string>
     <string name="title_product">Producto</string>
-    <string name="googleAcount">Cuenta de google</string>
     <string name="labelCurrencySymbol">Moneda</string>
-    <string name="summaryCurrencySymbol">Símbolo de la moneda para los gastos</string>
+    <string name="summaryCurrencySymbol">Símbolo de moneda para los gastos</string>
     <string name="pref_CurrencySymbol_DefaultValue">€</string>
     <string name="pref_WalletCategory_Title">Gastos</string>
-    <string name="pref_DriveCategory_Title">Compartir</string>
-    <string name="pref_GoogleAccount_Title">Cuenta de Google</string>
-    <string name="summaryGoogleDriveAccount">cuenta de google drive compartida</string>
-    <string name="textProductNameErrorMessage">Es necesario introducir un nombre de producto</string>
-    <string name="actionSettings">Ajustes</string>
-    <string name="textBudgetModificationWarningMessage">Ya hay dinero dispuesto</string>
-    <string name="textBudgetModificationWarningTitle">No se puede modificar</string>
-    <string name="labelDeactivateScreenLock">No bloquear pantalla</string>
-    <string name="summaryDeactivateScreenLock">Desactiva bloqueo de pantalla</string>
-    <string name="deviceNotSupported">Dispositivo no soportado</string>
-    <string name="googlePlayServiceNeeded">Google Play service tiene que ser instalado</string>
-    <string name="textBudgetDeleteWarningMessage">Se eliminará el presupuesto seleccionado</string>
-    <string name="textBudgetsDeleteWarningMessage">Se eliminará los presupuestos seleccionados</string>
-    <string name="textBudgetDeleteWarningTitle">Presupuesto</string>
-    <string name="textAvailableBarLegend">disponible</string>
-    <string name="textSpentBarLegend">gasto</string>
-    <string name="textForecastBarLegend">previsión de ahorro</string>
-    <string name="title_activity_market">Supermercados</string>
-    <string name="textSupermarketName">Supermercado</string>
-    <string name="deleteMarket">Eliminar</string>
-    <string name="editMarketCategory">Cambiar orden de zonas</string>
-    <string name="title_activity_market_category_list">Lista de Zonas</string>
-    <string name="textMarketDeleteWarningMessage">Se eliminará el supermercado. Los productos no se eliminarán.</string>
-    <string name="textMarketDeleteWarningTitle">Supermercados</string>
-    <string name="labelSupermarkets">Supermercados</string>
-    <string name="summarySupermarkets">Crea establecimientos de compra</string>
-    <string name="labelPrefClearCache">Limpiar cache</string>
-    <string name="summaryPrefClearCache">Elimina ficheros de la cache</string>
-    <string name="confirmMessageClearedCache">Ficheros eliminados de la cache</string>
-    <string name="textBackPressed">Pulse de nuevo para salir</string>
-    <string name="actionViewMarketCategories">Orden de zonas</string>
-    <string name="labelRecalculateOrder">Recalcular orden</string>
-    <string name="summaryRecalculateOrder">Recalcula el orden de las zonas</string>
-    <string name="textMovedToTicket">Llevado a cesta</string>
-    <string name="actionShoppingMode">Modo compra</string>
-    <string name="titleUsualTab">Habitual</string>
-    <string name="titleUnusualTab">Ocasional</string>
-
-    <string name="buttonTextAdd">Añadir</string>
+    <string name="textProductNameErrorMessage">Nombre es obligatorio</string>
+    <string name="textAvailableBarLegend">Disponible</string>
+    <string name="textSpentBarLegend">Gasto</string>
+    <string name="textForecastBarLegend">Ahorro previsto</string>
+    <string name="title_activity_market">Mercados</string>
+    <string name="deleteMarket">Eliminado</string>
+    <string name="labelSupermarkets">Mercados</string>
+    <string name="textBackPressed">Pulsa otra vez para salir</string>
     <string name="textProductsAdded">Productos añadidos a la lista</string>
     <string name="buttonDoShopping">Comprar</string>
-    <string name="btnEndShopping">Terminar</string>
-    <string name="textErrorMessageInternetConnection">No hay conexión de Internet</string>
-    <string name="textErrorTitle">Error</string>
-    <string name="textInfoTitle">Información</string>
-    <string name="textInfoMessageSyncNow">Se están sincronizando datos</string>
-    <string name="textInfoMessageSyncSettings">Para poder compartir tienes que tener configurada la cuenta de drive compartida</string>
-    <string name="textNoAccount">No compartir</string>
-    <string name="textErrorMessageMarketNameMandatory">Tienes que introducir un nombre de establecimiento</string>
-    <string name="textButtonYes">Sí</string>
-    <string name="textButtonNo">No</string>
+    <string name="btnEndShopping">Finalizar</string>
     <string name="textAskWriteExpense">¿Anotar gasto?</string>
-    <string name="textButtonReturn">Volver</string>
     <string name="textAllSupermarkets">Todos</string>
     <string name="renameMarket">Renombrar</string>
-    <string name="copyProduct">Copiar</string>
-    <string name="moveProduct">Mover</string>
     <string name="textSelected">Seleccionados</string>
-    <string name="textSupermarketPlaced">El supermercado actual es</string>
-    <string name="textOptions">Opciones</string>
-    <string name="title_activity_help">Ayuda</string>
-    <string name="textSharingHelpKeyNotes"><b>PlanneHr UTILIZA GOOGLE DRIVE PARA COMPARTIR TUS DATOS EN TUS DISPOSITIVOS</b></string>
-    <string name="textSharingHelpKeyNote1">Para poder compartirlos, los dispositivos han de tener la misma cuenta <b>Google</b> configurada</string>
-    <string name="textSharingHelpKeyNote2">Seleccciona tu cuenta en</string>
-    <string name="textSharingHelpKeyNote3">o crea una nueva y después seleccíonala, touching on</string>
-    <string name="textExpensesHelpKeyNotes">CONTROL DE GASTO</string>
-    <string name="textExpensesHelpKeyNote1"><b>Disponible:</b> dinero del mes disponible para compras</string>
-    <string name="textExpensesHelpKeyNote2"><b>Objetivo:</b> dinero máximo que se pretende gastar</string>
-    <string name="textExpensesHelpKeyNote3"><b>Gasto Planificado:</b> gasto anotado con productos en la cesta</string>
-    <string name="textExpensesHelpKeyNote4"><b>Gasto Imprevisto:</b> gasto anotado sin productos en la cesta</string>
-    <string name="textExpensesHelpKeyNote5"><b>Estimación de ahorro:</b> ahorro dinero estimado</string>
-    <string name="textCacheDeleteWarning">¿Está seguro de reiniciar la cache?</string>
-    <string name="textImageCheckShowProductNotSet">También mostrar productos sin supermercado</string>
-    <string name="textPushNotificationMessage">Nuevos datos compartidos</string>
-    
+    <string name="textExpensesHelpKeyNotes">CONTROL DEL GASTO</string>
+    <string name="textExpensesHelpKeyNote1"><b>Disponible:</b></string>
+    <string name="textExpensesHelpKeyNote2"><b>Objetivo:</b></string>
+    <string name="textExpensesHelpKeyNote3"><b>Gasto Planificado:</b></string>
+    <string name="textExpensesHelpKeyNote4"><b>Gasto Inexperado:</b></string>
+    <string name="textExpensesHelpKeyNote5"><b>Ahorro Estimado:</b></string>
+    <string name="textImageCheckShowProductNotSet">También mostrar productos sin mercado asignado</string>
+
     <!-- NEW STRINGS  -->
-    <string name="title_activity_market_list">Lista de Supermercados</string>
-    <string name="marketAdd">Añadir Supermercado</string>
-    <string name="textProductsWithoutSupermarket">Sin Supermercado</string>
-    <string name="textProductsAllSupermarkets">Todos</string>
+    <string name="title_activity_market_list">Lista de Mercados</string>
+    <string name="marketAdd">Añadir Mercado</string>
+    <string name="textProductsWithoutSupermarket">Sin Mercado</string>
+    <string name="textProductsAllSupermarkets">Todos los Mercados</string>
     <string name="search_title">Búsqueda</string>
-    <string name="search_product_activity_title">Resultado</string>
+    <string name="search_product_activity_title">Resultado de la Búsqueda</string>
     <string name="textFragmentEnterListTitle">Mi Lista de la Compra</string>
-    <string name="textFragmentMyProductsTitle">Mi Base de datos de Productos</string>
-    <string name="textFragmentShoppingListTitle">Productos para Comprar</string>
-    <string name="textFragmentBasketTitle">En el Carro de la Compra</string>
-    <string name="textCapsule1">Productos</string>
-    <string name="textCapsule2">Mercados</string>
-    <string name="textCapsule3">Comprar</string>
-    <string name="textCapsule4">Gastos</string>
-    <string name="textCapsule5">Compartir</string>
-    <string name="textMarketAdd">Añadir Mercado</string>
-    <string name="textMessageThereAreNotSupermarkets">No tienes supermercados. Puedes crearlos</string>
-	<string name="textTitlePickColor">Elige un color</string>
-	<string name="text1EnterProductHelp">Usa cualquiera de los métodos disponibles</string>
-	<string name="text2EnterProductHelp">para introducir productos en tu lista de la compra</string>
-	<string name="title_help_activity_frame">Ayuda</string>
-	<string name="text1SetMarketHelp">Crea tus supermercados</string>
-	<string name="text2SetMarketHelp">Selecciona productos para assignarlos</string>
-	<string name="text1StartBuyHelp">Si la lista tiene productos se muestra el icono del carrito</string>
-	<string name="text2StartBuyHelp">Cuando cojes un producto pulsar sobre el tick verde. Orden de zonas es ajustado para los productos que tienen zona</string>
-	<string name="text1WriteExpenseHelp">Para finalizar tu compra pulsa</string>
-	<string name="text2WriteExpenseHelp">Entra tu gasto</string>
-	<string name="text1ShareHelp">Selecciona tu cuenta de google</string>
-	<string name="text2ShareHelp">Pulsa</string>
-	<string name="textErrorMessageMarketExist">Supermercado ya existe</string>
-	<string name="textMessageThereAreNotProducts">No hay productos que comiencen por</string>
-	<string name="textTitleEnterCard">PREPARA TU LISTA</string>
-	<string name="textTitleSetMarket">ASSIGNA PRODUCTOS A SUPERMERCADOS</string>
-	<string name="textTitleStartBuy">COMPRAR EN EL SUPERMERCADO</string>
-	<string name="textTitleWriteExpense">FIN COMPRA Y ANOTAR GASTO</string>
-	<string name="textTitleShare">COMPARTE TUS DATOS EN TUS DISPOSITIVOS</string>
+    <string name="textFragmentMyProductsTitle">Mis Productos</string>
+    <string name="textFragmentShoppingListTitle">Productos a Comprar</string>
+    <string name="textFragmentBasketTitle">En la Cesta</string>
+    <string name="textMessageThereAreNotSupermarkets">No tienes mercados. Puedes crearlos</string>
+    <string name="textMessageThereAreNotProducts">No hay productos que comiencen por</string>
 
     <!-- SearchView Hint -->
-    <string name="text_hint_search_view_product">Search product</string>
+    <string name="text_hint_search_view_product">Buscar producto</string>
+
+    <!-- Delete Product Dialog -->
+    <string name="delete_product_dialog_title">¿Eliminar Producto?</string>
+    <string name="delete_product_dialog_cancel_text">Cancelar</string>
+
+    <!-- Color picker activity -->
+    <string name="activity_color_picker_title">Selector de Color</string>
+    <string name="text_button_ok">OK</string>
+
+    <!-- Dialog -->
+    <string name="dialog_cancel">Cancelar</string>
+    <string name="dialog_no">No</string>
+
+    <!-- Delete Supermarket Dialog -->
+    <string name="delete_supermarket_dialog_title">¿Eliminar Mercado?</string>
+    <string name="delete_supermarket_dialog_cancel_text">Cancelar</string>
+    <string name="delete_supermarket_dalog_ok_text">Eliminar</string>
+
+    <!-- Delete Budget Dialog -->
+    <string name="delete_budget_dialog_title">¿Eliminar Producto?</string>
+    <string name="delete_budget_dialog_cancel_text">Cancelar</string>
+    <string name="delete_budget_dalog_ok_text">Eliminar</string>
+
+    <!-- Product Dialog -->
+    <string name="product_add_existing_text">Añadir</string>
+
+    <!-- Expense Dialog -->
+    <string name="enter_expense_dialog_text">Anotar</string>
+
+    <!-- Hints -->
+
+    <!-- Error messages -->
+    <string name="error_text_market_exist">Mercado ya existe</string>
+    <string name="error_text_market_name_mandatory">Nombre es obligatorio</string>
+    <string name="error_text_budget_available_mandatory">Disponible es obligatorio</string>
+    <string name="error_text_budget_target_mandatory">Objetivo es obligatorio</string>
+    <!-- Info messages -->
+    <string name="info_budget_title">Información</string>
+    <string name="info_budget_modification_message">No puede ser modicado. Ya tiene gastos anotados</string>
+    <string name="info_button_ok">OK</string>
+
+    <!-- SnackBar -->
+    <string name="text_snack_bar_action">Deshacer</string>
+    <string name="text_snack_bar_move_myproduct">Movido a la lista</string>
+
+    <!-- Drawer list -->
+    <string name="text_item_settings">Ajustes</string>
+    <string name="text_item_markets">Mercados</string>
+    <string name="text_item_expenses">Gastos</string>
+    <string name="text_accessibility_drawer_close">Cerrado</string>
+    <string name="delete_product_dalog_ok_text">Eliminar</string>
+    <string name="hint_edit_text_supermarket">Mercado</string>
+    <string name="text_accessibility_drawer_open">Abrir</string>
 
 </resources>
