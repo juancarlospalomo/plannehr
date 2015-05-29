@@ -1,7 +1,11 @@
 package com.householdplanner.shoppingapp.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +19,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -77,44 +83,129 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
         mRecyclerViewBasket.addOnItemTouchListener(new RecyclerViewClickListener(getActivity(),
                         new RecyclerViewClickListener.RecyclerViewOnItemClickListener() {
 
+                            /**
+                             * Animate the deletion of a row
+                             * @param view row view to animate
+                             */
+                            private void animateRowDeleted(final View view, final int position) {
+                                if (view != null) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                                        Animator animator = AnimatorInflater.loadAnimator(getActivity(), R.animator.row_deleted);
+                                        animator.setTarget(view);
+                                        animator.addListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                mAdapter.mProductDataList.remove(position);
+                                                mAdapter.notifyItemRangeRemoved(position, 1);
+                                            }
+                                        });
+                                        animator.start();
+                                    } else {
+                                        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.row_deleted);
+                                        animation.setAnimationListener(new Animation.AnimationListener() {
+                                            @Override
+                                            public void onAnimationStart(Animation animation) {
+                                            }
+
+                                            @Override
+                                            public void onAnimationEnd(Animation animation) {
+                                                mAdapter.mProductDataList.remove(position);
+                                                mAdapter.notifyItemRangeRemoved(position, 1);
+                                            }
+
+                                            @Override
+                                            public void onAnimationRepeat(Animation animation) {
+
+                                            }
+                                        });
+                                        view.startAnimation(animation);
+                                    }
+                                }
+                            }
+
                             @Override
                             public void onItemClick(View view, int position) {
 
                             }
 
                             @Override
-                            public void onItemSecondaryActionClick(View view, final int position) {
+                            public void onItemSecondaryActionClick(final View view, int position) {
                                 final AppCompatCheckBox checkBoxActionIcon = (AppCompatCheckBox) view;
-                                if (mSnackBar.getVisibility() == View.GONE) {
-                                    //The snack bar is not displayed yet, so we have to show it
-                                    checkBoxActionIcon.setChecked(false);
-                                    mSnackBar.setOnSnackBarListener(new SnackBar.OnSnackBarListener() {
-                                        @Override
-                                        public void onClose() {
-                                            Product product = mAdapter.mProductDataList.get(position);
-                                            if (product != null) {
-                                                mAdapter.mProductDataList.remove(position);
-                                                mAdapter.notifyItemRangeRemoved(position, 1);
-                                                UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
-                                                useCaseShoppingList.removeFromBasket(product);
-                                                getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
-                                            }
-                                        }
+                                String productName = null;
 
-                                        @Override
-                                        public void onUndo() {
-                                            //User click on Undo action
-                                            checkBoxActionIcon.setChecked(true);
-                                        }
-                                    });
-                                    mSnackBar.show(R.string.text_snack_bar_move_myproduct);
-                                } else {
-                                    //SnackBar is visible, but the user instead pushing on UNDO action,
+                                if (!checkBoxActionIcon.isChecked()) {
                                     //Unchecked the checkbox, therefore the action has to be undone
+                                    Product product = (Product) mSnackBar.getAdapterItem();
+                                    position = mSnackBar.getAdapterPosition();
+                                    if (product != null && position != SnackBar.INVALID_POSITION) {
+                                        mAdapter.mProductDataList.add(position, product);
+                                        mAdapter.notifyItemInserted(position);
+                                    }
                                     checkBoxActionIcon.setChecked(true);
                                     mSnackBar.undo();
+                                } else {
+                                    checkBoxActionIcon.setChecked(false);
+                                    //We check if there is a row being deleted currently
+                                    int lastPosition = mSnackBar.getAdapterPosition();
+                                    if (lastPosition != mSnackBar.INVALID_POSITION) {
+                                        //Get the product name for the position passed in the parameter, as it will be used later
+                                        //to get the new position of the row
+                                        productName = mAdapter.mProductDataList.get(position).name;
+                                        //Currently, there is a row that is being deleted
+                                        //So, we confirm the deletion
+                                        Product product = mAdapter.mProductDataList.get(lastPosition);
+                                        if (product != null) {
+                                            UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                            useCaseShoppingList.removeFromBasket(product);
+                                            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                        }
+                                        mSnackBar.hide();
+                                    }
+                                    if (mSnackBar.getAdapterPosition() == SnackBar.INVALID_POSITION) {
+                                        //Deleting has finished
+                                        if (lastPosition != SnackBar.INVALID_POSITION) {
+                                            //As the Adapter has been altered deleting the row the snackbar had stored,
+                                            //the position where the user clicked on is not the same yet
+                                            position = mAdapter.findPositionByName(productName);
+                                        }
+
+                                        final int currentPosition = position;
+
+                                        //Snackbar tied to the current position
+                                        mSnackBar.setAdapterPosition(currentPosition);
+                                        mSnackBar.setAdapterItem(mAdapter.mProductDataList.get(currentPosition));
+                                        mSnackBar.setOnSnackBarListener(new SnackBar.OnSnackBarListener() {
+                                            @Override
+                                            public void onClose() {
+                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                if (product != null) {
+                                                    UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                                    useCaseShoppingList.removeFromBasket(product);
+                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);                                                }
+                                            }
+
+                                            @Override
+                                            public void onUndo() {
+                                                //User click on Undo action
+                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                int position = mSnackBar.getAdapterPosition();
+                                                if (product != null && position != SnackBar.INVALID_POSITION) {
+                                                    mAdapter.mProductDataList.add(position, product);
+                                                    mAdapter.notifyItemInserted(position);
+                                                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+                                                        ((View) view.getParent()).setScaleY(1f);
+                                                    }
+                                                }
+                                                checkBoxActionIcon.setChecked(true);
+                                            }
+                                        });
+                                        BasketAdapter.ViewHolder viewHolder = (BasketAdapter.ViewHolder) mRecyclerViewBasket.findViewHolderForAdapterPosition(currentPosition);
+                                        animateRowDeleted(viewHolder.itemView, currentPosition);
+                                        mSnackBar.show(R.string.text_snack_bar_move_shoppinglist);
+                                    }
                                 }
                             }
+
 
                             @Override
                             public void onItemLongClick(View view, int position) {
@@ -218,6 +309,22 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                 return 0;
             }
         }
+
+        /**
+         * Find the position in the adapter of the row with product name = name
+         *
+         * @param name product name
+         * @return return position or -1 if it isn't found
+         */
+        public int findPositionByName(String name) {
+            for (int index = 0; index < mProductDataList.size(); index++) {
+                if (mProductDataList.get(index).name.equals(name)) {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
     }
 
     /**

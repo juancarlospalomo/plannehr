@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
@@ -27,6 +26,8 @@ import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 
 public class SearchProductActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
+
+    private static final String LOG_TAG = SearchProductActivity.class.getSimpleName();
 
     private final static int LOADER_ID = 1;
     private final static String KEY_QUERY_PATTERN = "queryPattern";
@@ -74,6 +75,10 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
         }
     }
 
+    /**
+     * Create a product on the list with the product id on the history list
+     * @param id product id
+     */
     private void createProduct(int id) {
         ProductHistoryRepository historyRepository = new ProductHistoryRepository(SearchProductActivity.this);
         ShoppingListRepository listRepository = new ShoppingListRepository(SearchProductActivity.this);
@@ -84,7 +89,6 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
             int categoryId = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_CATEGORY));
             int sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
             if (listRepository.createProductItem(productName, market, "", 0, categoryId, sequence)) {
-                Toast.makeText(SearchProductActivity.this, R.string.textProductsAdded, Toast.LENGTH_SHORT).show();
                 getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                 getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
             }
@@ -187,7 +191,6 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
                         int categoryId = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_CATEGORY));
                         int sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
                         if (listRepository.createProductItem(productName, market, "", 0, categoryId, sequence)) {
-                            Toast.makeText(SearchProductActivity.this, R.string.textProductsAdded, Toast.LENGTH_SHORT).show();
                             getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                             getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
                             new Handler().postDelayed(new Runnable() {

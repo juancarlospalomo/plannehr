@@ -274,7 +274,7 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
                 restartShoppingMode();
             } else {
                 final MenuItem searchItem = menu.findItem(R.id.action_search);
-                SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+                final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
                 searchView.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
                 SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -307,6 +307,12 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
                     public boolean onSuggestionClick(int i) {
                         MenuItemCompat.collapseActionView(searchItem);
                         showActionBarIcons();
+                        Cursor cursor = (Cursor) searchView.getSuggestionsAdapter().getItem(i);
+                        String name = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1));
+                        FragmentEnterData fragment = (FragmentEnterData) getSupportFragmentManager().findFragmentByTag(TAG_FRAGMENT_ENTER_DATA);
+                        if (fragment != null) {
+                            fragment.setProductVisible(name);
+                        }
                         return false;
                     }
                 });

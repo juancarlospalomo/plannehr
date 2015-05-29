@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +16,8 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +25,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -50,7 +55,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     public static final String TAG_FRAGMENT = "fragmentEnterList";
 
     private static final int LOADER_ID = 1;
-    private static final int SELECT_MARKET_FOR_MOVE = 2;
+    private static final int REQUEST_CODE_MARKET_FOR_MOVE = 2;
     private static final int EDIT_PRODUCT = 3;
     private static final String KEY_ITEMS_SELECTED = "items";
     private static final String KEY_SELECT_ITEM = "selectItem";
@@ -82,14 +87,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (mSelectItemName != null) {
-            getLoaderManager().restartLoader(LOADER_ID, null, this);
-        }
-    }
-
-    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         if (mContextualMode) {
             inflater.inflate(R.menu.current_list, menu);
@@ -109,8 +106,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             case R.id.moveProduct:
                 mItemsSelected = getProductsSelected();
                 actionMoveSelectedToTarget();
-                ((BaseActivity)getActivity()).finishToolbarContextualActionMode();
                 return true;
+
             default:
                 return false;
         }
@@ -119,12 +116,13 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case SELECT_MARKET_FOR_MOVE:
+            case REQUEST_CODE_MARKET_FOR_MOVE:
                 if (resultCode == Activity.RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     String marketName = bundle.getString(MarketListActivity.EXTRA_MARKET_NAME);
                     moveSelectedToTarget(marketName);
                 }
+                ((BaseActivity) getActivity()).finishToolbarContextualActionMode();
                 break;
         }
     }
@@ -285,12 +283,17 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         return new ProductLoader(getActivity(), ProductLoader.TypeProducts.All);
     }
 
-
     @Override
     public void onLoadFinished(Loader<List<Product>> loader, List<Product> data) {
         if (loader.getId() == LOADER_ID) {
             mAdapter = new EnterListAdapter(data);
             mProductRecyclerView.setAdapter(mAdapter);
+            if (!TextUtils.isEmpty(mSelectItemName)) {
+                int position = mAdapter.findPositionByName(mSelectItemName);
+                if (position != -1) {
+                    mLayoutManager.scrollToPosition(position);
+                }
+            }
         }
         if (mCallback != null) {
             int items = 0;
@@ -314,6 +317,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
     /**
      * Show or hide the empty list image
+     *
      * @param value true will show the empty list image
      */
     private void setVisibleEmptyList(boolean value) {
@@ -336,8 +340,22 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    /**
+     * Set the feedback animation for product with name = name
+     *
+     * @param name product name
+     */
     public void setProductVisible(String name) {
         mSelectItemName = name;
+        if (mAdapter != null) {
+            int position = mAdapter.findPositionByName(name);
+            if (position != -1) {
+                //It has been found
+                EnterListAdapter.ViewHolder viewHolder = (EnterListAdapter.ViewHolder) mProductRecyclerView.findViewHolderForAdapterPosition(position);
+                mAdapter.animateRowInserted(viewHolder.itemView);
+                mLayoutManager.scrollToPosition(position);
+            }
+        }
     }
 
     /**
@@ -347,7 +365,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         Intent intent = new Intent(getActivity(), MarketListActivity.class);
         intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_ALL, true);
         intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_CHECK_NO_MARKET, false);
-        startActivityForResult(intent, SELECT_MARKET_FOR_MOVE);
+        startActivityForResult(intent, REQUEST_CODE_MARKET_FOR_MOVE);
     }
 
     /**
@@ -422,13 +440,17 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 viewHolder.mImageAvatar.setColor(getResources().getColor(android.R.color.transparent));
             }
 
-
             viewHolder.mText.setText(product.name);
             viewHolder.mImageEdit.setImageResource(R.drawable.ic_action_edit);
             if (mSelectedItems.get(position)) {
                 viewHolder.itemView.setBackgroundResource(R.drawable.list_row_background_selected);
             } else {
                 viewHolder.itemView.setBackgroundResource(R.drawable.list_row_background);
+            }
+            if (!TextUtils.isEmpty(mSelectItemName) && mSelectItemName.equals(product.name)) {
+                animateRowInserted(viewHolder.itemView);
+                mLayoutManager.scrollToPosition(position);
+                mSelectItemName = null;
             }
         }
 
@@ -438,6 +460,37 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 return mProductListData.size();
             } else {
                 return 0;
+            }
+        }
+
+        /**
+         * Find the position in the adapter of the row with product name = name
+         *
+         * @param name product name
+         * @return return position or -1 if it isn't found
+         */
+        public int findPositionByName(String name) {
+            for (int index = 0; index < mProductListData.size(); index++) {
+                if (mProductListData.get(index).name.equals(name)) {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * Animate a view to emergence
+         *
+         * @param view it is the row to animate
+         */
+        private void animateRowInserted(final View view) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                view.setAlpha(0f);
+                view.animate().alpha(1f).setDuration(1000)
+                        .start();
+            } else {
+                Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.row_inserted);
+                view.startAnimation(animation);
             }
         }
 
@@ -490,6 +543,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
          * Clear all selected items
          */
         public void clearSelection() {
+            Log.v(LOG_TAG, "clearSelection");
             mSelectedItems.clear();
             mSelectedItems = new SparseBooleanArray();
             notifyDataSetChanged();
@@ -573,9 +627,9 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         @Override
         protected void onPostExecute(Boolean result) {
             if (mContextualMode) {
-                ((BaseActivity)getActivity()).finishToolbarContextualActionMode();
+                ((BaseActivity) getActivity()).finishToolbarContextualActionMode();
             }
-            if (mAdapter.mProductListData.size()==0) {
+            if (mAdapter.mProductListData.size() == 0) {
                 setVisibleEmptyList(true);
             }
             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);

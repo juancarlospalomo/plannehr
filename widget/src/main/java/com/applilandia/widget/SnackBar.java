@@ -24,6 +24,9 @@ public class SnackBar extends RelativeLayout {
 
     private final static String LOG_TAG = SnackBar.class.getSimpleName();
 
+    //Snackbar is not tied to any adapter position
+    public final static int INVALID_POSITION = -1;
+
     public interface OnSnackBarListener {
         public void onClose();
 
@@ -40,6 +43,10 @@ public class SnackBar extends RelativeLayout {
     private TextView mActionText;
     //Text for action
     private String mTextActionSnackBar;
+    //If the snackbar is tied to an adapter position, it holds it
+    private int mAdapterPosition = INVALID_POSITION;
+    //The item is being notified can be saved
+    private Object mAdapterItem = null;
 
     public SnackBar(Context context) {
         this(context, null);
@@ -107,6 +114,38 @@ public class SnackBar extends RelativeLayout {
     }
 
     /**
+     * Getter for adapter position
+     * @return adapter position
+     */
+    public int getAdapterPosition() {
+        return mAdapterPosition;
+    }
+
+    /**
+     * Setter for adapter position
+     * @param position adapter position
+     */
+    public void setAdapterPosition(int position) {
+        mAdapterPosition = position;
+    }
+
+    /**
+     * Getter for the item in the adapter
+     * @return row item
+     */
+    public Object getAdapterItem() {
+        return mAdapterItem;
+    }
+
+    /**
+     * Setter for the item in the adapter
+     * @param item row item
+     */
+    public void setAdapterItem(Object item) {
+        mAdapterItem = item;
+    }
+
+    /**
      * Show the animation for older versions than 14
      */
     private void showAnimation() {
@@ -119,10 +158,10 @@ public class SnackBar extends RelativeLayout {
             @Override
             public void onAnimationEnd(Animation animation) {
                 if ((!mUndo) && (getVisibility() == View.VISIBLE)) {
-                    hide();
                     if (mOnSnackBarListener != null) {
                         mOnSnackBarListener.onClose();
                     }
+                    hide();
                 }
             }
 
@@ -147,10 +186,10 @@ public class SnackBar extends RelativeLayout {
                     public void onAnimationEnd(Animator animation) {
                         //To avoid this event is called twice in Android v4.x
                         if ((!mUndo) && (getVisibility() == View.VISIBLE)) {
-                            hide();
                             if (mOnSnackBarListener != null) {
                                 mOnSnackBarListener.onClose();
                             }
+                            hide();
                         }
                     }
                 }).start();
@@ -179,6 +218,8 @@ public class SnackBar extends RelativeLayout {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public void hide() {
         setVisibility(View.GONE);
+        mAdapterPosition = INVALID_POSITION;
+        mAdapterItem = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             animate().cancel();
         } else {

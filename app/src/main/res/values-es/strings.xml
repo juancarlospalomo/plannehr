@@ -83,7 +83,6 @@
     <string name="deleteMarket">Eliminado</string>
     <string name="labelSupermarkets">Mercados</string>
     <string name="textBackPressed">Pulsa otra vez para salir</string>
-    <string name="textProductsAdded">Productos añadidos a la lista</string>
     <string name="buttonDoShopping">Comprar</string>
     <string name="btnEndShopping">Finalizar</string>
     <string name="textAskWriteExpense">¿Anotar gasto?</string>
