@@ -16,8 +16,8 @@ android {
         applicationId "com.householdplanner.shoppingapp"
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 12
-        versionName "1.5.1"
+        versionCode 13
+        versionName "1.6.0"
         signingConfig signingConfigs.debug
     }
 
@@ -25,11 +25,11 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile ('proguard-project.txt'), 'proguard-rules.pro'
-/*            applicationVariants.all { variant ->
+            applicationVariants.all { variant ->
                 variant.outputs.each { output ->
-                    output.outputFile = new File("build\\outputs\\apk\\ShoppingApp.apk")
+                    output.outputFile = new File("apk\\shoppingapp.apk")
                 }
-            }*/
+            }
         }
         debug {
             signingConfig signingConfigs.debug
