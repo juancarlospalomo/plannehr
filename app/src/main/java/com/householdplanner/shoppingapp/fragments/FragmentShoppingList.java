@@ -208,7 +208,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                                 if (product != null && position != SnackBar.INVALID_POSITION) {
                                                     mAdapter.mProductDataList.add(position, product);
                                                     mAdapter.notifyItemInserted(position);
-                                                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                                                         ((View) view.getParent()).setScaleY(1f);
                                                     }
                                                 }
@@ -246,12 +246,19 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
     @Override
     public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
         if (mCallback != null) mCallback.onLoadStart();
-        boolean completedList = util.getShowProductsNotSet(getActivity());
-        if (completedList || TextUtils.isEmpty(mMarketName)) {
+        boolean productsNotAssigned = util.getShowProductsNotSet(getActivity());
+        if (TextUtils.isEmpty(mMarketName)) {
+            //Get all pending products to do the shopping
             return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingList);
-        } else {
+        } else if (productsNotAssigned) {
+            //Get the products assigned to one supermarket
+            //and the products doesn't assigned to anyone
+            return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingListWithSupermarketAndWithoutAny, mMarketName);
+        } else if (!productsNotAssigned) {
+            //Get the products only assigned to one supermarket
             return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingListBySupermarket, mMarketName);
         }
+        return null;
     }
 
     @Override
@@ -269,7 +276,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                 // the queried Cursor with the SimpleCursorAdapter.
                 mAdapter = new ShoppingListAdapter(data);
                 mRecyclerViewShoppingList.setAdapter(mAdapter);
-                if (data.size() == 0) {
+                if (data != null && data.size() == 0) {
                     setVisibleEmptyList(true);
                 } else {
                     setVisibleEmptyList(false);

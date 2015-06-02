@@ -21,6 +21,7 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
         All,
         InShoppingList,
         InShoppingListBySupermarket,
+        InShoppingListWithSupermarketAndWithoutAny,
         InBasket
     }
 
@@ -61,6 +62,8 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
             mProductList = useCaseShoppingList.getShoppingListProducts();
         } else if (mTypeProducts == TypeProducts.InShoppingListBySupermarket) {
             mProductList = useCaseShoppingList.getShoppingListProducts(mMarket);
+        } else if (mTypeProducts == TypeProducts.InShoppingListWithSupermarketAndWithoutAny) {
+            mProductList = useCaseShoppingList.getShoppingListWithMarketAndWithoutMarket(mMarket);
         } else if (mTypeProducts == TypeProducts.InBasket) {
             mProductList = useCaseShoppingList.getProductsInBasket();
         }

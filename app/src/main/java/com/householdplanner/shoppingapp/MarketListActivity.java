@@ -12,8 +12,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
@@ -30,7 +28,7 @@ import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.stores.MarketStore;
 
-public class MarketListActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class MarketListActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
     private static final int NEW_MARKET_REQUEST_CODE = 1;
 
@@ -43,7 +41,9 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
     private static final int LOADER_ID = 1;
 
     private boolean mStarted = false;
+    //Hold if show label 'all supermarkets' or label 'without supermarket'
     private static boolean mShowAll = false;
+    //Hold if show the check to selected the products not assigned to supermarkets
     private static boolean mShowCheckNoMarket = true;
     private MarketListAdapter mAdapter;
     private ProgressCircle mProgressDialog = null;
@@ -52,8 +52,6 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_market_list);
-
-        initToolbar();
         //Get the extra data from intent
         getIntentData();
         //Configure the activity
@@ -75,6 +73,9 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
         mStarted = true;
     }
 
+    /**
+     * Get parameters through the intent data
+     */
     private void getIntentData() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -84,37 +85,18 @@ public class MarketListActivity extends AppCompatActivity implements LoaderCallb
     }
 
     /**
-     * Init the toolbar
+     * Configure the activity in its initial state
      */
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.marketToolBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    }
-
     private void setUpActivity() {
         if (mShowCheckNoMarket) {
-            ImageView view = (ImageView) findViewById(R.id.imageCheckShowProductNotSet);
-            if (util.getShowProductsNotSet(MarketListActivity.this)) {
-                view.setImageResource(R.drawable.ic_check_on);
-            } else {
-                view.setImageResource(R.drawable.ic_check_off);
-            }
-            view.setOnClickListener(new OnClickListener() {
+            AppCompatCheckBox checkBoxProductsNotAssigned = (AppCompatCheckBox) findViewById(R.id.checkboxProductsNotAssigned);
+            checkBoxProductsNotAssigned.setChecked(util.getShowProductsNotSet(MarketListActivity.this));
+            checkBoxProductsNotAssigned.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    boolean productsNotSet = util.getShowProductsNotSet(MarketListActivity.this);
-                    if (productsNotSet) {
-                        productsNotSet = false;
-                        ((ImageView) v).setImageResource(R.drawable.ic_check_off);
-                    } else {
-                        productsNotSet = true;
-                        ((ImageView) v).setImageResource(R.drawable.ic_check_on);
-                    }
-                    util.setShowProductsNotSet(MarketListActivity.this, productsNotSet);
+                    util.setShowProductsNotSet(MarketListActivity.this, ((AppCompatCheckBox) v).isChecked());
                 }
             });
-            TextView textCheckNoMarket = (TextView) findViewById(R.id.textImageCheckShowProductNotSet);
         } else {
             View layout = findViewById(R.id.layoutProductNotSet);
             layout.setVisibility(View.GONE);

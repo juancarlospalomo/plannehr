@@ -124,6 +124,25 @@ public class UseCaseShoppingList {
     }
 
     /**
+     * Get all products that belongs to a market or they haven't been assigned to any
+     * @param market market name
+     * @return List of products
+     */
+    public List<Product> getShoppingListWithMarketAndWithoutMarket(String market) {
+        //Variable for returning product list
+        List<Product> productList = new ArrayList<Product>();
+        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=? AND (" +
+                ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_MARKET + "=? OR " +
+                ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_MARKET + " IS NULL)";
+        String[] selectionArgs = new String[]{"0", market};
+        Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
+                mProjection, selection, selectionArgs, null);
+        productList = toList(cursor);
+
+        return productList;
+    }
+
+    /**
      * Commit a product for moving it to basket
      * @param product product to move
      */
