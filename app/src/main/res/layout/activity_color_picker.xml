@@ -2,37 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
     android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
 
     <com.applilandia.widget.ColorPicker
         android:id="@+id/colorPickerMarket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
 
     <com.applilandia.widget.OpacityBar
         android:id="@+id/opacityBarMarket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
 
     <com.applilandia.widget.SaturationBar
         android:id="@+id/saturationBarMarket"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/activity_vertical_margin" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/buttonOk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|right"
-        android:background="?attr/selectableItemBackground"
-        android:text="@string/text_button_ok" />
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:text="@string/text_button_ok"
+        android:theme="@style/Widget.ApplilandiaButton" />
 
 </LinearLayout>

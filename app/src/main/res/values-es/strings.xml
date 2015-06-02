@@ -8,52 +8,52 @@
     <string name="measureunit">Medida</string>
 
     <string-array name="measure_array">
-        <item>Measure Unit</item>
-        <item>grams</item>
-        <item>kilograms</item>
-        <item>litres</item>
-        <item>milliliters</item>
-        <item>unit</item>
-        <item>package</item>
+        <item>Unidad de Medida</item>
+        <item>gramo</item>
+        <item>kilogramo</item>
+        <item>litro</item>
+        <item>mililitro</item>
+        <item>unidad</item>
+        <item>paquete</item>
     </string-array>
 
     <string name="categoryId">Categoría</string>
 
     <string-array name="category_array">
-        <item>Aisle</item>
-        <item>Household</item>
-        <item>Drinks</item>
-        <item>Meat &amp; Poultry</item>
-        <item>Cheese &amp; Yogurts</item>
-        <item>Fish &amp; Frozen Food</item>
-        <item>Vegetables</item>
-        <item>Bakery</item>
-        <item>Food cupboard</item>
-        <item>Health &amp; beauty</item>
-        <item>Special</item>
+        <item>Pasillo</item>
+        <item>Menaje</item>
+        <item>Bebidas</item>
+        <item>Embutido,Carne,Pollo</item>
+        <item>Queso y Yogur</item>
+        <item>Pescado y Congelados</item>
+        <item>Verduras</item>
+        <item>Panadería</item>
+        <item>Legumbres y Conservas</item>
+        <item>Higiene</item>
+        <item>Otro</item>
     </string-array>
 
-    <string name="btnSave">Grabar</string>
+    <string name="btnSave">OK</string>
     <string name="title_activity_wallet">Gastos</string>
     <string name="textWalletMoney">Gasto Inexperado</string>
-    <string name="title_activity_budget">Gastos</string>
+    <string name="title_activity_budget">Presupuesto</string>
     <string name="budgetAvailable">Disponible</string>
     <string name="budgetTarget">Objetivo</string>
     <string name="monthName">Mes</string>
 
     <string-array name="month_array">
-        <item>January</item>
-        <item>February</item>
-        <item>March</item>
-        <item>April</item>
-        <item>May</item>
-        <item>June</item>
-        <item>July</item>
-        <item>August</item>
-        <item>September</item>
-        <item>October</item>
-        <item>November</item>
-        <item>December</item>
+        <item>Enero</item>
+        <item>Febrero</item>
+        <item>Marzo</item>
+        <item>Abril</item>
+        <item>Mayo</item>
+        <item>Junio</item>
+        <item>Julio</item>
+        <item>Agosto</item>
+        <item>Septiembre</item>
+        <item>Octubre</item>
+        <item>Noviembre</item>
+        <item>Diciembre</item>
     </string-array>
 
     <string name="editBudget">Editar</string>
@@ -90,11 +90,11 @@
     <string name="renameMarket">Renombrar</string>
     <string name="textSelected">Seleccionados</string>
     <string name="textExpensesHelpKeyNotes">CONTROL DEL GASTO</string>
-    <string name="textExpensesHelpKeyNote1"><b>Disponible:</b></string>
-    <string name="textExpensesHelpKeyNote2"><b>Objetivo:</b></string>
-    <string name="textExpensesHelpKeyNote3"><b>Gasto Planificado:</b></string>
-    <string name="textExpensesHelpKeyNote4"><b>Gasto Inexperado:</b></string>
-    <string name="textExpensesHelpKeyNote5"><b>Ahorro Estimado:</b></string>
+    <string name="textExpensesHelpKeyNote1"><b>Disponible:</b> dinero del mes disponible para compras</string>
+    <string name="textExpensesHelpKeyNote2"><b>Objetivo:</b> dinero máximo que se pretende gastar</string>
+    <string name="textExpensesHelpKeyNote3"><b>Gasto Planificado:</b> gasto anotado con productos en la cesta</string>
+    <string name="textExpensesHelpKeyNote4"><b>Gasto Inexperado:</b> gasto anotado sin productos en la cesta</string>
+    <string name="textExpensesHelpKeyNote5"><b>Ahorro Estimado:</b> ahorro dinero estimado</string>
     <string name="textImageCheckShowProductNotSet">También mostrar productos sin mercado asignado</string>
 
     <!-- NEW STRINGS  -->
@@ -166,5 +166,7 @@
     <string name="delete_product_dalog_ok_text">Eliminar</string>
     <string name="hint_edit_text_supermarket">Mercado</string>
     <string name="text_accessibility_drawer_open">Abrir</string>
+    <string name="text_snack_bar_move_cart">Movido al carro</string>
+    <string name="text_snack_bar_move_shoppinglist">Movido a la lista</string>
 
 </resources>

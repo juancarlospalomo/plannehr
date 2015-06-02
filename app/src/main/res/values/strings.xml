@@ -33,10 +33,10 @@
         <item>Special</item>
     </string-array>
 
-    <string name="btnSave">Save</string>
+    <string name="btnSave">OK</string>
     <string name="title_activity_wallet">Expenses</string>
     <string name="textWalletMoney">Unexpected Expense</string>
-    <string name="title_activity_budget">Expenses</string>
+    <string name="title_activity_budget">Budget</string>
     <string name="budgetAvailable">Available</string>
     <string name="budgetTarget">Target</string>
     <string name="monthName">Month Name</string>
@@ -90,8 +90,8 @@
     <string name="renameMarket">Rename</string>
     <string name="textSelected">Selecteds</string>
     <string name="textExpensesHelpKeyNotes">EXPENDITURE CONTROL</string>
-    <string name="textExpensesHelpKeyNote1"><b>Available:</b></string>
-    <string name="textExpensesHelpKeyNote2"><b>Target:</b></string>
+    <string name="textExpensesHelpKeyNote1"><b>Available:</b> Household available money for this month</string>
+    <string name="textExpensesHelpKeyNote2"><b>Target:</b> Household target money</string>
     <string name="textExpensesHelpKeyNote3"><b>Planned Expense:</b> Total expense money with products in basket</string>
     <string name="textExpensesHelpKeyNote4"><b>Unexpected Expense:</b> Total expense money without products in basket</string>
     <string name="textExpensesHelpKeyNote5"><b>Estimated Savings:</b> Estimated money to save</string>

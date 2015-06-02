@@ -68,8 +68,8 @@
     </style>
 
     <style name="AppTheme.NavigationDrawerItem.TextDrawerItem">
-        <item name="android:textSize">@dimen/text_size_body_1_material</item>
-        <item name="fontFamily">@string/font_family_title_material</item>
+        <item name="android:textSize">@dimen/text_size_subhead_material</item>
+        <item name="fontFamily">@string/font_family_subhead_material</item>
         <item name="android:textColor">?attr/textDrawerItemColor</item>
         <item name="android:paddingLeft">@dimen/drawer_item_text_left_padding</item>
         <item name="android:layout_gravity">left</item>

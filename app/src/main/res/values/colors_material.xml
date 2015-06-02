@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Toolbar colors -->
-    <color name="color_toolbar_background">#99CC00</color>
+    <color name="color_toolbar_background">#80CBC4</color>
     <!-- Navigation drawer -->
     <color name="text_drawer_item">#E5000000</color>
 </resources>

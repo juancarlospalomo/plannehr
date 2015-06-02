@@ -441,7 +441,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             }
 
             viewHolder.mText.setText(product.name);
-            viewHolder.mImageEdit.setImageResource(R.drawable.ic_action_edit);
+            viewHolder.mImageEdit.setImageResource(R.drawable.ic_edit);
             if (mSelectedItems.get(position)) {
                 viewHolder.itemView.setBackgroundResource(R.drawable.list_row_background_selected);
             } else {

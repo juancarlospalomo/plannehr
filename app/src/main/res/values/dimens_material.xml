@@ -7,7 +7,7 @@
     <dimen name="list_primary_action_avatar_height">56dp</dimen>
     <dimen name="list_primary_action_avatar_width">56dp</dimen>
     <!-- Padding right action icon -->
-    <dimen name="padding_action_icon">4dp</dimen>
+    <dimen name="padding_action_icon">8dp</dimen>
     <dimen name="list_item_height">56dp</dimen>
     <dimen name="list_item_two_lines_height">72dp</dimen>
     <dimen name="list_item_padding_horizontal_material">16dp</dimen>

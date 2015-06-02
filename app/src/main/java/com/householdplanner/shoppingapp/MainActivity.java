@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +27,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.householdplanner.shoppingapp.asynctasks.BasketTask;
@@ -510,6 +510,7 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
             MenuItemCompat.setShowAsAction(item, MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
         }
         AppGlobalState.getInstance().setShoppingMode(this, false);
+        AppGlobalState.getInstance().setMarket(this, 0, null);
         swapFragmentTo(TAG_FRAGMENT_ENTER_DATA);
     }
 
@@ -573,7 +574,7 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
             mDrawerListItems = new ArrayList<>();
             mDrawerListItems.add(new DrawerItem(R.drawable.ic_action_market, R.string.text_item_markets));
             mDrawerListItems.add(new DrawerItem(R.drawable.ic_currency, R.string.text_item_expenses));
-            mDrawerListItems.add(new DrawerItem(R.drawable.ic_action_settings, R.string.text_item_settings));
+            mDrawerListItems.add(new DrawerItem(R.drawable.ic_settings, R.string.text_item_settings));
         }
 
         @Override
@@ -595,7 +596,7 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         public View getView(int position, View convertView, ViewGroup parent) {
             convertView = getLayoutInflater().inflate(R.layout.drawer_list_item, parent, false);
             ImageView imageView = (ImageView) convertView.findViewById(R.id.imageDrawerAction);
-            TextView textView = (TextView) convertView.findViewById(R.id.textViewDrawerAction);
+            AppCompatTextView textView = (AppCompatTextView) convertView.findViewById(R.id.textViewDrawerAction);
             imageView.setImageResource(mDrawerListItems.get(position).iconResId);
             textView.setText(mDrawerListItems.get(position).textResId);
             return convertView;
