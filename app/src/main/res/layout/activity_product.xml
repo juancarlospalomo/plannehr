@@ -1,68 +1,88 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plannehr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical" >
+    android:baselineAligned="false"
+    android:orientation="vertical">
 
-	<EditText 
-	    android:id="@+id/edProductName" 
-	    android:layout_height="wrap_content"
-	    android:layout_width="match_parent"
-	    android:hint="@string/product_name"
-	    android:imeOptions="actionNext"
-	    style="@style/editTextData"
-	    android:inputType="textCapSentences" /> 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        plannehr:theme="@style/ThemeOverlay.AppCompat.ActionBar"></android.support.v7.widget.Toolbar>
+
+    <com.applilandia.widget.ValidationField
+        android:id="@+id/validationFieldProductName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionNext"
+        android:inputType="textCapSentences"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        plannehr:hint="@string/product_name"
+        plannehr:viewType="EditText" />
 
     <android.support.v7.widget.AppCompatSpinner
-	    android:id="@+id/spCategory"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:entries="@array/category_array" 
-	    android:prompt="@string/categoryId" />
-    
-    <LinearLayout 
-        android:id="@+id/amountLayout"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:id="@+id/spCategory"
         android:layout_width="match_parent"
-        android:orientation="horizontal">
-		<EditText 
-		    android:id="@+id/edAmount" 
-		    android:layout_height="wrap_content"
-		    android:layout_width="wrap_content"
-		    android:hint="@string/amount"
-		    style="@style/editTextData" 
-		    android:inputType="numberDecimal" />
-	    <android.support.v7.widget.AppCompatSpinner
-	        android:id="@+id/spMeasure" 
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-	        android:entries="@array/measure_array"
-	        android:prompt="@string/measureunit" />
-	</LinearLayout>
-	
-    <LinearLayout 
         android:layout_height="wrap_content"
+        android:entries="@array/category_array"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:prompt="@string/categoryId"
+        android:spinnerMode="dialog" />
+
+    <ImageView
         android:layout_width="match_parent"
-        android:orientation="horizontal">
-	    <android.support.v7.widget.AppCompatButton
-		    android:id="@+id/btnCancel"
-		    android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_height="wrap_content"
-        	android:gravity="center"
-		    android:text="@string/btnCancel"
-		    android:onClick="btnCancel_onClick" />
-		<android.support.v7.widget.AppCompatButton
-		    android:id="@+id/btnSave"
-		    android:layout_width="0dp"
-        	android:layout_weight="1"
-        	android:layout_height="wrap_content"
-        	android:gravity="center"
-		    android:text="@string/btnSave"
-		    android:onClick="btnSave_onClick" />
-	</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/divider" />
+
+    <LinearLayout
+        android:id="@+id/amountLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <EditText
+            android:id="@+id/edAmount"
+            style="@style/editTextData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/amount"
+            android:inputType="numberDecimal"
+            android:ellipsize="start"
+            android:gravity="right"/>
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spMeasure"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:entries="@array/measure_array"
+            android:prompt="@string/measureunit"
+            android:spinnerMode="dialog"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:text="@string/btnSave"
+        android:theme="@style/Widget.ApplilandiaButton" />
+
 </LinearLayout>

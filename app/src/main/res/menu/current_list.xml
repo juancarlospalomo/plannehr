@@ -1,8 +1,17 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" 
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:shoppingapp="http://schemas.android.com/apk/res-auto">
-	
-    <item android:id="@+id/moveProduct"
-		android:showAsAction="ifRoom"
-		android:icon="@drawable/ic_action_market"
-		android:title="@string/labelSupermarkets" />
+
+    <item
+        android:id="@+id/deleteProduct"
+        android:icon="@drawable/ic_action_discard"
+        shoppingapp:showAsAction="ifRoom"
+        android:showAsAction="ifRoom"
+        android:title="@string/deleteProduct" />
+
+    <item
+        android:id="@+id/moveProduct"
+        android:icon="@drawable/ic_action_market"
+        shoppingapp:showAsAction="ifRoom"
+        android:showAsAction="ifRoom"
+        android:title="@string/labelSupermarkets" />
 </menu>

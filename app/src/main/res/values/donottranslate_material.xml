@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- These are the fonts for material design. the values have been extracted from
+ <Android_SDK>\platforms\android-21\data\res\values\donottranslate_material.xml -->
+<resources>
+    <string name="font_family_body_1_material" translatable="false">sans-serif</string>
+    <string name="font_family_subhead_material" translatable="false">sans-serif</string>
+    <string name="font_family_title_material" translatable="false">sans-serif-medium</string>
+</resources>

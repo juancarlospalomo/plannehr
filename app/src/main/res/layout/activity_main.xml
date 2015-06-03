@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:plannehr="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:orientation="vertical"
-    android:baselineAligned="false" >
-    
-	<FrameLayout android:id="@+id/fragment_container"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        plannehr:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:minHeight="?attr/actionBarSize"></android.support.v7.widget.Toolbar>
 
-	</FrameLayout>
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- the main content view -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></FrameLayout>
+
+        <ListView
+            android:id="@+id/left_drawer"
+            android:layout_width="@dimen/drawer_layout_width"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@android:color/white"></ListView>
+
+    </android.support.v4.widget.DrawerLayout>
 
 
-	
 </LinearLayout>

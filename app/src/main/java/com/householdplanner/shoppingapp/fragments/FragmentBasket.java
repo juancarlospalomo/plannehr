@@ -1,290 +1,352 @@
 package com.householdplanner.shoppingapp.fragments;
 
-import android.content.Context;
-import android.database.Cursor;
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorListenerAdapter;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
+
+import com.applilandia.widget.SnackBar;
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnFragmentProgress;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
-import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.stores.ShoppingListStore;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
+import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
+import com.householdplanner.shoppingapp.loaders.ProductLoader;
+import com.householdplanner.shoppingapp.models.Product;
+import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
-public class FragmentBasket extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,
-				OnFragmentProgress {
-	
-	public FragmentBasket() {
-		super();
-	}
-	
-	private static final int LOADER_ID = 1;
-	private BasketAdapter mAdapter;
-	private OnLoadData mCallback = null;
-	
+import java.util.List;
+
+public class FragmentBasket extends Fragment implements LoaderManager.LoaderCallbacks<List<Product>>,
+        OnFragmentProgress {
+
+    private static final int LOADER_ID = 1;
+    private RecyclerView mRecyclerViewBasket;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private SnackBar mSnackBar;
+    private BasketAdapter mAdapter;
+    private OnLoadData mCallback = null;
+
     @Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_basket, container, false);
-	}
-	
-	@Override
-	public void onViewCreated (View view, Bundle savedInstanceState) {
-		LoadProductList();
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		if (mCallback!=null) mCallback.onLoadStart();
-		return new BasketCursorLoader(getActivity());
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		int items = 0;
-		if (mCallback!=null) {
-			if (cursor!=null) items = cursor.getCount();
-			mCallback.onLoadFinish(items, null);
-		}
-		// A switch-case is useful when dealing with multiple Loaders/IDs
-		switch(loader.getId()) {
-			case LOADER_ID:
-		        // The asynchronous load is complete and the data
-		        // is now available for use. Only now can we associate
-		        // the queried Cursor with the SimpleCursorAdapter.
-				ImageView imageCart = (ImageView) getView().findViewById(R.id.imageEmptyCart);
-				if (items==0) {
-					imageCart.setVisibility(View.VISIBLE);
-				} else {
-					imageCart.setVisibility(View.GONE);
-				}
-				mAdapter.swapCursor(cursor);
-				break;
-		}
-		
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-	    // For whatever reason, the Loader's data is now unavailable.
-	    // Remove any references to the old data by replacing it with
-	    // a null Cursor.
-		mAdapter.swapCursor(null);
-	}
-
-	@Override
-	public void setOnLoadData(OnLoadData callback) {
-		mCallback = callback;
-	}
-	
-	private void LoadProductList() {
-
-        String[] fields = new String[] { ShoppingListStore.COLUMN_ID };
-        int[] listViewColumns = new int[] { R.id.textProductName };
-                
-        try {
-        	ListView listView = (ListView) getView().findViewById(R.id.productlistView);
-    		LoaderManager loaderManager = getLoaderManager();
-    		loaderManager.initLoader(LOADER_ID, null, this);
-        	mAdapter = new BasketAdapter(this.getActivity(), R.layout.basket_rowlayout, null, 
-        		fields, listViewColumns);
-        	listView.setAdapter(mAdapter);
-        } catch (Exception e) {
-        }
-	}
-
-	static class ViewHolder {
-		public TextView textName;
-		public ImageView image;
-	}
-	
-    public class BasketAdapter extends SimpleCursorAdapter {
-    	
-    	Context mContext;
-    	Cursor mCursor;
-    	
-		public BasketAdapter(Context context, int layout, Cursor c, String[] from, int[] to) {
-    		super(context, layout, c, from, to, 0);
-    		mContext = context;
-    		mCursor = c;
-    	}
-		
-    	@Override
-    	public View getView(int position, View convertView, ViewGroup parent) {
-    		
-    		final ViewHolder viewHolder;
-    		final int pos = position;
-    		
-    		if (convertView == null) {
-    			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    			convertView = inflater.inflate(R.layout.basket_rowlayout, parent, false);
-    			viewHolder = new ViewHolder();
-    			viewHolder.textName = (TextView) convertView.findViewById(R.id.textProductName);
-    			viewHolder.image = (ImageView) convertView.findViewById(R.id.imageLeftArrow);
-    			convertView.setTag(viewHolder);
-    		} else {
-    			viewHolder = (ViewHolder) convertView.getTag();
-    		}
-    		viewHolder.image.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-	            	  ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
-	            	  mCursor.moveToPosition(pos);
-	            	  int id = mCursor.getInt(mCursor.getColumnIndex(ShoppingListStore.COLUMN_ID));
-	            	  shoppingListRepository.rollbackProduct(id);
-	            	  shoppingListRepository.close();
-	            	  getActivity().getContentResolver().notifyChange(AppPreferences.URI_LIST_TABLE, null);
-				}
-    		});
-    		mCursor.moveToPosition(position);
-    		viewHolder.textName.setTypeface(font.getListItemFont(getActivity()));
-    		viewHolder.textName.setText(util.getCompleteProductRow(mContext, mCursor, false));
-    		return convertView;
-    	}
-    	
-    	@Override
-    	public Cursor swapCursor(Cursor c) {
-    		mCursor = c;
-    		return super.swapCursor(c);
-    	}
-    	
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_basket, container, false);
     }
 
-	private static class BasketCursorLoader extends AsyncTaskLoader<Cursor> {
-		
-		// We hold a reference to the Loader's data here.
-		private Cursor mCursor = null;
-		private ShoppingListRepository mShoppingListRepository = null;
-		final ForceLoadContentObserver mObserver;
-		
-		public BasketCursorLoader(Context context) {
-			// Loaders may be used across multiple Activitys (assuming they aren't
-		    // bound to the LoaderManager), so NEVER hold a reference to the context
-		    // directly. Doing so will cause you to leak an entire Activity's context.
-		    // The superclass constructor will store a reference to the Application
-		    // Context instead, and can be retrieved with a call to getContext().
-			super(context);
-			this.mObserver = new ForceLoadContentObserver();
-		}
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        inflateViews();
+        initRecyclerView();
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+    }
 
-		/****************************************************/
-		/** (1) A task that performs the asynchronous load **/
-		/****************************************************/
-	    @Override
-		public Cursor loadInBackground() {
-		    // This method is called on a background thread and should generate a
-		    // new set of data to be delivered back to the client.
-	        mShoppingListRepository = new ShoppingListRepository(this.getContext());
-	        mCursor = mShoppingListRepository.getProductsCommitted();
-	        if (mCursor!=null) {
-	            // Ensure the cursor window is filled
-	        	mCursor.getCount();
-	            // this is to force a reload when the content change
-	        	mCursor.registerContentObserver(this.mObserver);
-	            // this make sure this loader will be notified when
-	            // a notifyChange is called on the URI_MY_TABLE
-	            mCursor.setNotificationUri(getContext().getContentResolver(), AppPreferences.URI_LIST_TABLE);
-	        }
-			return mCursor;
-		}
-		
-		/********************************************************/
-		/** (2) Deliver the results to the registered listener **/
-		/********************************************************/
-		@Override
-		public void deliverResult(Cursor cursor) {
-			if (isReset()) {
-				// The Loader has been reset; ignore the result and invalidate the data.
-				if (cursor!=null) {
-					ReleaseResources(cursor);
-				}
-				return;
-			}
-			// Hold a reference to the old data so it doesn't get garbage collected.
-		    // We must protect it until the new data has been delivered.
-			Cursor oldCursor = mCursor;
-			mCursor = cursor;
-			
-			if (isStarted()) {
-			    // If the Loader is in a started state, deliver the results to the
-			    // client. The superclass method does this for us.
-				super.deliverResult(cursor);
-			}
-			// Invalidate the old data as we don't need it any more
-			if (oldCursor!=null && oldCursor!=cursor) {
-				ReleaseResources(oldCursor);
-			}
-		}
+    /**
+     * Inflate the existing views in the Fragment
+     */
+    private void inflateViews() {
+        mRecyclerViewBasket = (RecyclerView) getView().findViewById(R.id.recyclerViewBasket);
+        mSnackBar = (SnackBar) getView().findViewById(R.id.snackBarBasket);
+    }
 
-	    /*********************************************************/
-	    /** (3) Implement the Loader�s state-dependent behavior **/
-	    /*********************************************************/
+    /**
+     * Init the recycler view
+     */
+    private void initRecyclerView() {
+        //Change in content will not change the layout size of the recycler view
+        //Of this way, we improve the performance
+        mRecyclerViewBasket.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this.getActivity());
+        mRecyclerViewBasket.setLayoutManager(mLayoutManager);
+        mRecyclerViewBasket.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerViewBasket.addItemDecoration(new BasketItemDecoration());
 
-	    @Override
-	    protected void onStartLoading() {
-	    	if (mCursor != null) {
-		    	// Deliver any previously loaded data immediately.
-		    	deliverResult(mCursor);
-	    	}
+        mRecyclerViewBasket.addOnItemTouchListener(new RecyclerViewClickListener(getActivity(),
+                        new RecyclerViewClickListener.RecyclerViewOnItemClickListener() {
 
-		    if (takeContentChanged() || mCursor == null) {
-			    // When the observer detects a change, it should call onContentChanged()
-			    // on the Loader, which will cause the next call to takeContentChanged()
-			    // to return true. If this is ever the case (or if the current data is
-			    // null), we force a new load.
-			    forceLoad();
-		    }
-	    }
-	    
-	    @Override
-	    protected void onStopLoading() {
-		    // The Loader is in a stopped state, so we should attempt to cancel the 
-		    // current load (if there is one).
-		    cancelLoad();
-		    // Note that we leave the observer as is. Loaders in a stopped state
-		    // should still monitor the data source for changes so that the Loader
-		    // will know to force a new load if it is ever started again.
-	    }
-		
-	    @Override
-	    public void onCanceled(Cursor cursor) {
-	    	// Attempt to cancel the current asynchronous load.
-	        super.onCanceled(mCursor);
+                            /**
+                             * Animate the deletion of a row
+                             * @param view row view to animate
+                             */
+                            private void animateRowDeleted(final View view, final int position) {
+                                if (view != null) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                                        Animator animator = AnimatorInflater.loadAnimator(getActivity(), R.animator.row_deleted);
+                                        animator.setTarget(view);
+                                        animator.addListener(new AnimatorListenerAdapter() {
+                                            @Override
+                                            public void onAnimationEnd(Animator animation) {
+                                                mAdapter.mProductDataList.remove(position);
+                                                mAdapter.notifyItemRangeRemoved(position, 1);
+                                            }
+                                        });
+                                        animator.start();
+                                    } else {
+                                        Animation animation = AnimationUtils.loadAnimation(getActivity(), R.anim.row_deleted);
+                                        animation.setAnimationListener(new Animation.AnimationListener() {
+                                            @Override
+                                            public void onAnimationStart(Animation animation) {
+                                            }
 
-	        // The load has been canceled, so we should release the resources
-	        // associated with 'data'.
-	        ReleaseResources(cursor);
-	    }
-	    
-	    @Override
-	    protected void onReset() {
-	    	// Ensure the loader has been stopped.
-	        onStopLoading();
-            // At this point we can release the resources associated with 'mData'.
-	        if (mCursor != null) {
-	        	ReleaseResources(mCursor);
-	        	mCursor = null;
-	        }
-	    }
-    
-		private void ReleaseResources(Cursor cursor) {
-			if (cursor!=null) {
-				cursor.close();
-				mShoppingListRepository.close();
-			}
-		}
-	}
+                                            @Override
+                                            public void onAnimationEnd(Animation animation) {
+                                                mAdapter.mProductDataList.remove(position);
+                                                mAdapter.notifyItemRangeRemoved(position, 1);
+                                            }
 
+                                            @Override
+                                            public void onAnimationRepeat(Animation animation) {
+
+                                            }
+                                        });
+                                        view.startAnimation(animation);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onItemClick(View view, int position) {
+
+                            }
+
+                            @Override
+                            public void onItemSecondaryActionClick(final View view, int position) {
+                                final AppCompatCheckBox checkBoxActionIcon = (AppCompatCheckBox) view;
+                                String productName = null;
+
+                                if (!checkBoxActionIcon.isChecked()) {
+                                    //Unchecked the checkbox, therefore the action has to be undone
+                                    Product product = (Product) mSnackBar.getAdapterItem();
+                                    position = mSnackBar.getAdapterPosition();
+                                    if (product != null && position != SnackBar.INVALID_POSITION) {
+                                        mAdapter.mProductDataList.add(position, product);
+                                        mAdapter.notifyItemInserted(position);
+                                    }
+                                    checkBoxActionIcon.setChecked(true);
+                                    mSnackBar.undo();
+                                } else {
+                                    checkBoxActionIcon.setChecked(false);
+                                    //We check if there is a row being deleted currently
+                                    int lastPosition = mSnackBar.getAdapterPosition();
+                                    if (lastPosition != mSnackBar.INVALID_POSITION) {
+                                        //Get the product name for the position passed in the parameter, as it will be used later
+                                        //to get the new position of the row
+                                        productName = mAdapter.mProductDataList.get(position).name;
+                                        //Currently, there is a row that is being deleted
+                                        //So, we confirm the deletion
+                                        Product product = mAdapter.mProductDataList.get(lastPosition);
+                                        if (product != null) {
+                                            UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                            useCaseShoppingList.removeFromBasket(product);
+                                            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                        }
+                                        mSnackBar.hide();
+                                    }
+                                    if (mSnackBar.getAdapterPosition() == SnackBar.INVALID_POSITION) {
+                                        //Deleting has finished
+                                        if (lastPosition != SnackBar.INVALID_POSITION) {
+                                            //As the Adapter has been altered deleting the row the snackbar had stored,
+                                            //the position where the user clicked on is not the same yet
+                                            position = mAdapter.findPositionByName(productName);
+                                        }
+
+                                        final int currentPosition = position;
+
+                                        //Snackbar tied to the current position
+                                        mSnackBar.setAdapterPosition(currentPosition);
+                                        mSnackBar.setAdapterItem(mAdapter.mProductDataList.get(currentPosition));
+                                        mSnackBar.setOnSnackBarListener(new SnackBar.OnSnackBarListener() {
+                                            @Override
+                                            public void onClose() {
+                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                if (product != null) {
+                                                    UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                                    useCaseShoppingList.removeFromBasket(product);
+                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);                                                }
+                                            }
+
+                                            @Override
+                                            public void onUndo() {
+                                                //User click on Undo action
+                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                int position = mSnackBar.getAdapterPosition();
+                                                if (product != null && position != SnackBar.INVALID_POSITION) {
+                                                    mAdapter.mProductDataList.add(position, product);
+                                                    mAdapter.notifyItemInserted(position);
+                                                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+                                                        ((View) view.getParent()).setScaleY(1f);
+                                                    }
+                                                }
+                                                checkBoxActionIcon.setChecked(true);
+                                            }
+                                        });
+                                        BasketAdapter.ViewHolder viewHolder = (BasketAdapter.ViewHolder) mRecyclerViewBasket.findViewHolderForAdapterPosition(currentPosition);
+                                        animateRowDeleted(viewHolder.itemView, currentPosition);
+                                        mSnackBar.show(R.string.text_snack_bar_move_shoppinglist);
+                                    }
+                                }
+                            }
+
+
+                            @Override
+                            public void onItemLongClick(View view, int position) {
+                            }
+                        })
+        );
+    }
+
+    @Override
+    public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
+        if (mCallback != null) mCallback.onLoadStart();
+        return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InBasket);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Product>> loader, List<Product> data) {
+        int items = 0;
+        if (mCallback != null) {
+            if (data != null) items = data.size();
+            mCallback.onLoadFinish(items, null);
+        }
+        // A switch-case is useful when dealing with multiple Loaders/IDs
+        switch (loader.getId()) {
+            case LOADER_ID:
+                // The asynchronous load is complete and the data
+                // is now available for use. Only now can we associate
+                // the queried Cursor with the SimpleCursorAdapter.
+                ImageView imageCart = (ImageView) getView().findViewById(R.id.imageEmptyCart);
+                if (items == 0) {
+                    imageCart.setVisibility(View.VISIBLE);
+                } else {
+                    mAdapter = new BasketAdapter(data);
+                    mRecyclerViewBasket.setAdapter(mAdapter);
+                    imageCart.setVisibility(View.GONE);
+                }
+                break;
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Product>> loader) {
+        // For whatever reason, the Loader's data is now unavailable.
+        // Remove any references to the old data by replacing it with
+        // a null Cursor.
+        mRecyclerViewBasket.setAdapter(null);
+        mAdapter = null;
+    }
+
+    @Override
+    public void setOnLoadData(OnLoadData callback) {
+        mCallback = callback;
+    }
+
+    public class BasketAdapter extends RecyclerView.Adapter<BasketAdapter.ViewHolder> {
+
+        private List<Product> mProductDataList;
+
+        public BasketAdapter(List<Product> data) {
+            mProductDataList = data;
+        }
+
+        public class ViewHolder extends RecyclerView.ViewHolder {
+
+            public AppCompatTextView mTextViewPrimary;
+            public AppCompatTextView mTextViewSecondary;
+            public AppCompatCheckBox mSecondaryActionIcon;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                mTextViewPrimary = (AppCompatTextView) itemView.findViewById(R.id.textview_primary_text);
+                mTextViewSecondary = (AppCompatTextView) itemView.findViewById(R.id.textview_secondary_text);
+                mSecondaryActionIcon = (AppCompatCheckBox) itemView.findViewById(R.id.imageSecondaryActionIcon);
+            }
+        }
+
+        @Override
+        public BasketAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = getActivity().getLayoutInflater().inflate(R.layout.shopping_rowlayout, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(BasketAdapter.ViewHolder viewHolder, int position) {
+            if (mProductDataList != null) {
+                Product product = mProductDataList.get(position);
+                if (product != null) {
+                    viewHolder.mTextViewPrimary.setText(product.name);
+                    viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
+                            product.unitId, product.amount));
+                    viewHolder.mSecondaryActionIcon.setChecked(true);
+                }
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            if (mProductDataList != null) {
+                return mProductDataList.size();
+            } else {
+                return 0;
+            }
+        }
+
+        /**
+         * Find the position in the adapter of the row with product name = name
+         *
+         * @param name product name
+         * @return return position or -1 if it isn't found
+         */
+        public int findPositionByName(String name) {
+            for (int index = 0; index < mProductDataList.size(); index++) {
+                if (mProductDataList.get(index).name.equals(name)) {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
+    }
+
+    /**
+     * Inner class for recycler view item decoration
+     */
+    public class BasketItemDecoration extends android.support.v7.widget.RecyclerView.ItemDecoration {
+        Drawable mDivider;
+
+        public BasketItemDecoration() {
+            mDivider = ResourcesCompat.getDrawable(getResources(), R.drawable.list_row_background, null);
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            super.getItemOffsets(outRect, view, parent, state);
+            if (parent.getChildLayoutPosition(view) < 1) return;
+            if (((LinearLayoutManager) parent.getLayoutManager()).getOrientation() == LinearLayout.VERTICAL) {
+                outRect.top = mDivider.getIntrinsicHeight();
+            } else {
+                return;
+            }
+        }
+    }
 
 }

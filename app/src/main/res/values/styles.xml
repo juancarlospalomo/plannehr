@@ -4,51 +4,105 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
+
+    <style name="Widget" parent="@android:style/Widget" />
+
+    <style name="Widget.ApplilandiaTextView" parent="@android:style/Widget.TextView">
+        <item name="android:textColor">?android:textColorPrimary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Widget.ApplilandiaButton" parent="@android:style/Widget.Button">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/accent_material_light</item>
+    </style>
+
+    <style name="Widget.SearchView" parent="Widget.AppCompat.SearchView">
+
+    </style>
+
+    <!-- Text styles replied from Material Design theme -->
+
+    <style name="AppTheme.ActivityLayout">
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance" parent="android:TextAppearance" />
+
+    <style name="AppTheme.TextAppearance.Material">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:textColorHint">?android:attr/textColorHint</item>
+        <item name="android:textColorHighlight">?android:attr/textColorHighlight</item>
+        <item name="android:textColorLink">?android:attr/textColorLink</item>
+        <item name="android:textSize">@dimen/text_size_body_1_material</item>
+        <item name="fontFamily">@string/font_family_body_1_material</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.Material.Subhead">
+        <item name="android:textSize">@dimen/text_size_subhead_material</item>
+        <item name="fontFamily">@string/font_family_subhead_material</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <!-- New attribute to set the padding to text with avatar, text and icon -->
+        <item name="android:paddingLeft">@dimen/list_primary_action_text_avatar_text</item>
+    </style>
+
+    <style name="AppTheme.TextAppearance.Material.Body1">
+        <item name="android:textSize">@dimen/text_size_body_1_material</item>
+        <item name="fontFamily">@string/font_family_body_1_material</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <!-- New attribute to set the padding to text with avatar, text and icon -->
+        <item name="android:paddingLeft">@dimen/list_primary_action_text_avatar_text</item>
+    </style>
+
+    <!-- Styles for Navigation Drawer -->
+    <style name="AppTheme.NavigationDrawerItem">
+        <item name="android:paddingRight">@dimen/drawer_item_horizontal_padding</item>
+        <item name="android:layout_height">@dimen/drawer_item_height</item>
+    </style>
+
+    <style name="AppTheme.NavigationDrawerItem.IconDrawer">
+        <item name="android:layout_marginLeft">@dimen/drawer_item_horizontal_padding</item>
+    </style>
+
+    <style name="AppTheme.NavigationDrawerItem.TextDrawerItem">
+        <item name="android:textSize">@dimen/text_size_subhead_material</item>
+        <item name="fontFamily">@string/font_family_subhead_material</item>
+        <item name="android:textColor">?attr/textDrawerItemColor</item>
+        <item name="android:paddingLeft">@dimen/drawer_item_text_left_padding</item>
+        <item name="android:layout_gravity">left</item>
+    </style>
+
     <style name="TransparentProgressDialog" parent="@style/Theme.AppCompat.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowBackground">@color/transparent</item>
         <item name="android:backgroundDimEnabled">false</item>
         <item name="android:windowIsFloating">true</item>
-    	<item name="android:background">@color/transparent</item>
-    	
-    	<item name="android:bottomBright">@color/transparent</item>
-		<item name="android:bottomDark">@color/transparent</item>
-		<item name="android:bottomMedium">@color/transparent</item>
-		<item name="android:centerBright">@color/transparent</item>
-		<item name="android:centerDark">@color/transparent</item>
-		<item name="android:centerMedium">@color/transparent</item>
-		<item name="android:fullBright">@color/transparent</item>
-		<item name="android:fullDark">@color/transparent</item>
-		<item name="android:topBright">@color/transparent</item>
-		<item name="android:topDark">@color/transparent</item>
+        <item name="android:background">@color/transparent</item>
+
+        <item name="android:bottomBright">@color/transparent</item>
+        <item name="android:bottomDark">@color/transparent</item>
+        <item name="android:bottomMedium">@color/transparent</item>
+        <item name="android:centerBright">@color/transparent</item>
+        <item name="android:centerDark">@color/transparent</item>
+        <item name="android:centerMedium">@color/transparent</item>
+        <item name="android:fullBright">@color/transparent</item>
+        <item name="android:fullDark">@color/transparent</item>
+        <item name="android:topBright">@color/transparent</item>
+        <item name="android:topDark">@color/transparent</item>
     </style>
-    
+
     <style name="TextPagerTitle">
         <item name="android:textSize">22sp</item>
     </style>
 
-    <style name="textListItem" parent="@android:style/TextAppearance">
-    	<item name="android:textColor">?android:textColorPrimary</item> 
-    	<item name="android:textAppearance">?android:textAppearanceMedium</item>
-    </style>
-    
     <style name="textColouredButton" parent="@android:style/TextAppearance">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
     </style>
-    
-    <style name="textMessage" parent="@android:style/TextAppearance">
-        <item name="android:textColor">?android:textColorPrimary</item>
-        <item name="android:textAppearance">?android:textAppearanceMedium</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-    
-    <style name="textTitleMessage" parent="@android:style/TextAppearance">
-        <item name="android:textColor">?android:textColorPrimary</item>
-        <item name="android:textAppearance">?android:textAppearanceLarge</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-    
+
     <style name="editTextData" parent="@android:style/TextAppearance">
         <item name="android:textColor">?android:textColorPrimary</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
@@ -59,12 +113,12 @@
         <item name="android:layout_margin">3dp</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
     <style name="buttonColouredAction">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:gravity">center</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
-		<item name="android:layout_margin">3dp</item>
+        <item name="android:layout_margin">3dp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:shadowColor">#000000</item>
         <item name="android:shadowDx">1</item>

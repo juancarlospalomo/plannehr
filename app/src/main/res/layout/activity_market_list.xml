@@ -1,60 +1,86 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:plannehr="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.householdplanner.shoppingapp.MarketListActivity"
     android:gravity="center"
-    android:orientation="vertical" >
-    
-    <TextView android:id="@+id/textImageSelectNoMarket"
+    android:orientation="vertical"
+    tools:context="com.householdplanner.shoppingapp.MarketListActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_actionbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        plannehr:theme="@style/ThemeOverlay.AppCompat.ActionBar"></android.support.v7.widget.Toolbar>
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/textImageSelectNoMarket"
+        style="@style/textColouredButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:background="@drawable/square_blue"
         android:gravity="center"
-        android:text="@string/textProductsWithoutSupermarket"
-        style="@style/textColouredButton"
-        android:visibility="gone" />
-    
-    <LinearLayout android:id="@+id/layoutProductNotSet"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
+        android:text="@string/textProductsWithoutSupermarket"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/layoutProductNotSet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-        
-        <ImageView android:id="@+id/imageCheckShowProductNotSet"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:src="@drawable/ic_check_off" />
-    
-	    <TextView android:id="@+id/textImageCheckShowProductNotSet"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:paddingLeft="10dp"
-	        style="@style/textMessage"
-	        android:layout_gravity="center_vertical"
-	        android:text="@string/textImageCheckShowProductNotSet"
-	        android:onClick="imageCheckShowProductNotSet_onClick" />
-        
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/checkboxProductsNotAssigned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="?attr/listPaddingActionIcon" />
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/textImageCheckShowProductNotSet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="@string/textImageCheckShowProductNotSet" />
+
     </LinearLayout>
-    
-    <TextView android:id="@+id/textThereAreNotSupermarkets"
-        android:layout_height="wrap_content"
+
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/textThereAreNotSupermarkets"
         android:layout_width="match_parent"
-        style="@style/textMessage"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
         android:text="@string/textMessageThereAreNotSupermarkets"
         android:visibility="gone" />
-    
-    <GridView android:id="@+id/gridViewMarkets"
+
+    <GridView
+        android:id="@+id/gridViewMarkets"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="2"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:verticalSpacing="10dp"
         android:horizontalSpacing="10dp"
-        android:layout_marginTop="20dp" />
-    
+        android:numColumns="2"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:verticalSpacing="10dp" />
+
 </LinearLayout>

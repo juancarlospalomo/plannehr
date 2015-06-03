@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- UI assets metrics -->
+    <!-- Height area -->
+    <attr name="touchableAssetLayoutHeight" format="dimension" />
+    <attr name="touchableAssetLayoutWidth" format="dimension" />
+    <!-- Height for the avatar in list row -->
+    <attr name="listPreferredListItemAvatarHeight" format="dimension" />
+    <!-- List item preferred dimensions -->
+    <attr name="listItemHeight" format="dimension" />
+    <attr name="listItemTwoLinesHeight" format="dimension" />
+    <attr name="listPreferredListItemAvatarWidth" format="dimension" />
+    <attr name="listPaddingActionIcon" format="dimension" />
+    <attr name="listPaddingHorizontalAvatar" format="dimension" />
+    <attr name="listPaddingVerticalAvatar" format="dimension" />
+    <attr name="listItemPaddingTextTop" format="dimension" />
+    <attr name="listItemPaddingTextBottom" format="dimension" />
+    <attr name="listPreferredItemPaddingTop" format="dimension" />
+    <attr name="listPreferredItemPaddingBottom" format="dimension" />
+    <!-- The preferred TextAppearance for the secondary text of list items. -->
+    <attr name="textAppearanceListItemSecondary" format="reference" />
+    <!-- Navigation drawer -->
+    <attr name="textDrawerItemColor" format="reference|color" />
+</resources>

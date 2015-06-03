@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="background">#1474c0</color>
+	<color name="row">#ff0000</color>
+	<color name="translucent_red">#ff0000</color>
+	<color name="rowSelected">#0071C5</color>
+	<color name="transparent">#00000000</color>
+	<color name="blue">#0071C5</color>
+	<color name="grey_light">#D3D3D3</color>
+	<color name="white">#FFFFFF</color>
+	<color name="list_item_background">#FAFAFA</color>
+    <color name="list_item_pressed">#ECEBEB</color>
+    <color name="list_item_selected">#BDBDBD</color>
+</resources>
+

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -17,7 +16,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import com.householdplanner.shoppingapp.cross.ExpenseStructure;
-import com.householdplanner.shoppingapp.cross.font;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.repositories.WalletRepository;
 
@@ -25,11 +23,11 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class TicketActivity extends AppCompatActivity {
+public class TicketActivity extends BaseActivity {
 
 	public static final String EXTRA_HAS_PRODUCTS = "hasProducts";
 	
-	private static final int CREATE_BUDGET = 1;
+	private static final int REQUEST_CODE_CREATE_BUDGET = 1;
 	
 	boolean mHasProducts = false;
 	String mTicketDate = "";
@@ -42,6 +40,7 @@ public class TicketActivity extends AppCompatActivity {
 		Intent intent = this.getIntent();
 		mHasProducts = intent.getBooleanExtra(EXTRA_HAS_PRODUCTS, false);
 		setDefaultValues();
+		createButtonHandlers();
 	}
 
 	@Override
@@ -50,19 +49,21 @@ public class TicketActivity extends AppCompatActivity {
 		return true;
 	}
 
-	public void btnSaveTicket_onClick(View view) {
-		GetDataFromUI();
-		if (!Validate()) { 
-			ShowValidationErrorMessage();
-		} else {
-			checkExistBudget();
-		}
+	private void createButtonHandlers() {
+		AppCompatButton buttonOk = (AppCompatButton) findViewById(R.id.btnSaveTicket);
+		buttonOk.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				GetDataFromUI();
+				if (!Validate()) {
+					ShowValidationErrorMessage();
+				} else {
+					checkExistBudget();
+				}
+			}
+		});
 	}
-	
-	public void btnCancelTicket_onClick(View view) {
-		finish();
-	}
-	
+
 	public void showDatePickerDialog(View view) {
 		DialogFragment dateFragment = new DatePickerFragment();
 		dateFragment.show(getSupportFragmentManager(), "fecha");
@@ -73,8 +74,8 @@ public class TicketActivity extends AppCompatActivity {
 		int month = util.getMonth(mTicketDate);
 		if (!wallet.existBudget(month)) {
 			Intent intent = new Intent(this, BudgetActivity.class);
-			intent.putExtra("MonthId", month);
-			startActivityForResult(intent, CREATE_BUDGET);
+			intent.putExtra(BudgetActivity.EXTRA_MONTH_ID, month);
+			startActivityForResult(intent, REQUEST_CODE_CREATE_BUDGET);
 		} else {
 			Save();
 		}
@@ -83,7 +84,7 @@ public class TicketActivity extends AppCompatActivity {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch(requestCode) {
-			case CREATE_BUDGET:
+			case REQUEST_CODE_CREATE_BUDGET:
 				if (resultCode == Activity.RESULT_OK) {
 					Save();
 				}
@@ -101,10 +102,7 @@ public class TicketActivity extends AppCompatActivity {
 	
 	private void setDefaultValues() {
 		AppCompatButton btnDate = (AppCompatButton) findViewById(R.id.btnTicketDate);
-		btnDate.setTypeface(font.getButtonFont(this));
 		btnDate.setText(util.getFormattedDate());
-		EditText editTextExpense = (EditText) findViewById(R.id.edtExpense);
-		editTextExpense.setTypeface(font.getEditTextFont(this));
 	}
 	
 	private void ShowValidationErrorMessage() {

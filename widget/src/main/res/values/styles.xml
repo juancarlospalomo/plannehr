@@ -1,0 +1,50 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="ApplilandiaWidget" parent="@android:style/Widget" />
+
+    <style name="ApplilandiaWidget.CircleView">
+        <item name="background">@android:color/transparent</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="strokeColor">@color/accent_red</item>
+    </style>
+
+    <!-- Validation Field View styles -->
+    <style name="ApplilandiaWidget.ValidationField">
+        <item name="validationView">?attr/validationView</item>
+        <item name="background">@android:color/darker_gray</item>
+    </style>
+
+    <style name="ApplilandiaWidget.TextValidationAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/holo_red_light</item>
+    </style>
+
+    <style name="ApplilandiaWidget.ValidationView" parent="@android:style/Widget.TextView">
+        <item name="android:textAppearance">?attr/textValidationAppearance</item>
+        <item name="android:layout_height">16dp</item>
+    </style>
+
+    <!-- Snack bar styles -->
+    <style name="ApplilandiaWidget.SnackBarStyle">
+        <item name="android:layout_height">@dimen/snack_bar_single_line_height</item>
+        <item name="android:background">@color/snack_bar_background_color</item>
+    </style>
+
+    <style name="ApplilandiaWidget.SnackBar" parent="@android:style/Widget.TextView"/>
+
+    <style name="ApplilandiaWidget.SnackBar.Text">
+        <item name="android:textSize">14sp</item>
+        <!-- Roboto regular -->
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textColor">@color/primary_text_default_material_dark</item>
+    </style>
+
+    <style name="ApplilandiaWidget.SnackBar.Action">
+        <item name="android:textSize">14sp</item>
+        <!-- Roboto medium -->
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/action_color</item>
+    </style>
+
+</resources>
