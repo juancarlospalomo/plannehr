@@ -105,7 +105,7 @@ public class ShoppingListContract {
                 "vnd." + CONTENT_AUTHORITY + "." + PATH_MARKET;
 
         //Table name
-        public static final String TABLE_NAME = "market";
+        public static final String TABLE_NAME = "Market";
         /**
          * Table columns
          */
@@ -130,7 +130,7 @@ public class ShoppingListContract {
         public static final String CONTENT_TYPE_ITEM = "vnd.android.cursor.item/" +
                 "vnd." + CONTENT_AUTHORITY + "." + PATH_BUDGET;
         //Table name
-        public static final String TABLE_NAME = "budget";
+        public static final String TABLE_NAME = "Budget";
         /**
          * Table columns
          */

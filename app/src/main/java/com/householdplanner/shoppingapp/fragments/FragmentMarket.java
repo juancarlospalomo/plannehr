@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.applilandia.widget.ValidationField;
 import com.householdplanner.shoppingapp.BaseActivity;
 import com.householdplanner.shoppingapp.ColorPickerActivity;
@@ -34,7 +35,6 @@ import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
-import com.householdplanner.shoppingapp.stores.MarketStore;
 
 /**
  * Created by JuanCarlos on 25/05/2015.
@@ -215,8 +215,8 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
                         for (int index = 0; index < cursor.getCount(); index++) {
                             if (cursor.moveToPosition(index)) {
                                 if (selectedItems.get(index)) {
-                                    int marketId = cursor.getInt(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_ID));
-                                    String marketName = cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
+                                    int marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_ID));
+                                    String marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
                                     marketRepository.deleteMarketItem(marketId, marketName);
                                     getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                 }
@@ -259,8 +259,8 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
         String marketName = mMarketValidationField.getText();
         if (!TextUtils.isEmpty(marketName)) {
             cursor.moveToPosition(position);
-            int marketId = cursor.getInt(cursor.getColumnIndex(MarketStore.COLUMN_ID));
-            String oldMarket = cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
+            int marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry._ID));
+            String oldMarket = cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
             MarketRepository marketRepository = new MarketRepository(getActivity());
             marketRepository.renameMarket(marketId, oldMarket, marketName);
             marketRepository.close();
@@ -282,7 +282,7 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
         enableEntryData();
         Cursor cursor = mAdapter.getCursor();
         cursor.moveToPosition(position);
-        mMarketValidationField.setText(cursor.getString(cursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME)));
+        mMarketValidationField.setText(cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME)));
         mCurrentPosition = position;
         mRenamingMarket = true;
     }
@@ -301,7 +301,7 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
                 mMarketValidationField.setError("");
                 MarketRepository marketRepository = new MarketRepository(getActivity());
                 if (marketRepository.getMarketId(marketName) == 0) {
-                    marketRepository.createMarketItem(marketName, categories);
+                    marketRepository.createMarketItem(marketName);
                     mMarketValidationField.setText("");
                     getLoaderManager().restartLoader(LOADER_ID, null, this);
                     if (mContextualMode)
@@ -317,7 +317,7 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
     }
 
     private void loadMarkets() {
-        String[] fields = new String[]{MarketStore.COLUMN_MARKET_NAME};
+        String[] fields = new String[]{ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME};
         int[] listViewColumns = new int[]{android.R.id.text1};
 
         try {
@@ -406,14 +406,14 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
             }
 
             mCursor.moveToPosition(position);
-            String marketName = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
+            String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
             viewHolder.text.setText(util.capitalize(marketName));
             if (mSelectedItems.get(position)) {
                 convertView.setBackgroundResource(R.drawable.list_row_background_selected);
             } else {
                 convertView.setBackgroundResource(R.drawable.list_row_background);
             }
-            final String color = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_COLOR));
+            final String color = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_COLOR));
             if (color != null) {
                 viewHolder.imagePicker.setImageDrawable(null);
                 GradientDrawable drawable = (GradientDrawable) getResources().getDrawable(R.drawable.square_blue);
@@ -427,7 +427,7 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
             } else {
                 viewHolder.imagePicker.setBackgroundResource(R.drawable.ic_action_colorpicker);
             }
-            final int marketId = mCursor.getInt(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_ID));
+            final int marketId = mCursor.getInt(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_ID));
             viewHolder.imagePicker.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

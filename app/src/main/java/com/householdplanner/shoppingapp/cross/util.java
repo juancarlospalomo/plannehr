@@ -7,8 +7,8 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 
 import com.householdplanner.shoppingapp.R;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.fragments.FragmentSetting;
-import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,9 +21,9 @@ public class util {
 
     public static String getCompleteHistoryRow(Context context, Cursor cursor, boolean includeMarket) {
         String itemText;
-        itemText = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_PRODUCT_NAME));
+        itemText = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
         if (includeMarket) {
-            String marketName = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_MARKET));
+            String marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
             if (marketName != null) itemText += " " + capitalize(marketName);
         }
         return itemText;

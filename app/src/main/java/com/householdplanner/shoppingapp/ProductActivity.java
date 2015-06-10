@@ -20,7 +20,6 @@ import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 
 public class ProductActivity extends BaseActivity {
 
@@ -159,10 +158,10 @@ public class ProductActivity extends BaseActivity {
             ProductHistoryRepository historyRepository = new ProductHistoryRepository(this);
             Cursor cursor = historyRepository.getProduct(mName, null);
             if ((cursor != null) && (cursor.moveToFirst())) {
-                mMarketName = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_MARKET));
+                mMarketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
                 if (TextUtils.isEmpty(mMarketName)) mMarketName = null;
             }
-            shoppingListRepository.createProductItem(mName, mMarketName, mAmount, mMeasureId, mCategoryId, 0);
+            shoppingListRepository.createProductItem(mName, mMarketName, mAmount, mMeasureId, mCategoryId);
             shoppingListRepository.close();
         } else {
             shoppingListRepository.updateProductItem(mId, mName, mMarketName, mAmount, mMeasureId, mCategoryId);

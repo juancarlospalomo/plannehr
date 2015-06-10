@@ -23,7 +23,6 @@ import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 
 public class SearchProductActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
@@ -84,11 +83,10 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
         ShoppingListRepository listRepository = new ShoppingListRepository(SearchProductActivity.this);
         Cursor cursor = historyRepository.getProduct(id);
         if ((cursor != null) && (cursor.moveToFirst())) {
-            String productName = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_PRODUCT_NAME));
-            String market = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_MARKET));
-            int categoryId = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_CATEGORY));
-            int sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
-            if (listRepository.createProductItem(productName, market, "", 0, categoryId, sequence)) {
+            String productName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
+            String market = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
+            int categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID));
+            if (listRepository.createProductItem(productName, market, "", 0, categoryId)) {
                 getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                 getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
             }
@@ -98,7 +96,7 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
     }
 
     private void doQuery(String query) {
-        String[] fields = new String[]{ProductHistoryStore.COLUMN_PRODUCT_NAME};
+        String[] fields = new String[]{ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME};
         int[] listViewColumns = new int[]{R.id.textProduct};
 
         try {
@@ -181,16 +179,15 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
                 public void onClick(View v) {
                     viewHolder.imageCheck.setChecked(true);
                     mCursor.moveToPosition(pos);
-                    int id = mCursor.getInt(mCursor.getColumnIndex(ProductHistoryStore.COLUMN_ID));
+                    int id = mCursor.getInt(mCursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID));
                     ProductHistoryRepository historyRepository = new ProductHistoryRepository(SearchProductActivity.this);
                     ShoppingListRepository listRepository = new ShoppingListRepository(SearchProductActivity.this);
                     Cursor cursor = historyRepository.getProduct(id);
                     if ((cursor != null) && (cursor.moveToFirst())) {
-                        String productName = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_PRODUCT_NAME));
-                        String market = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_MARKET));
-                        int categoryId = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_CATEGORY));
-                        int sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
-                        if (listRepository.createProductItem(productName, market, "", 0, categoryId, sequence)) {
+                        String productName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
+                        String market = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
+                        int categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID));
+                        if (listRepository.createProductItem(productName, market, "", 0, categoryId)) {
                             getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                             getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
                             new Handler().postDelayed(new Runnable() {

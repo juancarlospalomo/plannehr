@@ -64,7 +64,7 @@ public class UseCaseMyProducts {
         boolean result = false;
         ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
         result = shoppingListRepository.createProductItem(productHistory.name ,
-                productHistory.marketName, "", 0, productHistory.categoryId, 0);
+                productHistory.marketName, "", 0, productHistory.categoryId);
         shoppingListRepository.close();
         return result;
     }

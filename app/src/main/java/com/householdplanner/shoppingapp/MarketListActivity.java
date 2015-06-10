@@ -25,8 +25,8 @@ import android.widget.TextView;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
-import com.householdplanner.shoppingapp.stores.MarketStore;
 
 public class MarketListActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
@@ -122,7 +122,7 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
     }
 
     private void loadMarkets() {
-        String[] fields = new String[]{MarketStore.COLUMN_MARKET_NAME};
+        String[] fields = new String[]{ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME};
         int[] listViewColumns = new int[]{android.R.id.text1};
 
         try {
@@ -241,11 +241,11 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
                 viewHolder = (ViewHolder) convertView.getTag();
             }
             mCursor.moveToPosition(position);
-            final String marketName = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
+            final String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
 
             final int pos = position;
 
-            String color = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_COLOR));
+            String color = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_COLOR));
             if (color != null) {
                 GradientDrawable drawable = (GradientDrawable) getResources().getDrawable(R.drawable.square_blue);
                 drawable.mutate();
@@ -261,8 +261,8 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
                 @Override
                 public void onClick(View v) {
                     mCursor.moveToPosition(pos);
-                    int marketId = mCursor.getInt(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_ID));
-                    String marketName = mCursor.getString(mCursor.getColumnIndex(MarketStore.COLUMN_MARKET_NAME));
+                    int marketId = mCursor.getInt(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_ID));
+                    String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
                     Intent data = new Intent();
                     data.putExtra(EXTRA_MARKET_ID, marketId);
                     data.putExtra(EXTRA_MARKET_NAME, marketName);

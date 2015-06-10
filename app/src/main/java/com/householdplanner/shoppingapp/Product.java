@@ -10,7 +10,6 @@ import android.widget.Toast;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
-import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
 
 public class Product implements DialogInterface.OnClickListener {
 
@@ -67,14 +66,13 @@ public class Product implements DialogInterface.OnClickListener {
         Cursor cursor = historyRepository.getProduct(mProductName, mMarket);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                categoryId = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_CATEGORY));
-                sequence = cursor.getInt(cursor.getColumnIndex(ProductHistoryStore.COLUMN_SEQUENCE));
+                categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID));
                 if (TextUtils.isEmpty(mMarket)) {
-                    mMarket = cursor.getString(cursor.getColumnIndex(ProductHistoryStore.COLUMN_MARKET));
+                    mMarket = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
                 }
             }
         }
-        if (listRepository.createProductItem(mProductName, mMarket, mAmount, mUnitId, categoryId, sequence)) {
+        if (listRepository.createProductItem(mProductName, mMarket, mAmount, mUnitId, categoryId)) {
             mActivity.getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
             mActivity.getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
             mProductCallback.onSaveProduct();

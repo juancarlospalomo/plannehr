@@ -2,41 +2,59 @@ package com.householdplanner.shoppingapp.stores;
 
 import android.database.sqlite.SQLiteDatabase;
 
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
+
 public class BudgetStore {
 
-	//Budget table
-	public static final String TABLE_BUDGET = "Budget";
-	public static final String COLUMN_ID = "_id";
-	public static final String COLUMN_MONTH = "Month";
-	public static final String COLUMN_AVAILABLE = "Available";
-	public static final String COLUMN_TARGET = "Target";
-	public static final String COLUMN_WITHDRAWN = "WithDrawn";
-	public static final String COLUMN_LAST_WITHDRAWN = "LWithDrawn";
-	public static final String COLUMN_WALLET = "Wallet";
-	public static final String COLUMN_LAST_WALLET = "LWallet";
-	public static final String COLUMN_DEVICE_WITHDRAWN = "DeviceWithDrawn";
-	public static final String COLUMN_DEVICE_WALLET = "DeviceWallet";
+    // Database creation SQL statement
+    private static final String SQL_TABLE_CREATE = "CREATE TABLE "
+            + ShoppingListContract.BudgetEntry.TABLE_NAME
+            + "(" + ShoppingListContract.BudgetEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + ShoppingListContract.BudgetEntry.COLUMN_MONTH + " INTEGER, "
+            + ShoppingListContract.BudgetEntry.COLUMN_AVAILABLE + " REAL, "
+            + ShoppingListContract.BudgetEntry.COLUMN_TARGET + " REAL, "
+            + ShoppingListContract.BudgetEntry.COLUMN_WITHDRAWN + " REAL, "
+            + ShoppingListContract.BudgetEntry.COLUMN_WALLET + " REAL, "
+            + ShoppingListContract.BudgetEntry.COLUMN_LAST_WITHDRAWN + " REAL, "
+            + ShoppingListContract.BudgetEntry.COLUMN_LAST_WALLET + " REAL);";
 
-	// Database creation SQL statement
-	private static final String SQL_TABLE_CREATE = "create table " 
-			+ TABLE_BUDGET
-			+ "(" 
-			+ COLUMN_ID + " integer primary key autoincrement, " 
-			+ COLUMN_MONTH + " integer, "
-			+ COLUMN_AVAILABLE + " real, "
-			+ COLUMN_TARGET + " real, "
-			+ COLUMN_WITHDRAWN + " real, "
-			+ COLUMN_WALLET + " real, "
-			+ COLUMN_DEVICE_WITHDRAWN + " real, "
-			+ COLUMN_DEVICE_WALLET + " real, "
-			+ COLUMN_LAST_WITHDRAWN + " real, " 
-			+ COLUMN_LAST_WALLET + " real);";
-	
-	public static void onCreate(SQLiteDatabase database) {
-		database.execSQL(SQL_TABLE_CREATE);
-	}
-	
-	public static void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+    public static void onCreate(SQLiteDatabase database) {
+        database.execSQL(SQL_TABLE_CREATE);
+    }
 
-	}
+    public static void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
+        if (oldVersion < 5 && newVersion == 5) {
+            onUpgradeV5(database);
+        }
+    }
+
+    /**
+     * Update table to V5 version
+     * @param database
+     */
+    private static void onUpgradeV5(SQLiteDatabase database) {
+        String sql = "ALTER TABLE " + ShoppingListContract.BudgetEntry.TABLE_NAME
+                + " RENAME TO " + ShoppingListContract.BudgetEntry.TABLE_NAME + "_old;";
+        database.execSQL(sql);
+        database.execSQL(SQL_TABLE_CREATE);
+        database.execSQL("INSERT INTO " + ShoppingListContract.BudgetEntry.TABLE_NAME
+                + "(" + ShoppingListContract.BudgetEntry.COLUMN_MONTH + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_AVAILABLE + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_TARGET + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_WITHDRAWN + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_WALLET + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_LAST_WITHDRAWN + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_LAST_WALLET + ") "
+                + "SELECT " + ShoppingListContract.BudgetEntry.COLUMN_MONTH + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_AVAILABLE + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_TARGET + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_WITHDRAWN + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_WALLET + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_LAST_WITHDRAWN + ","
+                + ShoppingListContract.BudgetEntry.COLUMN_LAST_WALLET + " "
+                + "FROM " + ShoppingListContract.BudgetEntry.TABLE_NAME + "_old;");
+
+        database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.BudgetEntry.TABLE_NAME + "_old");
+    }
+
 }

@@ -8,9 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 import com.householdplanner.shoppingapp.cross.util;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.stores.DatabaseHelper;
-import com.householdplanner.shoppingapp.stores.ProductHistoryStore;
-import com.householdplanner.shoppingapp.stores.ShoppingListStore;
 import com.householdplanner.shoppingapp.stores.ShoppingListStore.TypeOperation;
 
 import java.util.Locale;
@@ -23,18 +22,13 @@ public class ShoppingListRepository {
     private Cursor mCursor;
     private Context mContext;
 
-    private String[] allColumns = {ShoppingListStore.COLUMN_ID,
-            ShoppingListStore.COLUMN_PRODUCT_MODIFIED,
-            ShoppingListStore.COLUMN_PRODUCT_NAME,
-            ShoppingListStore.COLUMN_MARKET,
-            ShoppingListStore.COLUMN_AMOUNT,
-            ShoppingListStore.COLUMN_UNIT_ID,
-            ShoppingListStore.COLUMN_CATEGORY,
-            ShoppingListStore.COLUMN_COMMITTED,
-            ShoppingListStore.COLUMN_SEQUENCE,
-            ShoppingListStore.COLUMN_SHOPPING_DATE,
-            ShoppingListStore.COLUMN_OPERATION,
-            ShoppingListStore.COLUMN_SYNC_TIMESTAMP};
+    private String[] allColumns = {ShoppingListContract.ProductEntry._ID,
+            ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME,
+            ShoppingListContract.ProductEntry.COLUMN_MARKET,
+            ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT,
+            ShoppingListContract.ProductEntry.COLUMN_UNIT_ID,
+            ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID,
+            ShoppingListContract.ProductEntry.COLUMN_COMMITTED};
 
     public ShoppingListRepository(Context context) {
         mShoppingListStore = new DatabaseHelper(context);
@@ -45,10 +39,6 @@ public class ShoppingListRepository {
         mShoppingListStore = new DatabaseHelper(context);
         mContext = context;
         mDatabase = database;
-    }
-
-    protected void onDestroy() {
-        this.close();
     }
 
     private void open() throws SQLException {
@@ -69,29 +59,36 @@ public class ShoppingListRepository {
     }
 
     public boolean createProductItem(String productName,
-                                     String market, String amount, int unitId, int categoryId, int sequence) {
+                                     String market, String amount, int unitId, int categoryId) {
 
-        return createProductItem(1, productName, market, amount,
-                unitId, categoryId, sequence, 0, TypeOperation.Add, util.getDateTime());
+        return createProductItem(productName, market, amount,
+                unitId, categoryId, 0, TypeOperation.Add, util.getDateTime());
     }
 
-    private boolean createProductItem(int modified, String productName,
-                                      String market, String amount, int unitId, int categoryId, int sequence,
+    /**
+     * Create a product on the list
+     *
+     * @param productName
+     * @param market
+     * @param amount
+     * @param unitId
+     * @param categoryId
+     * @param committed
+     * @param operation
+     * @param syncDate
+     * @return
+     */
+    private boolean createProductItem(String productName, String market, String amount, int unitId, int categoryId,
                                       int committed, TypeOperation operation, String syncDate) {
         ContentValues values = new ContentValues();
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, modified);
-        values.put(ShoppingListStore.COLUMN_PRODUCT_NAME, util.capitalize(productName));
+        values.put(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME, util.capitalize(productName));
         if (!TextUtils.isEmpty(market))
-            values.put(ShoppingListStore.COLUMN_MARKET, market.toLowerCase(Locale.getDefault()));
-        values.put(ShoppingListStore.COLUMN_AMOUNT, amount);
-        values.put(ShoppingListStore.COLUMN_UNIT_ID, unitId);
-        values.put(ShoppingListStore.COLUMN_CATEGORY, categoryId);
-        values.put(ShoppingListStore.COLUMN_COMMITTED, committed);
-        values.put(ShoppingListStore.COLUMN_SEQUENCE, sequence);
-        values.put(ShoppingListStore.COLUMN_SHOPPING_DATE, "");
-        values.put(ShoppingListStore.COLUMN_OPERATION, operation.getValue());
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, syncDate);
-        long insertId = getDatabase().insert(ShoppingListStore.TABLE_LIST, null,
+            values.put(ShoppingListContract.ProductEntry.COLUMN_MARKET, market.toLowerCase(Locale.getDefault()));
+        values.put(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT, amount);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID, unitId);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID, categoryId);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_COMMITTED, committed);
+        long insertId = getDatabase().insert(ShoppingListContract.ProductEntry.TABLE_NAME, null,
                 values);
 
         if (insertId > 0) {
@@ -112,19 +109,19 @@ public class ShoppingListRepository {
             int categoryId;
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-                    productName = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-                    market = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET));
-                    categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_CATEGORY));
+                    productName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME));
+                    market = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_MARKET));
+                    categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID));
                     Cursor product = productHistoryRepository.getProduct(productName, market);
                     if (product != null) {
                         if (product.moveToFirst()) {
-                            int historyCategoryId = product.getInt(product.getColumnIndex(ProductHistoryStore.COLUMN_CATEGORY));
-                            int id = product.getInt(product.getColumnIndex(ProductHistoryStore.COLUMN_ID));
+                            int historyCategoryId = product.getInt(product.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID));
+                            int id = product.getInt(product.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID));
                             if (historyCategoryId != categoryId) {
-                                productHistoryRepository.updateProductItem(id, market, categoryId, 1, util.getDateTime(), -1);
+                                productHistoryRepository.updateProductItem(id, market, categoryId);
                             }
                         } else {
-                            productHistoryRepository.createProductItem(productName, market, categoryId, 1, util.getDateTime());
+                            productHistoryRepository.createProductItem(productName, market, categoryId);
                         }
                     }
                     cursor.moveToNext();
@@ -147,26 +144,23 @@ public class ShoppingListRepository {
                                      String market, String amount, int unitId, int categoryId) {
         boolean result = false;
         ContentValues values = new ContentValues();
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-        values.put(ShoppingListStore.COLUMN_PRODUCT_NAME, util.capitalize(productName));
+        values.put(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME, util.capitalize(productName));
         if (market != null)
-            values.put(ShoppingListStore.COLUMN_MARKET, market.toLowerCase(Locale.getDefault()));
+            values.put(ShoppingListContract.ProductEntry.COLUMN_MARKET, market.toLowerCase(Locale.getDefault()));
         else
-            values.putNull(ShoppingListStore.COLUMN_MARKET);
-        values.put(ShoppingListStore.COLUMN_AMOUNT, amount);
-        values.put(ShoppingListStore.COLUMN_UNIT_ID, unitId);
-        values.put(ShoppingListStore.COLUMN_CATEGORY, categoryId);
-        values.put(ShoppingListStore.COLUMN_COMMITTED, 0);
-        values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Update.getValue());
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
+            values.putNull(ShoppingListContract.ProductEntry.COLUMN_MARKET);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT, amount);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID, unitId);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID, categoryId);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_COMMITTED, 0);
         getDatabase().beginTransaction();
-        long rowsAffected = getDatabase().update(ShoppingListStore.TABLE_LIST,
+        long rowsAffected = getDatabase().update(ShoppingListContract.ProductEntry.TABLE_NAME,
                 values, "_id=" + id, null);
         if (rowsAffected > 0) {
             ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext, getDatabase());
             int historyId = historyRepository.getProductId(productName, market);
             if (historyId > 0) {
-                result = historyRepository.updateProductItem(id, market, categoryId, 1, util.getDateTime(), -1);
+                result = historyRepository.updateProductItem(id, market, categoryId);
                 result = true;
             } else {
                 result = true;
@@ -182,44 +176,24 @@ public class ShoppingListRepository {
         return result;
     }
 
-    public void copyToSupermarket(int id, String newMarket) {
-        String selectSql, insertSql;
-        selectSql = "SELECT 1, Name, ";
-        insertSql = "INSERT INTO " + ShoppingListStore.TABLE_LIST
-                + " (Modify, Name,";
-        if (newMarket != null) {
-            newMarket = newMarket.toLowerCase(Locale.getDefault());
-            selectSql += "'" + newMarket + "',";
-
-            insertSql += "Market,";
-        }
-        selectSql += " Amount, UnitId, Category, Comitted, Sequence, SDate, " + TypeOperation.Add.getValue() + ",'" + util.getDateTime() + "'"
-                + " FROM " + ShoppingListStore.TABLE_LIST
-                + " WHERE _id = " + id;
-        insertSql += "Amount, UnitId, Category, Comitted, Sequence, SDate, op, SyncDate) ";
-        getDatabase().execSQL(insertSql + selectSql);
-    }
 
     public void moveToSupermaket(int id, String newMarket) {
-        Cursor cursor = getDatabase().query(ShoppingListStore.TABLE_LIST,
-                new String[]{ShoppingListStore.COLUMN_PRODUCT_NAME,
-                        ShoppingListStore.COLUMN_MARKET}, "_id=" + id, null, null, null, null);
+        Cursor cursor = getDatabase().query(ShoppingListContract.ProductEntry.TABLE_NAME,
+                new String[]{ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME,
+                        ShoppingListContract.ProductEntry.COLUMN_MARKET}, "_id=" + id, null, null, null, null);
         if (cursor != null) {
             if (cursor.moveToFirst()) {
-                String productName = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-                String market = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET));
+                String productName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME));
+                String market = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_MARKET));
                 ContentValues values = new ContentValues();
                 if (newMarket != null) {
-                    values.put(ShoppingListStore.COLUMN_MARKET, newMarket.toLowerCase(Locale.getDefault()));
+                    values.put(ShoppingListContract.ProductEntry.COLUMN_MARKET, newMarket.toLowerCase(Locale.getDefault()));
                 } else {
-                    values.putNull(ShoppingListStore.COLUMN_MARKET);
+                    values.putNull(ShoppingListContract.ProductEntry.COLUMN_MARKET);
                 }
-                values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-                values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Update.getValue());
-                values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
                 getDatabase().beginTransaction();
-                if (getDatabase().update(ShoppingListStore.TABLE_LIST, values,
-                        ShoppingListStore.COLUMN_ID + "=" + id, null) > 0) {
+                if (getDatabase().update(ShoppingListContract.ProductEntry.TABLE_NAME, values,
+                        ShoppingListContract.ProductEntry._ID + "=" + id, null) > 0) {
                     ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext, getDatabase());
                     historyRepository.moveToSupermarket(productName, market, newMarket);
                     getDatabase().setTransactionSuccessful();
@@ -229,6 +203,12 @@ public class ShoppingListRepository {
         }
     }
 
+    /**
+     * Rename supermarket
+     *
+     * @param oldMarket current name
+     * @param newMarket new name
+     */
     public void renameSupermarket(String oldMarket, String newMarket) {
         ContentValues values = new ContentValues();
         if (newMarket != null) {
@@ -237,31 +217,26 @@ public class ShoppingListRepository {
         if (oldMarket != null) {
             oldMarket = oldMarket.toLowerCase(Locale.getDefault());
         }
-        values.put(ShoppingListStore.COLUMN_MARKET, newMarket);
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-        values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Update.getValue());
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
-        getDatabase().update(ShoppingListStore.TABLE_LIST, values,
-                ShoppingListStore.COLUMN_MARKET + "='" + oldMarket + "'", null);
+        values.put(ShoppingListContract.ProductEntry.COLUMN_MARKET, newMarket);
+        getDatabase().update(ShoppingListContract.ProductEntry.TABLE_NAME, values,
+                ShoppingListContract.ProductEntry.COLUMN_MARKET + "='" + oldMarket + "'", null);
 
     }
 
+    /**
+     * Remove a supermarket from all products that owns it
+     *
+     * @param oldMarket market name
+     */
     public void unSetMarket(String oldMarket) {
         ContentValues values = new ContentValues();
-        values.putNull(ShoppingListStore.COLUMN_MARKET);
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-        values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Update.getValue());
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
-        getDatabase().update(ShoppingListStore.TABLE_LIST, values,
-                ShoppingListStore.COLUMN_MARKET + "='" + oldMarket.toLowerCase(Locale.getDefault()) + "'", null);
-    }
-
-    public boolean deleteProductItem(int id) {
-        return deletePermanentProductItem(id);
+        values.putNull(ShoppingListContract.ProductEntry.COLUMN_MARKET);
+        getDatabase().update(ShoppingListContract.ProductEntry.TABLE_NAME, values,
+                ShoppingListContract.ProductEntry.COLUMN_MARKET + "='" + oldMarket.toLowerCase(Locale.getDefault()) + "'", null);
     }
 
     public boolean deletePermanentProductItem(int id) {
-        int rowsAffected = getDatabase().delete(ShoppingListStore.TABLE_LIST, "_id=" + id, null);
+        int rowsAffected = getDatabase().delete(ShoppingListContract.ProductEntry.TABLE_NAME, "_id=" + id, null);
         if (rowsAffected > 0) {
             return true;
         } else {
@@ -269,36 +244,38 @@ public class ShoppingListRepository {
         }
     }
 
+    /**
+     * Take the product to the cart
+     *
+     * @param id product identifier
+     */
     public void commitProduct(int id) {
         ContentValues values = new ContentValues();
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-        values.put(ShoppingListStore.COLUMN_COMMITTED, 1);
-        values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Update.getValue());
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
-        getDatabase().update(ShoppingListStore.TABLE_LIST, values, ShoppingListStore.COLUMN_ID + "=" + id
+        values.put(ShoppingListContract.ProductEntry.COLUMN_COMMITTED, 1);
+        getDatabase().update(ShoppingListContract.ProductEntry.TABLE_NAME, values, ShoppingListContract.ProductEntry._ID + "=" + id
                 , null);
     }
 
+    /**
+     * Get out the product from the cart
+     *
+     * @param id product identifier
+     */
     public void rollbackProduct(int id) {
         ContentValues values = new ContentValues();
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 1);
-        values.put(ShoppingListStore.COLUMN_COMMITTED, 0);
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, util.getDateTime());
-        values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Update.getValue());
-        getDatabase().update(ShoppingListStore.TABLE_LIST, values, ShoppingListStore.COLUMN_ID + "=" + id
+        values.put(ShoppingListContract.ProductEntry.COLUMN_COMMITTED, 0);
+        getDatabase().update(ShoppingListContract.ProductEntry.TABLE_NAME, values, ShoppingListContract.ProductEntry._ID + "=" + id
                 , null);
     }
 
-    public Cursor getProduct(String name) {
-        return getDatabase().query(ShoppingListStore.TABLE_LIST, allColumns,
-                ShoppingListStore.COLUMN_PRODUCT_NAME + "='" + name + "'", null, null, null, null);
-
-    }
-
+    /**
+     * Get if there are at least one supermarket with products
+     *
+     * @return true if there are some supermarkets with products
+     */
     public boolean existsProductsInSupermarket() {
-        String selection = ShoppingListStore.COLUMN_MARKET + " is not null "
-                + "AND " + ShoppingListStore.COLUMN_OPERATION + "<>" + TypeOperation.Delete.getValue();
-        Cursor cursor = getDatabase().query(ShoppingListStore.TABLE_LIST, allColumns,
+        String selection = ShoppingListContract.ProductEntry.COLUMN_MARKET + " is not null ";
+        Cursor cursor = getDatabase().query(ShoppingListContract.ProductEntry.TABLE_NAME, allColumns,
                 selection, null, null, null, null);
         if (cursor != null) {
             if (cursor.getCount() > 0) return true;
@@ -308,294 +285,40 @@ public class ShoppingListRepository {
         }
     }
 
-    public Cursor getDeviceChangedProductItem() {
-        mCursor = this.getDatabase().query(ShoppingListStore.TABLE_LIST,
-                allColumns, ShoppingListStore.COLUMN_PRODUCT_MODIFIED + "=1", null, null, null, null);
-        return mCursor;
-    }
-
-    public int getProductsCount() {
-        String selection = ShoppingListStore.COLUMN_OPERATION + "<>" + TypeOperation.Delete.getValue();
-        Cursor cursor = this.getDatabase().query(ShoppingListStore.TABLE_LIST,
-                allColumns, ShoppingListStore.COLUMN_COMMITTED + "=0 and " +
-                        selection, null, null, null,
-                ShoppingListStore.COLUMN_PRODUCT_NAME + " ASC");
-        if (cursor != null) {
-            return cursor.getCount();
-        } else {
-            return 0;
-        }
-    }
-
-    public Cursor getProductsNoCommittedByMarket(String marketName) {
-        String selection = ShoppingListStore.COLUMN_OPERATION + "<>" + TypeOperation.Delete.getValue();
-        if ((marketName != null) && (!TextUtils.isEmpty(marketName)))
-            selection += " AND " + ShoppingListStore.COLUMN_MARKET + "='" + marketName.toLowerCase(Locale.getDefault()) + "'";
-        mCursor = this.getDatabase().query(ShoppingListStore.TABLE_LIST,
-                allColumns, ShoppingListStore.COLUMN_COMMITTED + "=0 and " +
-                        selection, null, null, null,
-                ShoppingListStore.COLUMN_PRODUCT_NAME + " ASC");
-        return mCursor;
-    }
-
-    public Cursor getProductsNotCommittedOrderedByCategory(int marketId, String marketName, boolean getNotSet) {
-        if (marketId == 0) marketId = 1;
-
-        String sql = "SELECT List._id, List.Name, List.Market, List.Amount, "
-                + "List.UnitId, List.Category, List.Sequence, List.SDate, MarketCategory.CategoryOrder "
-                + " FROM List LEFT JOIN MarketCategory ON List.Category = MarketCategory.CategoryId "
-                + " WHERE List.Comitted = 0 AND List.op <> " + TypeOperation.Delete.getValue()
-                + " AND MarketCategory.MarketId = " + marketId;
-        if (!TextUtils.isEmpty(marketName)) {
-            if (getNotSet) {
-                sql += " AND (List.Market = '" + marketName.toLowerCase(Locale.getDefault()) + "'"
-                        + " OR List.Market IS NULL OR List.Market='')";
-            } else {
-                sql += " AND List.Market = '" + marketName.toLowerCase(Locale.getDefault()) + "'";
-            }
-        }
-        sql += " ORDER BY MarketCategory.CategoryOrder";
-        mCursor = getDatabase().rawQuery(sql, null);
-        return mCursor;
-    }
-
+    /**
+     * Get the products in the cart
+     *
+     * @return cursor with the products in the cart
+     */
     public Cursor getProductsCommitted() {
-        return this.getDatabase().query(ShoppingListStore.TABLE_LIST, allColumns,
-                ShoppingListStore.COLUMN_COMMITTED + "=1 and " +
-                        ShoppingListStore.COLUMN_OPERATION + "<>" + TypeOperation.Delete.getValue(), null, null, null,
-                ShoppingListStore.COLUMN_SHOPPING_DATE + " DESC");
+        return this.getDatabase().query(ShoppingListContract.ProductEntry.TABLE_NAME, allColumns,
+                ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=1 ", null, null, null, null);
     }
 
+    /**
+     * Clean the cart
+     *
+     * @return true if the products were deleted from the cart
+     */
     public boolean deleteCommittedProducts() {
-        return getDatabase().delete(ShoppingListStore.TABLE_LIST, ShoppingListStore.COLUMN_COMMITTED + "=1", null) > 0;
+        return getDatabase().delete(ShoppingListContract.ProductEntry.TABLE_NAME, ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=1", null) > 0;
     }
 
+    /**
+     * Find out if one product is in Shopping List
+     *
+     * @param name product name
+     * @return true if the product exists on the shopping list
+     */
     public boolean existProductInNotCommittedList(String name) {
         boolean result = false;
-        Cursor cursor = this.getDatabase().rawQuery("SELECT _id FROM List WHERE Name = '"
-                + name + "' and " + ShoppingListStore.COLUMN_OPERATION + "<>" + TypeOperation.Delete.getValue(), null);
+        String sql = "SELECT " + ShoppingListContract.ProductEntry._ID + " "
+                + "FROM " + ShoppingListContract.ProductEntry.TABLE_NAME + " "
+                + "WHERE " + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + "'" + name + "'";
+
+        Cursor cursor = this.getDatabase().rawQuery(sql, null);
         if (cursor.getCount() > 0) result = true;
         return result;
-    }
-
-    public boolean endSyncProcess() {
-        boolean result = true;
-        try {
-            ContentValues values = new ContentValues();
-            values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 0);
-            values.put(ShoppingListStore.COLUMN_OPERATION, TypeOperation.Unchanged.getValue());
-            getDatabase().beginTransaction();
-            getDatabase().delete(ShoppingListStore.TABLE_LIST, ShoppingListStore.COLUMN_OPERATION + "=" + TypeOperation.Delete.getValue(), null);
-            getDatabase().update(ShoppingListStore.TABLE_LIST, values, null, null);
-            getDatabase().setTransactionSuccessful();
-            getDatabase().endTransaction();
-        } catch (Exception e) {
-            result = false;
-        }
-        return result;
-    }
-
-    public boolean createTempTable() {
-        boolean result = false;
-        try {
-            ShoppingListStore.createTemp(this.getDatabase());
-            result = true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
-    public boolean createTempProductItem(String productName, String market, String amount,
-                                         int unitId, int categoryId, int committed, int sequence, int operation, String syncDate) {
-        ContentValues values = new ContentValues();
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 0);
-        values.put(ShoppingListStore.COLUMN_PRODUCT_NAME, productName);
-        values.put(ShoppingListStore.COLUMN_MARKET, market);
-        values.put(ShoppingListStore.COLUMN_AMOUNT, amount);
-        values.put(ShoppingListStore.COLUMN_UNIT_ID, unitId);
-        values.put(ShoppingListStore.COLUMN_CATEGORY, categoryId);
-        values.put(ShoppingListStore.COLUMN_COMMITTED, committed);
-        values.put(ShoppingListStore.COLUMN_SEQUENCE, sequence);
-        values.put(ShoppingListStore.COLUMN_OPERATION, operation);
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, syncDate);
-        long insertId = getDatabase().insert("List_Temp", null, values);
-        if (insertId > 0) return true;
-        else return false;
-    }
-
-    public void insertRowsNotInList() {
-        String sqlSelect = "SELECT List_Temp.Name, List_Temp.Market, " +
-                "List_Temp.Amount, List_Temp.UnitId, " +
-                "List_Temp.Category, List_Temp.Comitted, List_Temp.Sequence, List_Temp.op, " +
-                "List_Temp.SyncDate " +
-                "FROM List_Temp " +
-                "WHERE List_Temp.op = " + TypeOperation.Add.getValue();
-
-        Cursor cursor = getDatabase().rawQuery(sqlSelect, null);
-        Cursor product = null;
-        int unitId, categoryId, sequence, committed;
-        String productName, market, amount, syncDate;
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                while (!cursor.isAfterLast()) {
-                    boolean insertRecord = true;
-                    product = getProduct(cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME)));
-                    if (product != null) {
-                        if (product.moveToFirst()) {
-                            int id = product.getInt(product.getColumnIndex(ShoppingListStore.COLUMN_ID));
-                            if (product.getInt(product.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_MODIFIED)) == 1) {
-                                String deviceSyncDate = product.getString(product.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                                String dbSyncDate = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                                if (util.compareDates(dbSyncDate, deviceSyncDate) == 1) {
-                                    //Device has got the product, so we delete it
-                                    //as he was entered in centralized db before this one
-                                    deletePermanentProductItem(id);
-                                    //we insert the record from db
-                                    insertRecord = true;
-                                } else {
-                                    //we have inserted the record before the other users
-                                    insertRecord = false;
-                                }
-                            } else {
-                                deletePermanentProductItem(id);
-                                insertRecord = true;
-                            }
-                        }
-                    }
-                    if (insertRecord) {
-                        productName = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-                        market = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET));
-                        amount = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_AMOUNT));
-                        unitId = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_UNIT_ID));
-                        categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_CATEGORY));
-                        committed = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_COMMITTED));
-                        sequence = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_SEQUENCE));
-                        syncDate = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                        createProductItem(0, productName, market, amount, unitId, categoryId, sequence, committed, TypeOperation.Unchanged, syncDate);
-                    }
-                    cursor.moveToNext();
-                }
-                if (product != null) product.close();
-            }
-        }
-        if (cursor != null) cursor.close();
-    }
-
-    public void updateChangedRows() {
-        String sqlSelect = "SELECT List_Temp.Name, List_Temp.Market, " +
-                "List_Temp.Amount, List_Temp.UnitId, " +
-                "List_Temp.Category, List_Temp.Comitted, List_Temp.Sequence, List_Temp.op, " +
-                "List_Temp.SyncDate " +
-                "FROM List_Temp " +
-                "WHERE List_Temp.op = " + TypeOperation.Update.getValue();
-        Cursor cursor = getDatabase().rawQuery(sqlSelect, null);
-        Cursor product = null;
-        int unitId, categoryId, sequence, committed;
-        String productName, market, amount, syncDate, deviceSyncDate;
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                while (!cursor.isAfterLast()) {
-                    productName = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME));
-                    market = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_MARKET));
-                    amount = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_AMOUNT));
-                    unitId = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_UNIT_ID));
-                    categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_CATEGORY));
-                    committed = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_COMMITTED));
-                    sequence = cursor.getInt(cursor.getColumnIndex(ShoppingListStore.COLUMN_SEQUENCE));
-                    syncDate = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                    product = getProduct(cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME)));
-                    if (product != null) {
-                        if (product.moveToFirst()) {
-                            //Device has got the product, so we check the timestamp
-                            //get the timestamp from centralized db
-                            int id = product.getInt(product.getColumnIndex(ShoppingListStore.COLUMN_ID));
-                            deviceSyncDate = product.getString(product.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                            //if timestamp db > timestamp device, then update the data
-                            //in the device, because the db is newer
-                            if (product.getInt(product.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_MODIFIED)) == 1) {
-                                //If it has been modified in the device too, the compare dates
-                                if (util.compareDates(syncDate, deviceSyncDate) == 1) {
-                                    updateChangedRow(id, productName, market, amount, unitId, categoryId, committed, sequence, TypeOperation.Update, syncDate);
-                                }
-                            } else {
-                                updateChangedRow(id, productName, market, amount, unitId, categoryId, committed, sequence, TypeOperation.Update, syncDate);
-                            }
-                        } else {
-                            createProductItem(0, productName, market, amount, unitId, categoryId, sequence, committed, TypeOperation.Unchanged, syncDate);
-                        }
-                    }
-                    cursor.moveToNext();
-                }
-                if (product != null) product.close();
-            }
-        }
-        if (cursor != null) cursor.close();
-    }
-
-    public void deleteRows() {
-        String sqlSelect = "SELECT List_Temp.Name, List_Temp.Market, " +
-                "List_Temp.Amount, List_Temp.UnitId, " +
-                "List_Temp.Category, List_Temp.Comitted, List_Temp.Sequence, List_Temp.op, " +
-                "List_Temp.SyncDate " +
-                "FROM List_Temp " +
-                "WHERE List_Temp.op = " + TypeOperation.Delete.getValue();
-
-        Cursor cursor = getDatabase().rawQuery(sqlSelect, null);
-        Cursor product = null;
-        String syncDate, deviceSyncDate;
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                while (!cursor.isAfterLast()) {
-                    syncDate = cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                    product = getProduct(cursor.getString(cursor.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_NAME)));
-                    if (product != null) {
-                        if (product.moveToFirst()) {
-                            //Exists, then we compare the dates
-                            //if timestamp in db is greater than timestamp in device
-                            //then we delete it
-                            int id = product.getInt(product.getColumnIndex(ShoppingListStore.COLUMN_ID));
-                            //Compare dates only if the product has been changed in
-                            //the device too.
-                            if (product.getInt(product.getColumnIndex(ShoppingListStore.COLUMN_PRODUCT_MODIFIED)) == 1) {
-                                deviceSyncDate = product.getString(product.getColumnIndex(ShoppingListStore.COLUMN_SYNC_TIMESTAMP));
-                                //if timestamp db > timestamp device, then update the data
-                                //in the device, because the db is newer
-                                if (util.compareDates(syncDate, deviceSyncDate) == 1) {
-                                    deletePermanentProductItem(id);
-                                }
-                            } else {
-                                deletePermanentProductItem(id);
-                            }
-                        }
-                    }
-                    cursor.moveToNext();
-                }
-                if (product != null) product.close();
-            }
-        }
-        if (cursor != null) cursor.close();
-    }
-
-    private void updateChangedRow(int id, String productName, String market, String amount,
-                                  int unitId, int categoryId, int committed, int sequence, TypeOperation operation,
-                                  String syncDate) {
-        ContentValues values = new ContentValues();
-        values.put(ShoppingListStore.COLUMN_PRODUCT_MODIFIED, 0);
-        values.put(ShoppingListStore.COLUMN_PRODUCT_NAME, productName);
-        if (TextUtils.isEmpty(market)) {
-            values.putNull(ShoppingListStore.COLUMN_MARKET);
-        } else {
-            values.put(ShoppingListStore.COLUMN_MARKET, market);
-        }
-        values.put(ShoppingListStore.COLUMN_AMOUNT, amount);
-        values.put(ShoppingListStore.COLUMN_UNIT_ID, unitId);
-        values.put(ShoppingListStore.COLUMN_CATEGORY, categoryId);
-        values.put(ShoppingListStore.COLUMN_COMMITTED, committed);
-        values.put(ShoppingListStore.COLUMN_SEQUENCE, sequence);
-        values.put(ShoppingListStore.COLUMN_OPERATION, operation.getValue());
-        values.put(ShoppingListStore.COLUMN_SYNC_TIMESTAMP, syncDate);
-        getDatabase().update(ShoppingListStore.TABLE_LIST, values, "_id=" + id, null);
     }
 
 }
