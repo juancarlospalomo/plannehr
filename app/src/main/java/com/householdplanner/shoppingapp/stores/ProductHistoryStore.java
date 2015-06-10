@@ -76,9 +76,6 @@ public class ProductHistoryStore {
                 + "FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old;");
 
         database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old");
-
-        //Insert Products
-        insertProducts(database);
     }
 
     private static boolean existProduct(String productName, SQLiteDatabase db) {
@@ -453,8 +450,8 @@ public class ProductHistoryStore {
      */
     private static String getProductInsertSQL(String productName, int categoryId) {
         String sql = "INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", "
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + " VALUES "
+                + "(" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", "
+                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + ") VALUES "
                 + "('" + productName + "', " + categoryId + ")";
         return sql;
     }

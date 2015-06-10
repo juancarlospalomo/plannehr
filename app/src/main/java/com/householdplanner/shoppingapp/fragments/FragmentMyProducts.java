@@ -197,7 +197,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                             if (mSnackBar.getAdapterPosition() == SnackBar.INVALID_POSITION) {
                                 //Deleting has finished
                                 if (lastPosition != SnackBar.INVALID_POSITION) {
-                                    //As the Adapter has been altered deleting the row the snackbar had stored,
+                                    //As the Adapter has been altered deleting the row the SnackBar has stored,
                                     //the position where the user clicked on is not the same yet
                                     position = mAdapter.findPositionByName(productName);
                                 }

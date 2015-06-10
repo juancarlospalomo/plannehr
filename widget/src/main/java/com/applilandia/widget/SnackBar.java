@@ -178,9 +178,9 @@ public class SnackBar extends RelativeLayout {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private void showAnimator() {
         setAlpha(1);
-        animate().setDuration(2000)
+        animate().setDuration(1000)
                 .setInterpolator(new AccelerateInterpolator())
-                .alpha(0f)
+                .alpha(1f)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

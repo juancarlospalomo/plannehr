@@ -153,12 +153,22 @@ public class UseCaseShoppingList {
     }
 
     /**
-     * Get out a produc from the cart
+     * Get out a product from the cart
      * @param product product to remove
      */
     public void removeFromBasket(Product product) {
         ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
         shoppingListRepository.rollbackProduct(product._id);
+        shoppingListRepository.close();
+    }
+
+    /**
+     * Remove a product from the list
+     * @param product product to remove
+     */
+    public void removeFromList(Product product) {
+        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
+        shoppingListRepository.deletePermanentProductItem(product._id);
         shoppingListRepository.close();
     }
 

@@ -235,8 +235,14 @@ public class ShoppingListRepository {
                 ShoppingListContract.ProductEntry.COLUMN_MARKET + "='" + oldMarket.toLowerCase(Locale.getDefault()) + "'", null);
     }
 
+    /**
+     * Delete product from list
+     * @param id product id
+     * @return true if it was deleted
+     */
     public boolean deletePermanentProductItem(int id) {
-        int rowsAffected = getDatabase().delete(ShoppingListContract.ProductEntry.TABLE_NAME, "_id=" + id, null);
+        int rowsAffected = getDatabase().delete(ShoppingListContract.ProductEntry.TABLE_NAME,
+                ShoppingListContract.ProductEntry._ID + "=" + id, null);
         if (rowsAffected > 0) {
             return true;
         } else {
