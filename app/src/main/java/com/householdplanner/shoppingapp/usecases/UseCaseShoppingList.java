@@ -163,12 +163,32 @@ public class UseCaseShoppingList {
     }
 
     /**
-     * Remove a product from the list
+     * Remove a product from the cart in shopping mode, restoring it on the shopping list
      * @param product product to remove
      */
-    public void removeFromList(Product product) {
+    public void backToShoppingList(Product product) {
         ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
-        shoppingListRepository.deletePermanentProductItem(product._id);
+        shoppingListRepository.rollbackProduct(product._id);
+        shoppingListRepository.close();
+    }
+
+    /**
+     * Remove a product from the shopping list, sending it to cart again
+     * @param product
+     */
+    public void backToCart(Product product) {
+        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
+        shoppingListRepository.commitProduct(product._id);
+        shoppingListRepository.close();
+    }
+
+    /**
+     * Remove from list the last product entered with a name
+     * @param name product name
+     */
+    public void removeFromList(String name) {
+        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
+        shoppingListRepository.deleteLastProductRow(name);
         shoppingListRepository.close();
     }
 
