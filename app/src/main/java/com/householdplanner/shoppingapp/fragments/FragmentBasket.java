@@ -95,6 +95,12 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                                         animator.addListener(new AnimatorListenerAdapter() {
                                             @Override
                                             public void onAnimationEnd(Animator animation) {
+                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                if (product != null) {
+                                                    UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                                    useCaseShoppingList.removeFromBasket(product);
+                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                                }
                                                 mAdapter.mProductDataList.remove(position);
                                                 mAdapter.notifyItemRangeRemoved(position, 1);
                                             }
@@ -109,6 +115,12 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
 
                                             @Override
                                             public void onAnimationEnd(Animation animation) {
+                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                if (product != null) {
+                                                    UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                                    useCaseShoppingList.removeFromBasket(product);
+                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                                }
                                                 mAdapter.mProductDataList.remove(position);
                                                 mAdapter.notifyItemRangeRemoved(position, 1);
                                             }
@@ -131,15 +143,15 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                             @Override
                             public void onItemSecondaryActionClick(final View view, int position) {
                                 final AppCompatCheckBox checkBoxActionIcon = (AppCompatCheckBox) view;
-                                String productName = null;
 
                                 if (!checkBoxActionIcon.isChecked()) {
                                     //Unchecked the checkbox, therefore the action has to be undone
                                     Product product = (Product) mSnackBar.getAdapterItem();
                                     position = mSnackBar.getAdapterPosition();
                                     if (product != null && position != SnackBar.INVALID_POSITION) {
-                                        mAdapter.mProductDataList.add(position, product);
-                                        mAdapter.notifyItemInserted(position);
+                                        UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                        useCaseShoppingList.backToCart(product);
+                                        getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                     }
                                     checkBoxActionIcon.setChecked(true);
                                     mSnackBar.undo();
@@ -148,40 +160,19 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                                     //We check if there is a row being deleted currently
                                     int lastPosition = mSnackBar.getAdapterPosition();
                                     if (lastPosition != mSnackBar.INVALID_POSITION) {
-                                        //Get the product name for the position passed in the parameter, as it will be used later
-                                        //to get the new position of the row
-                                        productName = mAdapter.mProductDataList.get(position).name;
-                                        //Currently, there is a row that is being deleted
-                                        //So, we confirm the deletion
-                                        Product product = mAdapter.mProductDataList.get(lastPosition);
-                                        if (product != null) {
-                                            UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
-                                            useCaseShoppingList.removeFromBasket(product);
-                                            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
-                                        }
+                                        //Then, hide the SnackBar
                                         mSnackBar.hide();
+                                        //After hide the SnackBar, it contains an INVALID_POSITION
                                     }
                                     if (mSnackBar.getAdapterPosition() == SnackBar.INVALID_POSITION) {
                                         //Deleting has finished
-                                        if (lastPosition != SnackBar.INVALID_POSITION) {
-                                            //As the Adapter has been altered deleting the row the snackbar had stored,
-                                            //the position where the user clicked on is not the same yet
-                                            position = mAdapter.findPositionByName(productName);
-                                        }
-
                                         final int currentPosition = position;
-
-                                        //Snackbar tied to the current position
+                                        //SnackBar tied to the current position
                                         mSnackBar.setAdapterPosition(currentPosition);
                                         mSnackBar.setAdapterItem(mAdapter.mProductDataList.get(currentPosition));
                                         mSnackBar.setOnSnackBarListener(new SnackBar.OnSnackBarListener() {
                                             @Override
                                             public void onClose() {
-                                                Product product = (Product) mSnackBar.getAdapterItem();
-                                                if (product != null) {
-                                                    UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
-                                                    useCaseShoppingList.removeFromBasket(product);
-                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);                                                }
                                             }
 
                                             @Override
@@ -190,9 +181,10 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                                                 Product product = (Product) mSnackBar.getAdapterItem();
                                                 int position = mSnackBar.getAdapterPosition();
                                                 if (product != null && position != SnackBar.INVALID_POSITION) {
-                                                    mAdapter.mProductDataList.add(position, product);
-                                                    mAdapter.notifyItemInserted(position);
-                                                    if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB) {
+                                                    UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                                    useCaseShoppingList.backToCart(product);
+                                                    getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                                                         ((View) view.getParent()).setScaleY(1f);
                                                     }
                                                 }

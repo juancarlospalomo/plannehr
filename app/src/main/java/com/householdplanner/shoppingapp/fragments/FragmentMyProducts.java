@@ -42,6 +42,7 @@ import com.householdplanner.shoppingapp.models.ProductHistory;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
+import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
 import java.util.List;
 
@@ -124,6 +125,13 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                 animator.addListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
+                                        ProductHistory product = mAdapter.mProductHistoryListData.get(position);
+                                        if (product != null) {
+                                            UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
+                                            if (useCaseMyProducts.copyToShoppingList(product)) {
+                                                getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                            }
+                                        }
                                         mAdapter.mProductHistoryListData.remove(position);
                                         mAdapter.notifyItemRangeRemoved(position, 1);
                                     }
@@ -138,6 +146,13 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
                                     @Override
                                     public void onAnimationEnd(Animation animation) {
+                                        ProductHistory product = mAdapter.mProductHistoryListData.get(position);
+                                        if (product != null) {
+                                            UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
+                                            if (useCaseMyProducts.copyToShoppingList(product)) {
+                                                getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                            }
+                                        }
                                         mAdapter.mProductHistoryListData.remove(position);
                                         mAdapter.notifyItemRangeRemoved(position, 1);
                                     }
@@ -163,15 +178,14 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                     @Override
                     public void onItemSecondaryActionClick(final View view, int position) {
                         final AppCompatCheckBox checkBoxActionIcon = (AppCompatCheckBox) view;
-                        String productName = null;
-
                         if (checkBoxActionIcon.isChecked()) {
                             //Unchecked the checkbox, therefore the action has to be undone
                             ProductHistory product = (ProductHistory) mSnackBar.getAdapterItem();
                             position = mSnackBar.getAdapterPosition();
                             if (product != null && position != SnackBar.INVALID_POSITION) {
-                                mAdapter.mProductHistoryListData.add(position, product);
-                                mAdapter.notifyItemInserted(position);
+                                UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                useCaseShoppingList.removeFromList(product.name);
+                                getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
                             }
                             checkBoxActionIcon.setChecked(false);
                             mSnackBar.undo();
@@ -180,28 +194,12 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                             //We check if there is a row being deleted currently
                             int lastPosition = mSnackBar.getAdapterPosition();
                             if (lastPosition != mSnackBar.INVALID_POSITION) {
-                                //Get the product name for the position passed in the parameter, as it will be used later
-                                //to get the new position of the row
-                                productName = mAdapter.mProductHistoryListData.get(position).name;
-                                //Currently, there is a row that is being deleted
-                                //So, we confirm the deletion
-                                ProductHistory product = mAdapter.mProductHistoryListData.get(lastPosition);
-                                if (product != null) {
-                                    UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
-                                    if (useCaseMyProducts.copyToShoppingList(product)) {
-                                        getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
-                                    }
-                                }
+                                //Then, hide the SnackBar
                                 mSnackBar.hide();
+                                //After hide the SnackBar, it contains an INVALID_POSITION
                             }
                             if (mSnackBar.getAdapterPosition() == SnackBar.INVALID_POSITION) {
-                                //Deleting has finished
-                                if (lastPosition != SnackBar.INVALID_POSITION) {
-                                    //As the Adapter has been altered deleting the row the SnackBar has stored,
-                                    //the position where the user clicked on is not the same yet
-                                    position = mAdapter.findPositionByName(productName);
-                                }
-
+                                //Deleting has finished or it´s the first deletion
                                 final int currentPosition = position;
                                 //Snackbar tied to the current position
                                 mSnackBar.setAdapterPosition(currentPosition);
@@ -209,12 +207,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                 mSnackBar.setOnSnackBarListener(new SnackBar.OnSnackBarListener() {
                                     @Override
                                     public void onClose() {
-                                        ProductHistory product = (ProductHistory) mSnackBar.getAdapterItem();
-                                        if (product != null) {
-                                            UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
-                                            useCaseMyProducts.copyToShoppingList(product);
-                                            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
-                                        }
+                                        //Called once the SnackBar has finished
                                     }
 
                                     @Override
@@ -223,11 +216,10 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                         ProductHistory product = (ProductHistory) mSnackBar.getAdapterItem();
                                         int position = mSnackBar.getAdapterPosition();
                                         if (product != null && position != SnackBar.INVALID_POSITION) {
-                                            mAdapter.mProductHistoryListData.add(position, product);
-                                            mAdapter.notifyItemInserted(position);
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                                                ((View) view.getParent()).setScaleY(1f);
-                                            }
+                                            UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                            useCaseShoppingList.removeFromList(product.name);
+                                            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
+                                            getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                         }
                                         checkBoxActionIcon.setChecked(false);
                                     }

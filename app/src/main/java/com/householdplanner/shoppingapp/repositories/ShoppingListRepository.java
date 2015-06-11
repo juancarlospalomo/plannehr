@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.stores.DatabaseHelper;
-import com.householdplanner.shoppingapp.stores.ShoppingListStore.TypeOperation;
 
 import java.util.Locale;
 
@@ -58,11 +57,20 @@ public class ShoppingListRepository {
         if (mShoppingListStore != null) mShoppingListStore.close();
     }
 
+    /**
+     * Create a non committed product
+     * @param productName product name
+     * @param market market name
+     * @param amount product amount
+     * @param unitId measure unit id
+     * @param categoryId zone id
+     * @return true if it was created
+     */
     public boolean createProductItem(String productName,
                                      String market, String amount, int unitId, int categoryId) {
 
         return createProductItem(productName, market, amount,
-                unitId, categoryId, 0, TypeOperation.Add, util.getDateTime());
+                unitId, categoryId, 0);
     }
 
     /**
@@ -74,12 +82,10 @@ public class ShoppingListRepository {
      * @param unitId
      * @param categoryId
      * @param committed
-     * @param operation
-     * @param syncDate
      * @return
      */
     private boolean createProductItem(String productName, String market, String amount, int unitId, int categoryId,
-                                      int committed, TypeOperation operation, String syncDate) {
+                                      int committed) {
         ContentValues values = new ContentValues();
         values.put(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME, util.capitalize(productName));
         if (!TextUtils.isEmpty(market))
@@ -237,6 +243,7 @@ public class ShoppingListRepository {
 
     /**
      * Delete product from list
+     *
      * @param id product id
      * @return true if it was deleted
      */
@@ -320,10 +327,31 @@ public class ShoppingListRepository {
         boolean result = false;
         String sql = "SELECT " + ShoppingListContract.ProductEntry._ID + " "
                 + "FROM " + ShoppingListContract.ProductEntry.TABLE_NAME + " "
-                + "WHERE " + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + "'" + name + "'";
+                + "WHERE " + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + "='" + name + "'";
 
         Cursor cursor = this.getDatabase().rawQuery(sql, null);
         if (cursor.getCount() > 0) result = true;
+        return result;
+    }
+
+    /**
+     * Delete the last row inserted with a specific product name
+     * @param name product name
+     * @return true if it was deleted
+     */
+    public boolean deleteLastProductRow(String name) {
+        boolean result = false;
+        String sql = "SELECT " + ShoppingListContract.ProductEntry._ID + " "
+                + "FROM " + ShoppingListContract.ProductEntry.TABLE_NAME + " "
+                + "WHERE " + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + "='" + name + "'";
+
+        Cursor cursor = this.getDatabase().rawQuery(sql, null);
+        if (cursor.getCount() > 0) {
+            if (cursor.moveToLast()) {
+                int id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry._ID));
+                result = deletePermanentProductItem(id);
+            }
+        }
         return result;
     }
 
