@@ -91,11 +91,6 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         if (!mStarted) {
             setFragment();
             mStarted = true;
-        } else {
-            if (!AppGlobalState.getInstance().isShoppingMode(this)) {
-                //TODO: Review it
-                //setShoppingMenu();
-            }
         }
     }
 

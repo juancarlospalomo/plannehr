@@ -102,6 +102,7 @@ public class AppGlobalState {
         if (mMarketName == null) {
             mMarketName = PreferenceManager.getDefaultSharedPreferences(context).getString(STATE_MARKET_NAME, null);
             if (mMarketName == null) {
+                mMarketId = new Integer(PreferenceManager.getDefaultSharedPreferences(context).getInt(STATE_MARKET_ID, 0));
                 if (mMarketId.intValue() != 0) {
                     MarketRepository marketRepository = new MarketRepository(context);
                     mMarketName = marketRepository.getMarketName(mMarketId.intValue());

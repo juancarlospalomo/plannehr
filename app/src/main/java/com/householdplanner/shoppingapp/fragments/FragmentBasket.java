@@ -225,12 +225,12 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                 // The asynchronous load is complete and the data
                 // is now available for use. Only now can we associate
                 // the queried Cursor with the SimpleCursorAdapter.
+                mAdapter = new BasketAdapter(data);
+                mRecyclerViewBasket.setAdapter(mAdapter);
                 ImageView imageCart = (ImageView) getView().findViewById(R.id.imageEmptyCart);
                 if (items == 0) {
                     imageCart.setVisibility(View.VISIBLE);
                 } else {
-                    mAdapter = new BasketAdapter(data);
-                    mRecyclerViewBasket.setAdapter(mAdapter);
                     imageCart.setVisibility(View.GONE);
                 }
                 break;
