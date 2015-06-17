@@ -64,6 +64,29 @@
         <attr name="textAction" />
     </declare-styleable>
 
+    <!-- SlidingTabLayout Styles -->
+    <attr name="slidingTabLayoutStyle" format="reference" />
+    <attr name="slidingTabView" format="reference" />
+    <attr name="slidingTabViewTextAppearance" format="reference" />
+
+    <declare-styleable name="slidingTabLayout">
+        <attr name="slidingTabView" />
+    </declare-styleable>
+
+    <declare-styleable name="slidingTabView">
+        <attr name="android:textAppearance" />
+        <attr name="android:paddingLeft" />
+        <attr name="android:paddingRight" />
+        <attr name="android:paddingBottom" />
+        <attr name="android:colorBackground" />
+    </declare-styleable>
+
+    <declare-styleable name="slidingTabViewTextAppearance">
+        <attr name="android:textSize" />
+        <attr name="fontFamily" />
+        <attr name="android:textColor" />
+    </declare-styleable>
+
 </resources>
 
 

@@ -3,6 +3,7 @@ package com.householdplanner.shoppingapp.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -117,6 +118,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                      * Animate the deletion of a row
                      * @param view row view to animate
                      */
+                    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
                     private void animateRowDeleted(final View view, final int position) {
                         if (view != null) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -125,7 +127,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                 animator.addListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
-                                        ProductHistory product = mAdapter.mProductHistoryListData.get(position);
+                                        ProductHistory product = (ProductHistory) mSnackBar.getAdapterItem();
                                         if (product != null) {
                                             UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
                                             if (useCaseMyProducts.copyToShoppingList(product)) {
@@ -134,6 +136,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                         }
                                         mAdapter.mProductHistoryListData.remove(position);
                                         mAdapter.notifyItemRangeRemoved(position, 1);
+                                        view.setScaleY(1);
                                     }
                                 });
                                 animator.start();
@@ -220,12 +223,14 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                             useCaseShoppingList.removeFromList(product.name);
                                             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
                                             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                                ((View) view.getParent()).setScaleY(1f);
+                                            }
                                         }
                                         checkBoxActionIcon.setChecked(false);
                                     }
 
                                 });
-
                                 MyProductsAdapter.ViewHolder viewHolder = (MyProductsAdapter.ViewHolder) mRecyclerViewMyProducts.findViewHolderForAdapterPosition(currentPosition);
                                 animateRowDeleted(viewHolder.itemView, currentPosition);
                                 mSnackBar.show(R.string.text_snack_bar_move_cart);

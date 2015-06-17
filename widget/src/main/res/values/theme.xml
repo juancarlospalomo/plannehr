@@ -13,6 +13,11 @@
         <item name="snackBarStyle">@style/ApplilandiaWidget.SnackBarStyle</item>
         <item name="snackBarText">@style/ApplilandiaWidget.SnackBar.Text</item>
         <item name="snackBarAction">@style/ApplilandiaWidget.SnackBar.Action</item>
+
+        <!-- SlidingTabLayout Styles -->
+        <item name="slidingTabLayoutStyle">@style/ApplilandiaWidget.SlidingTabLayoutStyle</item>
+        <item name="slidingTabView">@style/ApplilandiaWidget.SlidingTabView</item>
+        <item name="slidingTabViewTextAppearance">@style/ApplilandiaWidget.SlidingTabViewTextAppearance</item>
     </style>
 
 </resources>

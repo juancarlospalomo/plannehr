@@ -155,7 +155,7 @@
     <string name="info_button_ok">OK</string>
 
     <!-- SnackBar -->
-    <string name="text_snack_bar_action">Deshacer</string>
+    <string name="text_snack_bar_action">DESHACER</string>
     <string name="text_snack_bar_move_myproduct">Movido a la lista</string>
 
     <!-- Drawer list -->

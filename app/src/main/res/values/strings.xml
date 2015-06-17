@@ -157,7 +157,7 @@
     <string name="info_button_ok">OK</string>
 
     <!-- SnackBar -->
-    <string name="text_snack_bar_action">Undo</string>
+    <string name="text_snack_bar_action">UNDO</string>
     <string name="text_snack_bar_move_myproduct">Moved to the list</string>
     <string name="text_snack_bar_move_shoppinglist">Moved to the list</string>
     <string name="text_snack_bar_move_cart">Moved to the cart</string>

@@ -47,4 +47,25 @@
         <item name="android:textColor">@color/action_color</item>
     </style>
 
+    <!-- SlidingTabLayout Styles -->
+    <style name="ApplilandiaWidget.SlidingTabLayoutStyle">
+        <item name="slidingTabView">?attr/slidingTabView</item>
+    </style>
+
+    <style name="ApplilandiaWidget.SlidingTabView">
+        <item name="android:textAppearance">?attr/slidingTabViewTextAppearance</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingBottom">20dp</item>
+        <item name="android:colorBackground">#FF80CBC4</item>
+        <item name="android:layout_height">80dp</item>
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="ApplilandiaWidget.SlidingTabViewTextAppearance">
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/primary_text_default_material_light</item>
+    </style>
+
 </resources>

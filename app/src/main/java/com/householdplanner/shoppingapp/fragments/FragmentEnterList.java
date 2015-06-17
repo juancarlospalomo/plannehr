@@ -237,22 +237,24 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
      * @param position row position
      */
     private void onListItemSelect(View view, int position) {
-        mAdapter.toggleSelection(position);
-        if (mAdapter.isSelected(position)) {
-            view.setBackgroundResource(R.drawable.list_row_background_selected);
-        } else {
-            view.setBackgroundResource(R.drawable.list_row_background);
+        if (view!=null) {
+            mAdapter.toggleSelection(position);
+            if (mAdapter.isSelected(position)) {
+                view.setBackgroundResource(R.drawable.list_row_background_selected);
+            } else {
+                view.setBackgroundResource(R.drawable.list_row_background);
+            }
+            boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
+            BaseActivity baseActivity = (BaseActivity) getActivity();
+            if (hasCheckedItems && !mContextualMode)
+                // there are some selected items, start the actionMode
+                baseActivity.startToolbarContextualActionMode(new ToolbarContextualMode());
+            else if (!hasCheckedItems && mContextualMode)
+                // there no selected items, finish the actionMode
+                baseActivity.finishToolbarContextualActionMode();
+            if (mContextualMode)
+                baseActivity.getActionBarToolbar().setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
         }
-        boolean hasCheckedItems = mAdapter.getSelectedCount() > 0;
-        BaseActivity baseActivity = (BaseActivity) getActivity();
-        if (hasCheckedItems && !mContextualMode)
-            // there are some selected items, start the actionMode
-            baseActivity.startToolbarContextualActionMode(new ToolbarContextualMode());
-        else if (!hasCheckedItems && mContextualMode)
-            // there no selected items, finish the actionMode
-            baseActivity.finishToolbarContextualActionMode();
-        if (mContextualMode)
-            baseActivity.getActionBarToolbar().setTitle(String.valueOf(mAdapter.getSelectedCount()) + " " + getResources().getString(R.string.textSelected));
     }
 
     /**

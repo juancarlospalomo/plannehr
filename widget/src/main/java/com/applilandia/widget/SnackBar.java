@@ -8,6 +8,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,6 +100,7 @@ public class SnackBar extends RelativeLayout {
         mActionText.setLayoutParams(layoutParams);
         mActionText.setPadding(getPixels(40), 0, 0, 0);
         mActionText.setGravity(Gravity.CENTER);
+        Log.v(LOG_TAG, mTextActionSnackBar);
         mActionText.setText(mTextActionSnackBar);
         mActionText.setOnClickListener(new View.OnClickListener() {
             @Override
