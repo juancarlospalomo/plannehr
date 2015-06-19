@@ -43,6 +43,7 @@ import com.householdplanner.shoppingapp.loaders.ProductLoader;
 import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
+import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,8 +120,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             case REQUEST_CODE_MARKET_FOR_MOVE:
                 if (resultCode == Activity.RESULT_OK) {
                     Bundle bundle = data.getExtras();
-                    String marketName = bundle.getString(MarketListActivity.EXTRA_MARKET_NAME);
-                    moveSelectedToTarget(marketName);
+                    int marketId = bundle.getInt(MarketListActivity.EXTRA_MARKET_ID);
+                    moveSelectedToTarget(marketId);
                 }
                 ((BaseActivity) getActivity()).finishToolbarContextualActionMode();
                 break;
@@ -208,7 +209,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             intent.putExtra(ProductActivity.EXTRA_MARKET_NAME, product.marketName);
             intent.putExtra(ProductActivity.EXTRA_AMOUNT, product.amount);
             intent.putExtra(ProductActivity.EXTRA_UNIT_ID, product.unitId);
-            intent.putExtra(ProductActivity.EXTRA_CATEGORY, product.categoryId);
             startActivityForResult(intent, EDIT_PRODUCT);
         }
     }
@@ -218,14 +218,13 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
      *
      * @param targetMarket market
      */
-    private void moveSelectedToTarget(String targetMarket) {
+    private void moveSelectedToTarget(int targetMarket) {
         if (mItemsSelected != null) {
-            ShoppingListRepository listRepository = new ShoppingListRepository(getActivity());
+            UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
             for (int index = 0; index < mItemsSelected.size(); index++) {
                 int id = mItemsSelected.get(index).intValue();
-                listRepository.moveToSupermaket(id, targetMarket);
+                useCaseMyProducts.moveToSupermarket(id, targetMarket);
             }
-            listRepository.close();
             mItemsSelected = null;
         }
         getLoaderManager().restartLoader(LOADER_ID, null, this);
@@ -365,8 +364,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
      */
     private void showTargetMarket() {
         Intent intent = new Intent(getActivity(), MarketListActivity.class);
-        intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_ALL, true);
-        intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_CHECK_NO_MARKET, false);
+        intent.putExtra(MarketListActivity.EXTRA_SHOW_ALL_MARKETS, true);
+        intent.putExtra(MarketListActivity.EXTRA_SHOW_CHECK_NO_MARKET, false);
         startActivityForResult(intent, REQUEST_CODE_MARKET_FOR_MOVE);
     }
 

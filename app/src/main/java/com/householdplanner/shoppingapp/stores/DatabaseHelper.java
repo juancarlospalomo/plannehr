@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "ShoppingList.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -23,10 +23,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         upgradeDb(database, oldVersion, newVersion);
-        ShoppingListStore.onUpgrade(database, oldVersion, newVersion);
-        ProductHistoryStore.onUpgrade(database, oldVersion, newVersion);
-        BudgetStore.onUpgrade(database, oldVersion, newVersion);
+        //Order is very important.  It is regarding to the relationships
+        //in inverse order to the FK´s
         MarketStore.onUpgrade(database, oldVersion, newVersion);
+        ProductHistoryStore.onUpgrade(database, oldVersion, newVersion);
+        ShoppingListStore.onUpgrade(database, oldVersion, newVersion);
+        BudgetStore.onUpgrade(database, oldVersion, newVersion);
     }
 
     /**
@@ -37,7 +39,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param newVersion
      */
     private void upgradeDb(SQLiteDatabase database, int oldVersion, int newVersion) {
-        if ((oldVersion < 5) && (newVersion == 5)) {
+        if (oldVersion < 5) {
             //Delete MarketCategory and Ticket tables as they are not going to be used anymore
             database.execSQL("DROP TABLE IF EXISTS MarketCategory");
             database.execSQL("DROP TABLE IF EXISTS Ticket");

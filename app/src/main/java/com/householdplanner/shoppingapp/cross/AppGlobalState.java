@@ -5,7 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.repositories.MarketRepository;
+import com.householdplanner.shoppingapp.models.Market;
+import com.householdplanner.shoppingapp.usecases.UseCaseMarket;
 
 public class AppGlobalState {
 
@@ -104,9 +105,11 @@ public class AppGlobalState {
             if (mMarketName == null) {
                 mMarketId = new Integer(PreferenceManager.getDefaultSharedPreferences(context).getInt(STATE_MARKET_ID, 0));
                 if (mMarketId.intValue() != 0) {
-                    MarketRepository marketRepository = new MarketRepository(context);
-                    mMarketName = marketRepository.getMarketName(mMarketId.intValue());
-                    marketRepository.close();
+                    UseCaseMarket useCaseMarket = new UseCaseMarket(context);
+                    Market market = useCaseMarket.getMarket(mMarketId.intValue());
+                    if (market != null) {
+                        mMarketName = market.name;
+                    }
                     if (mMarketName != null) {
                         if (mMarketName.equals("a")) {
                             mMarketName = context.getResources().getString(R.string.textAllSupermarkets);
@@ -116,6 +119,16 @@ public class AppGlobalState {
             }
         }
         return mMarketName;
+    }
+
+    /**
+     * Return the current market Id
+     * @param context
+     * @return market id
+     */
+    public synchronized int getMarketId(Context context) {
+        mMarketId = new Integer(PreferenceManager.getDefaultSharedPreferences(context).getInt(STATE_MARKET_ID, 0));
+        return mMarketId.intValue();
     }
 
     /**
@@ -130,9 +143,11 @@ public class AppGlobalState {
         mMarketName = marketName;
 
         if (marketName == null && mMarketId.intValue() != 0) {
-            MarketRepository marketRepository = new MarketRepository(context);
-            mMarketName = marketRepository.getMarketName(mMarketId.intValue());
-            marketRepository.close();
+            UseCaseMarket useCaseMarket = new UseCaseMarket(context);
+            Market market = useCaseMarket.getMarket(mMarketId.intValue());
+            if (market != null) {
+                marketName = market.name;
+            }
         }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

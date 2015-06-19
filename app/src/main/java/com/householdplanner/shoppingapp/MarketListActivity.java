@@ -1,51 +1,53 @@
 package com.householdplanner.shoppingapp;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.AppCompatTextView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.ProgressCircle;
 import com.householdplanner.shoppingapp.cross.util;
-import com.householdplanner.shoppingapp.data.ShoppingListContract;
-import com.householdplanner.shoppingapp.repositories.MarketRepository;
+import com.householdplanner.shoppingapp.loaders.MarketLoader;
+import com.householdplanner.shoppingapp.models.Market;
 
-public class MarketListActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
+import java.util.List;
 
-    private static final int NEW_MARKET_REQUEST_CODE = 1;
+public class MarketListActivity extends BaseActivity implements LoaderCallbacks<List<Market>> {
 
-    public static final String EXTRA_MARKET_ID = "MarketId";
-    public static final String EXTRA_MARKET_NAME = "MarketName";
-    public static final String IN_EXTRA_SHOW_ALL = "ShowAll";
-    public static final String IN_EXTRA_SHOW_CHECK_NO_MARKET = "ShowCheckNoMarket";
+    private static final int REQUEST_CODE_NEW_MARKET = 1;
+
+    public static final String EXTRA_MARKET_ID = "market_id";
+    public static final String EXTRA_MARKET_NAME = "market_name";
+    public static final String EXTRA_SHOW_ALL_MARKETS = "show_all";
+    public static final String EXTRA_SHOW_CHECK_NO_MARKET = "show_check_no_market";
     public static final int SELECTED_NONE = 0;
 
     private static final int LOADER_ID = 1;
 
-    private boolean mStarted = false;
     //Hold if show label 'all supermarkets' or label 'without supermarket'
     private static boolean mShowAll = false;
     //Hold if show the check to selected the products not assigned to supermarkets
     private static boolean mShowCheckNoMarket = true;
     private MarketListAdapter mAdapter;
+    private GridView mGridViewMarkets;
+    private AppCompatCheckBox mCheckBoxProductsNotAssigned;
+    private View mLayoutMarketNotAssigned;
+    private AppCompatTextView mTextViewNone;
     private ProgressCircle mProgressDialog = null;
 
     @Override
@@ -54,23 +56,21 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_market_list);
         //Get the extra data from intent
         getIntentData();
+        //inflate the views
+        inflateViews();
         //Configure the activity
         setUpActivity();
+        getSupportLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (!mStarted) {
-            loadMarkets();
-        } else {
-            if (getSupportLoaderManager().getLoader(LOADER_ID) != null) {
-                getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
-            } else {
-                loadMarkets();
-            }
-        }
-        mStarted = true;
+    /**
+     * Inflate the views on the Activity
+     */
+    private void inflateViews() {
+        mGridViewMarkets = (GridView) findViewById(R.id.gridViewMarkets);
+        mCheckBoxProductsNotAssigned = (AppCompatCheckBox) findViewById(R.id.checkboxProductsNotAssigned);
+        mLayoutMarketNotAssigned = findViewById(R.id.layoutProductNotSet);
+        mTextViewNone = (AppCompatTextView) findViewById(R.id.textImageSelectNoMarket);
     }
 
     /**
@@ -79,8 +79,8 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
     private void getIntentData() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            mShowAll = bundle.getBoolean(IN_EXTRA_SHOW_ALL, false);
-            mShowCheckNoMarket = bundle.getBoolean(IN_EXTRA_SHOW_CHECK_NO_MARKET, true);
+            mShowAll = bundle.getBoolean(EXTRA_SHOW_ALL_MARKETS, false);
+            mShowCheckNoMarket = bundle.getBoolean(EXTRA_SHOW_CHECK_NO_MARKET, true);
         }
     }
 
@@ -89,27 +89,23 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
      */
     private void setUpActivity() {
         if (mShowCheckNoMarket) {
-            AppCompatCheckBox checkBoxProductsNotAssigned = (AppCompatCheckBox) findViewById(R.id.checkboxProductsNotAssigned);
-            checkBoxProductsNotAssigned.setChecked(util.getShowProductsNotSet(MarketListActivity.this));
-            checkBoxProductsNotAssigned.setOnClickListener(new OnClickListener() {
+            mCheckBoxProductsNotAssigned.setChecked(util.getShowProductsNotSet(MarketListActivity.this));
+            mCheckBoxProductsNotAssigned.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     util.setShowProductsNotSet(MarketListActivity.this, ((AppCompatCheckBox) v).isChecked());
                 }
             });
         } else {
-            View layout = findViewById(R.id.layoutProductNotSet);
-            layout.setVisibility(View.GONE);
+            mLayoutMarketNotAssigned.setVisibility(View.GONE);
         }
 
-        TextView textViewNone = (TextView) findViewById(R.id.textImageSelectNoMarket);
         if (!mShowAll) {
-            textViewNone.setText(R.string.textProductsAllSupermarkets);
+            mTextViewNone.setText(R.string.textProductsAllSupermarkets);
         } else {
-            textViewNone.setText(R.string.textProductsWithoutSupermarket);
+            mTextViewNone.setText(R.string.textProductsWithoutSupermarket);
         }
-        textViewNone.setOnClickListener(new OnClickListener() {
-
+        mTextViewNone.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent data = new Intent();
@@ -121,24 +117,10 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
         });
     }
 
-    private void loadMarkets() {
-        String[] fields = new String[]{ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME};
-        int[] listViewColumns = new int[]{android.R.id.text1};
-
-        try {
-            GridView gridView = (GridView) findViewById(R.id.gridViewMarkets);
-            LoaderManager loaderManager = getSupportLoaderManager();
-            loaderManager.initLoader(LOADER_ID, null, this);
-            mAdapter = new MarketListAdapter(R.layout.market_item, null, fields, listViewColumns);
-            gridView.setAdapter(mAdapter);
-        } catch (Exception e) {
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == NEW_MARKET_REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE_NEW_MARKET) {
             if (resultCode == RESULT_OK) {
                 getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
             }
@@ -164,7 +146,7 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
 
             case R.id.actionMarketAdd:
                 Intent intent = new Intent(this, MarketActivity.class);
-                startActivityForResult(intent, NEW_MARKET_REQUEST_CODE);
+                startActivityForResult(intent, REQUEST_CODE_NEW_MARKET);
                 return true;
 
             default:
@@ -174,27 +156,28 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
 
 
     @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    public Loader<List<Market>> onCreateLoader(int id, Bundle args) {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressCircle(this);
             mProgressDialog.show();
         }
-        return new MarketListCursorLoader(this);
+        return new MarketLoader(this, MarketLoader.TypeMarketSet.All);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+    public void onLoadFinished(Loader<List<Market>> loader, List<Market> data) {
         if (loader.getId() == LOADER_ID) {
             TextView textViewMessage = (TextView) findViewById(R.id.textThereAreNotSupermarkets);
             TextView textImageSelectNoMarkets = (TextView) findViewById(R.id.textImageSelectNoMarket);
-            if ((cursor != null) && (cursor.getCount() > 0)) {
+            if ((data != null) && (data.size() > 0)) {
                 textImageSelectNoMarkets.setVisibility(View.VISIBLE);
                 textViewMessage.setVisibility(View.GONE);
             } else {
                 textImageSelectNoMarkets.setVisibility(View.GONE);
                 textViewMessage.setVisibility(View.VISIBLE);
             }
-            mAdapter.swapCursor(cursor);
+            mAdapter = new MarketListAdapter(this, data);
+            mGridViewMarkets.setAdapter(mAdapter);
             if (mProgressDialog != null) {
                 mProgressDialog.dismiss();
                 mProgressDialog = null;
@@ -203,30 +186,33 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
     }
 
     @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        mAdapter.swapCursor(null);
+    public void onLoaderReset(Loader<List<Market>> loader) {
+        mAdapter = null;
     }
 
     static class ViewHolder {
-        public TextView text;
+        public TextView mTextMarket;
     }
 
-    public class MarketListAdapter extends SimpleCursorAdapter {
+    public class MarketListAdapter extends ArrayAdapter<Market> {
 
-        Cursor mCursor;
+        private Context mContext;
+        private List<Market> mMarketDataList;
 
-        public MarketListAdapter(int layout, Cursor c, String[] from, int[] to) {
-            super(MarketListActivity.this, layout, c, from, to, 0);
-            mCursor = c;
+        public MarketListAdapter(Context context, List<Market> data) {
+            super(context, R.layout.market_item);
+            mContext = context;
+            mMarketDataList = data;
         }
 
         public int getCount() {
-            if (mCursor != null) return mCursor.getCount();
-            else return 0;
+            if (mMarketDataList != null) {
+                return mMarketDataList.size();
+            } else {
+                return 0;
+            }
         }
 
-        @SuppressWarnings("deprecation")
-        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -235,37 +221,31 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
                 LayoutInflater inflater = (LayoutInflater) MarketListActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.market_item, parent, false);
                 viewHolder = new ViewHolder();
-                viewHolder.text = (TextView) convertView.findViewById(R.id.textMarket);
+                viewHolder.mTextMarket = (TextView) convertView.findViewById(R.id.textMarket);
                 convertView.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) convertView.getTag();
             }
-            mCursor.moveToPosition(position);
-            final String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
 
-            final int pos = position;
+            final Market market = mMarketDataList.get(position);
 
-            String color = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_COLOR));
-            if (color != null) {
+            if (market.color != 0) {
                 GradientDrawable drawable = (GradientDrawable) getResources().getDrawable(R.drawable.square_blue);
                 drawable.mutate();
-                drawable.setColor(Integer.parseInt(color));
+                drawable.setColor(market.color);
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                    viewHolder.text.setBackgroundDrawable(drawable);
+                    viewHolder.mTextMarket.setBackgroundDrawable(drawable);
                 } else {
-                    viewHolder.text.setBackground(drawable);
+                    viewHolder.mTextMarket.setBackground(drawable);
                 }
             }
-            viewHolder.text.setText(util.capitalize(marketName));
-            viewHolder.text.setOnClickListener(new View.OnClickListener() {
+            viewHolder.mTextMarket.setText(util.capitalize(market.name));
+            viewHolder.mTextMarket.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mCursor.moveToPosition(pos);
-                    int marketId = mCursor.getInt(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_ID));
-                    String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
                     Intent data = new Intent();
-                    data.putExtra(EXTRA_MARKET_ID, marketId);
-                    data.putExtra(EXTRA_MARKET_NAME, marketName);
+                    data.putExtra(EXTRA_MARKET_ID, market._id);
+                    data.putExtra(EXTRA_MARKET_NAME, market.name);
                     MarketListActivity.this.setResult(RESULT_OK, data);
                     MarketListActivity.this.finish();
                 }
@@ -274,136 +254,6 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
             return convertView;
         }
 
-        @Override
-        public Cursor swapCursor(Cursor c) {
-            mCursor = c;
-            return super.swapCursor(c);
-        }
-
-    }
-
-    private static class MarketListCursorLoader extends AsyncTaskLoader<Cursor> {
-
-        // We hold a reference to the Loader's data here.
-        private Cursor mCursor = null;
-        private MarketRepository mMarketRepository;
-
-        public MarketListCursorLoader(Context context) {
-            // Loaders may be used across multiple Activitys (assuming they aren't
-            // bound to the LoaderManager), so NEVER hold a reference to the context
-            // directly. Doing so will cause you to leak an entire Activity's context.
-            // The superclass constructor will store a reference to the Application
-            // Context instead, and can be retrieved with a call to getContext().
-            super(context);
-        }
-
-        /****************************************************/
-        /** (1) A task that performs the asynchronous load **/
-        /**
-         * ************************************************
-         */
-        @Override
-        public Cursor loadInBackground() {
-            // This method is called on a background thread and should generate a
-            // new set of data to be delivered back to the client.
-            mMarketRepository = new MarketRepository(this.getContext());
-            if (!mShowAll) {
-                mCursor = mMarketRepository.getMarketsWithProducts();
-            } else {
-                mCursor = mMarketRepository.getAllMarkets();
-            }
-            return mCursor;
-        }
-
-        /********************************************************/
-        /** (2) Deliver the results to the registered listener **/
-        /**
-         * ****************************************************
-         */
-        @Override
-        public void deliverResult(Cursor cursor) {
-            if (isReset()) {
-                // The Loader has been reset; ignore the result and invalidate the data.
-                if (cursor != null) {
-                    ReleaseResources(cursor);
-                }
-                return;
-            }
-            // Hold a reference to the old data so it doesn't get garbage collected.
-            // We must protect it until the new data has been delivered.
-            Cursor oldCursor = mCursor;
-            mCursor = cursor;
-
-            if (isStarted()) {
-                // If the Loader is in a started state, deliver the results to the
-                // client. The superclass method does this for us.
-                super.deliverResult(cursor);
-            }
-            // Invalidate the old data as we don't need it any more
-            if (oldCursor != null && oldCursor != cursor) {
-                ReleaseResources(oldCursor);
-            }
-        }
-
-        /*********************************************************/
-        /** (3) Implement the Loader�s state-dependent behavior **/
-        /**
-         * *****************************************************
-         */
-
-        @Override
-        protected void onStartLoading() {
-            if (mCursor != null) {
-                // Deliver any previously loaded data immediately.
-                deliverResult(mCursor);
-            }
-
-            if (takeContentChanged() || mCursor == null) {
-                // When the observer detects a change, it should call onContentChanged()
-                // on the Loader, which will cause the next call to takeContentChanged()
-                // to return true. If this is ever the case (or if the current data is
-                // null), we force a new load.
-                forceLoad();
-            }
-        }
-
-        @Override
-        protected void onStopLoading() {
-            // The Loader is in a stopped state, so we should attempt to cancel the
-            // current load (if there is one).
-            cancelLoad();
-
-            // Note that we leave the observer as is. Loaders in a stopped state
-            // should still monitor the data source for changes so that the Loader
-            // will know to force a new load if it is ever started again.
-        }
-
-        @Override
-        public void onCanceled(Cursor cursor) {
-            // Attempt to cancel the current asynchronous load.
-            super.onCanceled(mCursor);
-
-            // The load has been canceled, so we should release the resources
-            // associated with 'data'.
-            ReleaseResources(cursor);
-        }
-
-        @Override
-        protected void onReset() {
-            // Ensure the loader has been stopped.
-            onStopLoading();
-
-            // At this point we can release the resources associated with 'mData'.
-            if (mCursor != null) {
-                ReleaseResources(mCursor);
-                mCursor = null;
-            }
-        }
-
-        private void ReleaseResources(Cursor cursor) {
-            cursor.close();
-            mMarketRepository.close();
-        }
     }
 
 }

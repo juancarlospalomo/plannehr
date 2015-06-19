@@ -37,18 +37,14 @@ public class ShoppingListContract {
         /**
          * Columns
          */
-        //Product name
-        public static final String COLUMN_PRODUCT_NAME = "Name";
+        //Product _id in Catalog (FK)
+        public static final String COLUMN_PRODUCT_ID = "ProductId";
         //Product amount
         public static final String COLUMN_PRODUCT_AMOUNT = "Amount";
         //Product measure unit id
         public static final String COLUMN_UNIT_ID = "UnitId";
-        //Product category id
-        public static final String COLUMN_CATEGORY_ID = "Category";
-        //Market name that product belongs to
-        public static final String COLUMN_MARKET = "Market";
         //Is Product in the basket?
-        public static final String COLUMN_COMMITTED = "Comitted";
+        public static final String COLUMN_COMMITTED = "Committed";
     }
 
     /**
@@ -70,19 +66,20 @@ public class ShoppingListContract {
          */
         //Product name
         public static final String COLUMN_PRODUCT_NAME = "Name";
-        //Product category id
-        public static final String COLUMN_CATEGORY_ID = "Category";
-        //Market name that product belongs to
-        public static final String COLUMN_MARKET = "Market";
-
+        //Market Id FK
+        public static final String COLUMN_MARKET_ID = "MarketId";
+        //Market name that product belongs to. Redundancy for query optimization
+        public static final String COLUMN_MARKET_NAME = "MarketName";
         /**
-         *Alias for fields if they are needed
+         * Alias for fields if they are needed
          */
         public static final String ALIAS_ID = TABLE_NAME + "_" + _ID;
 
         //Uri functions to manage the parameters
+
         /**
          * extract suggestion name string from uri
+         *
          * @param uri to match
          * @return partial name pattern string
          */
@@ -109,12 +106,18 @@ public class ShoppingListContract {
         /**
          * Table columns
          */
-        //Generated Market Id
-        public static final String COLUMN_MARKET_ID = "MarketId";
         //Market name
         public static final String COLUMN_MARKET_NAME = "Name";
         //Color for the market
         public static final String COLUMN_COLOR = "Color";
+
+        /**
+         * Uri functions to manage the parameters
+         */
+        public static Uri setUriProductMarket() {
+            return CONTENT_URI.buildUpon().appendPath(PATH_PRODUCT).build();
+        }
+
     }
 
     /**

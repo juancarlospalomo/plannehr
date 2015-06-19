@@ -28,8 +28,8 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
     private Context mContext;
     //Products set to get
     private TypeProducts mTypeProducts;
-    //Market name
-    private String mMarket;
+    //Market identifier
+    private int mMarketId;
     private List<Product> mProductList;
     private ProductObserver mObserver;
 
@@ -46,11 +46,11 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
      *
      * @param context
      * @param typeProducts product set
-     * @param market       market name
+     * @param marketId     market identifier
      */
-    public ProductLoader(Context context, TypeProducts typeProducts, String market) {
+    public ProductLoader(Context context, TypeProducts typeProducts, int marketId) {
         this(context, typeProducts);
-        mMarket = market;
+        mMarketId = marketId;
     }
 
     @Override
@@ -61,9 +61,9 @@ public class ProductLoader extends AsyncTaskLoader<List<Product>> {
         } else if (mTypeProducts == TypeProducts.InShoppingList) {
             mProductList = useCaseShoppingList.getShoppingListProducts();
         } else if (mTypeProducts == TypeProducts.InShoppingListBySupermarket) {
-            mProductList = useCaseShoppingList.getShoppingListProducts(mMarket);
+            mProductList = useCaseShoppingList.getShoppingListProducts(mMarketId);
         } else if (mTypeProducts == TypeProducts.InShoppingListWithSupermarketAndWithoutAny) {
-            mProductList = useCaseShoppingList.getShoppingListWithMarketAndWithoutMarket(mMarket);
+            mProductList = useCaseShoppingList.getShoppingListWithMarketAndWithoutMarket(mMarketId);
         } else if (mTypeProducts == TypeProducts.InBasket) {
             mProductList = useCaseShoppingList.getProductsInBasket();
         }

@@ -8,8 +8,8 @@ public class ProductHistory {
     public int _id;
     //Product name
     public String name;
+    //Market identifier
+    public int marketId;
     //Market name
     public String marketName;
-    //Category id
-    public int categoryId;
 }

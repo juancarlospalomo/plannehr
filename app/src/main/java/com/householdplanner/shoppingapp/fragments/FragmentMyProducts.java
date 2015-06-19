@@ -187,7 +187,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                             position = mSnackBar.getAdapterPosition();
                             if (product != null && position != SnackBar.INVALID_POSITION) {
                                 UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
-                                useCaseShoppingList.removeFromList(product.name);
+                                useCaseShoppingList.removeFromList(product._id);
                                 getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
                             }
                             checkBoxActionIcon.setChecked(false);
@@ -220,7 +220,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                         int position = mSnackBar.getAdapterPosition();
                                         if (product != null && position != SnackBar.INVALID_POSITION) {
                                             UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
-                                            useCaseShoppingList.removeFromList(product.name);
+                                            useCaseShoppingList.removeFromList(product._id);
                                             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
                                             getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

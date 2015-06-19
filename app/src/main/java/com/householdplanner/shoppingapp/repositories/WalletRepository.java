@@ -160,7 +160,7 @@ public class WalletRepository {
                         + ShoppingListContract.BudgetEntry.COLUMN_WITHDRAWN + "=" + ShoppingListContract.BudgetEntry.COLUMN_WITHDRAWN + "+" + ticketExpense
                         + " WHERE " + ShoppingListContract.BudgetEntry.COLUMN_MONTH + "=" + monthNumber);
                 ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext, getDatabase());
-                shoppingListRepository.emptyCommitted();
+                shoppingListRepository.deleteCommittedProducts();
                 getDatabase().setTransactionSuccessful();
             } else {
                 getDatabase().execSQL("UPDATE " + ShoppingListContract.BudgetEntry.TABLE_NAME + " SET "

@@ -3,11 +3,9 @@ package com.householdplanner.shoppingapp.cross;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
 import android.preference.PreferenceManager;
 
 import com.householdplanner.shoppingapp.R;
-import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.fragments.FragmentSetting;
 
 import java.text.DateFormat;
@@ -19,16 +17,6 @@ import java.util.Locale;
 
 public class util {
 
-    public static String getCompleteHistoryRow(Context context, Cursor cursor, boolean includeMarket) {
-        String itemText;
-        itemText = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
-        if (includeMarket) {
-            String marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
-            if (marketName != null) itemText += " " + capitalize(marketName);
-        }
-        return itemText;
-    }
-
     public static String getMeasureUnitName(Context context, int id, String amount) {
         String result = "";
         String[] items = context.getResources().getStringArray(R.array.measure_array);
@@ -36,13 +24,6 @@ public class util {
             result = getCorrectWordNumber(items[id], amount);
         }
         return result;
-    }
-
-    public static String getDateTime() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        Date date = new Date();
-        return dateFormat.format(date);
     }
 
     public static int getMonth(String dateTo) {
@@ -66,24 +47,6 @@ public class util {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /*
-     * return: 0 => both dates are equals
-     * 		   1 => first date greater than the second one
-     *         2 => second date greater than the first one
-     */
-    public static int compareDates(String firstDate, String secondDate) {
-        int result = 0;
-        Date dateFirst, dateSecond;
-        dateFirst = getDate(firstDate);
-        dateSecond = getDate(secondDate);
-        result = dateFirst.compareTo(dateSecond);
-        if (result < 0) result = 2;
-        else {
-            if (result > 0) result = 1;
-        }
-        return result;
     }
 
     public static String getFormattedDate(int year, int month, int day) {

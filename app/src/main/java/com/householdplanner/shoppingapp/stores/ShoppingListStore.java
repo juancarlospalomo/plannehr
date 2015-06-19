@@ -1,5 +1,6 @@
 package com.householdplanner.shoppingapp.stores;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
@@ -26,11 +27,8 @@ public class ShoppingListStore {
     //Database creation sql statement
     private static final String SQL_TABLE_CREATE = "CREATE TABLE "
             + ShoppingListContract.ProductEntry.TABLE_NAME + "(" + ShoppingListContract.ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " TEXT COLLATE NOCASE, "
-            + ShoppingListContract.ProductEntry.COLUMN_MARKET + " TEXT, "
             + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + " TEXT, "
             + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + " INTEGER, "
-            + ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID + " INTEGER, "
             + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + " INTEGER);";
 
     public static void onCreate(SQLiteDatabase database) {
@@ -41,8 +39,11 @@ public class ShoppingListStore {
         if (oldVersion < 2) {
             onUpgradeV2(db);
         }
-        if (oldVersion < 5 && newVersion == 5) {
+        if (oldVersion < 5) {
             onUpgradeV5(db);
+        }
+        if (oldVersion < 6) {
+            onUpgradeV6(db);
         }
     }
 
@@ -74,21 +75,69 @@ public class ShoppingListStore {
         database.execSQL(sql);
         database.execSQL(SQL_TABLE_CREATE);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME
-                + "(" + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + ","
-                + ShoppingListContract.ProductEntry.COLUMN_MARKET + ","
+                + "(Name, Market,"
                 + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
                 + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
-                + ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID + ","
+                + "Category,"
                 + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + ") "
-                + "SELECT " + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + ","
-                + ShoppingListContract.ProductEntry.COLUMN_MARKET + ","
+                + "SELECT Name, Market,"
                 + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
                 + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
-                + ShoppingListContract.ProductEntry.COLUMN_CATEGORY_ID + ","
-                + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + " "
+                + "Category,"
+                + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "Comitted "
                 + "FROM " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old;");
 
         database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old");
+    }
+
+    /**
+     * Update table to V6 version
+     *
+     * @param database
+     */
+    private static void onUpgradeV6(SQLiteDatabase database) {
+        String sql = "ALTER TABLE " + ShoppingListContract.ProductEntry.TABLE_NAME
+                + " RENAME TO " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old;";
+        database.execSQL(sql);
+        database.execSQL(SQL_TABLE_CREATE);
+
+        Cursor cursor = getVersionLessThan6Rows(database);
+
+        if ((cursor != null) & (cursor.moveToFirst())) {
+            while (!cursor.isAfterLast()) {
+                sql = "INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME + " ("
+                        + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + ","
+                        + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
+                        + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
+                        + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + ") VALUES ("
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID)) + ",'"
+                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT)) + "',"
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID))
+                        + cursor.getInt(cursor.getColumnIndex("Comitted")) + ")";
+
+                database.execSQL(sql);
+                cursor.moveToNext();
+            }
+        }
+
+        if (cursor != null) cursor.close();
+        database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old");
+    }
+
+    private static Cursor getVersionLessThan6Rows(SQLiteDatabase database) {
+        String sql = "SELECT " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + ","
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old." + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Comitted"
+                + " FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " INNER JOIN "
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old"
+                + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + "="
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Name AND "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + "="
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Market";
+
+        Cursor cursor = database.rawQuery(sql, null);
+        return cursor;
     }
 
 }

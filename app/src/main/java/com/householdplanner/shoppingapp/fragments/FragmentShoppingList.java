@@ -16,7 +16,6 @@ import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 
     private static final int LOADER_ID = 1;
 
-    private static String mMarketName;
+    private static int mMarketId;
     private RecyclerView mRecyclerViewShoppingList;
     private RecyclerView.LayoutManager mLayoutManager;
     private SnackBar mSnackBar;
@@ -80,7 +79,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
      * Load the current market data
      */
     private void loadMarketData() {
-        mMarketName = AppGlobalState.getInstance().getMarketName(getActivity());
+        mMarketId = AppGlobalState.getInstance().getMarketId(getActivity());
     }
 
     /**
@@ -238,16 +237,16 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
     public Loader<List<Product>> onCreateLoader(int id, Bundle args) {
         if (mCallback != null) mCallback.onLoadStart();
         boolean productsNotAssigned = util.getShowProductsNotSet(getActivity());
-        if (TextUtils.isEmpty(mMarketName)) {
+        if (mMarketId == 0) {
             //Get all pending products to do the shopping
             return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingList);
         } else if (productsNotAssigned) {
             //Get the products assigned to one supermarket
             //and the products doesn't assigned to anyone
-            return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingListWithSupermarketAndWithoutAny, mMarketName);
+            return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingListWithSupermarketAndWithoutAny, mMarketId);
         } else if (!productsNotAssigned) {
             //Get the products only assigned to one supermarket
-            return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingListBySupermarket, mMarketName);
+            return new ProductLoader(getActivity(), ProductLoader.TypeProducts.InShoppingListBySupermarket, mMarketId);
         }
         return null;
     }

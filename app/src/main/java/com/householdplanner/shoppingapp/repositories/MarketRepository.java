@@ -6,16 +6,15 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
+import com.householdplanner.shoppingapp.models.Market;
 import com.householdplanner.shoppingapp.stores.DatabaseHelper;
-
-import java.util.Locale;
 
 public class MarketRepository {
     // Database fields
     private SQLiteDatabase mDatabase;
     private DatabaseHelper mMarketDbHelper;
-    private Cursor mCursor;
     private Context mContext;
 
     public MarketRepository(Context context) {
@@ -35,174 +34,61 @@ public class MarketRepository {
     }
 
     public void close() {
-        if (mCursor != null) mCursor.close();
         if (mDatabase != null) mDatabase.close();
         if (mMarketDbHelper != null) mMarketDbHelper.close();
     }
 
     /**
      * Create a new market
-     * @param marketName market name
+     *
+     * @param market market object
      * @return true if it was created
      */
-    public boolean createMarketItem(String marketName) {
-        int marketId = 1;
-        String query = "SELECT MAX(" + ShoppingListContract.MarketEntry.COLUMN_MARKET_ID + ") FROM "
-                + ShoppingListContract.MarketEntry.TABLE_NAME;
-        Cursor cursor = getDatabase().rawQuery(query, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                marketId = cursor.getInt(0);
-                marketId++;
-            }
-        }
+    public boolean insert(Market market) {
         ContentValues values = new ContentValues();
-        values.put(ShoppingListContract.MarketEntry.COLUMN_MARKET_ID, marketId);
-        values.put(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME, marketName.trim().toLowerCase(Locale.getDefault()));
+        values.put(ShoppingListContract.MarketEntry._ID, market._id);
+        values.put(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME, util.capitalize(market.name));
         long insertId = getDatabase().insert(ShoppingListContract.MarketEntry.TABLE_NAME, null, values);
-
         if (insertId > 0) {
-            close();
             return true;
         } else {
-            close();
             return false;
         }
     }
 
     /**
-     * Get markets that have products set
-     * @return markets cursor
+     * Delete a market
+     * @param marketId market id
+     * @return true if it was deleted
      */
-    public Cursor getMarketsWithProducts() {
-        String sql = "SELECT " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID + ","
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_ID + ","
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ", "
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_COLOR + " "
-                + "FROM " + ShoppingListContract.MarketEntry.TABLE_NAME + " INNER JOIN " + ShoppingListContract.ProductEntry.TABLE_NAME + " "
-                + "ON " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "=" + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_MARKET + " "
-                + "WHERE " + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_MARKET + " is not null "
-                + "GROUP BY " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID + ","
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_ID + ","
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ", "
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_COLOR + " ";
-
-        Cursor cursor = getDatabase().rawQuery(sql, null);
-        return cursor;
-    }
-
-    /**
-     * Delete a Market
-     * @param marketId market identifier
-     * @param marketName market name
-     * @return true if the market was successfully deleted
-     */
-    public boolean deleteMarketItem(int marketId, String marketName) {
-        int result;
-        getDatabase().beginTransaction();
-
-        result = getDatabase().delete(ShoppingListContract.MarketEntry.TABLE_NAME,
-                ShoppingListContract.MarketEntry.COLUMN_MARKET_ID + "=" + marketId, null);
-        if (result > 0) {
-            ShoppingListRepository listRepository = new ShoppingListRepository(mContext, getDatabase());
-            listRepository.unSetMarket(marketName);
-            ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext, getDatabase());
-            historyRepository.unSetMarket(marketName);
-        }
-        if (result > 0) {
-            getDatabase().setTransactionSuccessful();
-            getDatabase().endTransaction();
-            return true;
-        } else {
-            getDatabase().endTransaction();
-            return false;
-        }
+    public boolean delete(int marketId) {
+        boolean result = getDatabase().delete(ShoppingListContract.MarketEntry.TABLE_NAME,
+                ShoppingListContract.MarketEntry._ID + "=" + marketId, null) > 0;
+        return result;
     }
 
     /**
      * Rename the market name for a supermarket id
-     * @param marketId market id
-     * @param oldMarket current market name
+     *
+     * @param marketId      market id
      * @param newMarketName new market name
      * @return true if it was renamed
      */
-    public boolean renameMarket(int marketId, String oldMarket, String newMarketName) {
+    public boolean renameMarket(int marketId, String newMarketName) {
         boolean result = true;
         ContentValues values = new ContentValues();
         SQLiteDatabase database = getDatabase();
 
-        values.put(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME, newMarketName.toLowerCase(Locale.getDefault()));
-
-        database.beginTransaction();
-        database.update(ShoppingListContract.MarketEntry.TABLE_NAME, values,
-                ShoppingListContract.MarketEntry._ID + "=" + marketId, null);
-        ShoppingListRepository listRepository = new ShoppingListRepository(mContext, getDatabase());
-        listRepository.renameSupermarket(oldMarket, newMarketName);
-
-        ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext, getDatabase());
-        historyRepository.renameSupermarket(oldMarket, newMarketName);
-
-        database.setTransactionSuccessful();
-        database.endTransaction();
+        values.put(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME, util.capitalize(newMarketName));
+        result = database.update(ShoppingListContract.MarketEntry.TABLE_NAME, values,
+                ShoppingListContract.MarketEntry._ID + "=" + marketId, null) > 0;
 
         return result;
     }
 
     /**
-     * Get all markets in table
-     * @return cursor with existing markets
-     */
-    public Cursor getAllMarkets() {
-        mCursor = this.getDatabase().query(ShoppingListContract.MarketEntry.TABLE_NAME,
-                new String[]{ShoppingListContract.MarketEntry._ID,
-                        ShoppingListContract.MarketEntry.COLUMN_MARKET_ID,
-                        ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME,
-                        ShoppingListContract.MarketEntry.COLUMN_COLOR},
-                ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "<>'a'", null, null, null,
-                ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME);
-        return mCursor;
-    }
-
-    /**
-     * Get the market name that belongs to one id
-     * @param id market id
-     * @return Market name string
-     */
-    public String getMarketName(int id) {
-        String marketName = null;
-        String sql = "SELECT " + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME
-                + " FROM " + ShoppingListContract.MarketEntry.TABLE_NAME
-                + " WHERE " + ShoppingListContract.MarketEntry.COLUMN_MARKET_ID + "=" + id;
-        Cursor cursor = getDatabase().rawQuery(sql, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME));
-            }
-        }
-        return marketName;
-    }
-
-    /**
-     * Get the market id that belongs to one market name
-     * @param name market name
-     * @return market id
-     */
-    public int getMarketId(String name) {
-        int marketId = 0;
-        String sql = "SELECT " + ShoppingListContract.MarketEntry.COLUMN_MARKET_ID
-                + " FROM " + ShoppingListContract.MarketEntry.TABLE_NAME
-                + " WHERE " + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "='" + name.trim() + "'";
-        Cursor cursor = getDatabase().rawQuery(sql, null);
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_ID));
-            }
-        }
-        return marketId;
-    }
-
-    /**
      * Get the color represeting a supermarket
+     *
      * @param name market name
      * @return color number
      */
@@ -225,14 +111,15 @@ public class MarketRepository {
 
     /**
      * Set a color to one supermarket
+     *
      * @param marketId market identifier
-     * @param color color number
+     * @param color    color number
      */
     public void setColor(int marketId, int color) {
         ContentValues values = new ContentValues();
         values.put(ShoppingListContract.MarketEntry.COLUMN_COLOR, color);
         getDatabase().update(ShoppingListContract.MarketEntry.TABLE_NAME, values,
-                ShoppingListContract.MarketEntry.COLUMN_MARKET_ID + "=" + marketId, null);
+                ShoppingListContract.MarketEntry._ID + "=" + marketId, null);
     }
 
 }

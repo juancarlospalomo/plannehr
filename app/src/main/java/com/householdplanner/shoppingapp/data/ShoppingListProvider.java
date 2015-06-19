@@ -23,6 +23,8 @@ public class ShoppingListProvider extends ContentProvider {
     private final static int PRODUCT_HISTORY = 200;
     private final static int PRODUCT_HISTORY_SUGGEST = 201;
     private final static int BUDGET = 300;
+    private final static int MARKET = 400;
+    private final static int MARKET_PRODUCT = 401;
 
     private DatabaseHelper mDatabaseHelper;
 
@@ -36,6 +38,9 @@ public class ShoppingListProvider extends ContentProvider {
         mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_PRODUCT_HISTORY + "/" +
                 SearchManager.SUGGEST_URI_PATH_QUERY + "/*", PRODUCT_HISTORY_SUGGEST);
         mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_BUDGET, BUDGET);
+        mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_MARKET, MARKET);
+        mUriMatcher.addURI(ShoppingListContract.CONTENT_AUTHORITY, ShoppingListContract.PATH_MARKET + "/" +
+                ShoppingListContract.PATH_PRODUCT, MARKET_PRODUCT);
     }
 
     @Override
@@ -48,8 +53,14 @@ public class ShoppingListProvider extends ContentProvider {
      * Return the products on the list table
      */
     private Cursor getProductList(String[] projection, String selection, String[] selectionArgs, String orderBy) {
-        Cursor cursor = mDatabaseHelper.getReadableDatabase().query(ShoppingListContract.ProductEntry.TABLE_NAME,
-                projection, selection, selectionArgs, null, null, orderBy);
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+        //Build join
+        sqLiteQueryBuilder.setTables(ShoppingListContract.ProductEntry.TABLE_NAME + " INNER JOIN " +
+                ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " ON "
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + "="
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID);
+
+        Cursor cursor = sqLiteQueryBuilder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, orderBy);
         return cursor;
     }
 
@@ -60,11 +71,40 @@ public class ShoppingListProvider extends ContentProvider {
         SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
         //Build join
         sqLiteQueryBuilder.setTables(ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " LEFT JOIN " +
-                ShoppingListContract.ProductEntry.TABLE_NAME + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." +
-                ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + "=" + ShoppingListContract.ProductEntry.TABLE_NAME + "." +
-                ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME);
+                ShoppingListContract.ProductEntry.TABLE_NAME + " ON "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + "="
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID);
 
         return sqLiteQueryBuilder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, orderBy);
+    }
+
+    /**
+     * Get the markets that have products on the List
+     * @param orderBy order by clause
+     * @return Cursor with markets
+     */
+    public Cursor getMarketsWithProducts(String orderBy) {
+        SQLiteQueryBuilder sqLiteQueryBuilder = new SQLiteQueryBuilder();
+        //Build join
+        sqLiteQueryBuilder.setTables(ShoppingListContract.MarketEntry.TABLE_NAME + " INNER JOIN "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " ON "
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID + "="
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID
+                + " INNER JOIN " + ShoppingListContract.ProductEntry.TABLE_NAME + " ON "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + "="
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID);
+
+        String[] projection = new String[]{ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID,
+                ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME,
+                ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_COLOR};
+
+        String groupBy = ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID + ","
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_COLOR;
+
+        Cursor cursor = sqLiteQueryBuilder.query(mDatabaseHelper.getReadableDatabase(), projection, null, null,
+                groupBy, null, orderBy);
+        return cursor;
     }
 
     @Override
@@ -92,6 +132,15 @@ public class ShoppingListProvider extends ContentProvider {
                         projection, selection, selectionArgs, null, null, sortOrder);
                 break;
 
+            case MARKET:
+                cursor = mDatabaseHelper.getReadableDatabase().query(ShoppingListContract.MarketEntry.TABLE_NAME,
+                        projection, selection, selectionArgs, null, null, sortOrder);
+                break;
+
+            case MARKET_PRODUCT:
+                cursor = getMarketsWithProducts(sortOrder);
+                break;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -112,6 +161,11 @@ public class ShoppingListProvider extends ContentProvider {
                 return ShoppingListContract.ProductHistoryEntry.CONTENT_TYPE;
             case BUDGET:
                 return ShoppingListContract.BudgetEntry.CONTENT_TYPE;
+            case MARKET:
+                return ShoppingListContract.MarketEntry.CONTENT_TYPE;
+            case MARKET_PRODUCT:
+                return ShoppingListContract.MarketEntry.CONTENT_TYPE;
+
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }

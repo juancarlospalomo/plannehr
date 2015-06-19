@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.CursorLoader;
@@ -19,10 +18,15 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.householdplanner.shoppingapp.common.ProductHelper;
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
+import com.householdplanner.shoppingapp.exceptions.ProductException;
+import com.householdplanner.shoppingapp.models.Product;
+import com.householdplanner.shoppingapp.models.ProductHistory;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
-import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
+import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
+import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
 public class SearchProductActivity extends BaseActivity implements LoaderCallbacks<Cursor> {
 
@@ -76,23 +80,22 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
 
     /**
      * Create a product on the list with the product id on the history list
+     *
      * @param id product id
      */
     private void createProduct(int id) {
-        ProductHistoryRepository historyRepository = new ProductHistoryRepository(SearchProductActivity.this);
-        ShoppingListRepository listRepository = new ShoppingListRepository(SearchProductActivity.this);
-        Cursor cursor = historyRepository.getProduct(id);
-        if ((cursor != null) && (cursor.moveToFirst())) {
-            String productName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
-            String market = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
-            int categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID));
-            if (listRepository.createProductItem(productName, market, "", 0, categoryId)) {
-                getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
-                getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
-            }
+        UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(this);
+        ProductHistory productHistory = useCaseMyProducts.getProduct(id);
+        if (productHistory != null) {
+            Product product = new Product();
+            product.productId = productHistory._id;
+            product.name = productHistory.name;
+            product.committed = false;
+            ProductHelper productHelper = new ProductHelper(this, product, null);
+            productHelper.addProductToList();
+            getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
+            getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
         }
-        listRepository.close();
-        historyRepository.close();
     }
 
     private void doQuery(String query) {
@@ -180,31 +183,27 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
                     viewHolder.imageCheck.setChecked(true);
                     mCursor.moveToPosition(pos);
                     int id = mCursor.getInt(mCursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID));
-                    ProductHistoryRepository historyRepository = new ProductHistoryRepository(SearchProductActivity.this);
-                    ShoppingListRepository listRepository = new ShoppingListRepository(SearchProductActivity.this);
-                    Cursor cursor = historyRepository.getProduct(id);
-                    if ((cursor != null) && (cursor.moveToFirst())) {
-                        String productName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
-                        String market = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET));
-                        int categoryId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID));
-                        if (listRepository.createProductItem(productName, market, "", 0, categoryId)) {
+                    UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(SearchProductActivity.this);
+                    ProductHistory productHistory = useCaseMyProducts.getProduct(id);
+                    if (productHistory != null) {
+                        Product product = new Product();
+                        product.productId = productHistory._id;
+                        product.name = productHistory.name;
+                        product.committed = false;
+                        UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(SearchProductActivity.this);
+                        try {
+                            useCaseShoppingList.createProduct(product, false);
                             getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                             getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    getSupportLoaderManager().restartLoader(LOADER_ID, null, SearchProductActivity.this);
-                                }
-                            }, 100);
+                        } catch (ProductException e) {
+                            e.printStackTrace();
                         }
                     }
-                    listRepository.close();
-                    historyRepository.close();
                 }
             });
             mCursor.moveToPosition(position);
             viewHolder.imageCheck.setChecked(false);
-            viewHolder.textName.setText(util.getCompleteHistoryRow(mContext, mCursor, false));
+            viewHolder.textName.setText(util.capitalize(mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME))));
             return convertView;
         }
 

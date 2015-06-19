@@ -15,8 +15,8 @@ public class ProductHistoryStore {
             + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
             + " (" + ShoppingListContract.ProductHistoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " TEXT COLLATE NOCASE, "
-            + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + " INTEGER, "
-            + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET + " TEXT);";
+            + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + " INTEGER, "
+            + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + " TEXT);";
 
     public static void onCreate(SQLiteDatabase database) {
         database.execSQL(SQL_TABLE_CREATE);
@@ -27,8 +27,11 @@ public class ProductHistoryStore {
         if (oldVersion < 3) {
             onUpgradeV3(database);
         }
-        if (oldVersion < 5 && newVersion == 5) {
+        if (oldVersion < 5) {
             onUpgradeV5(database);
+        }
+        if (oldVersion < 6) {
+            onUpgradeV6(database);
         }
     }
 
@@ -43,15 +46,11 @@ public class ProductHistoryStore {
         database.execSQL(sql);
         database.execSQL(SQL_TABLE_CREATE);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
-                + " (" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET + ","
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + " "
-                + "SELECT " + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", Brand, "
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + " "
+                + " (" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ",Market,Category "
+                + "SELECT " + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", Brand, Category "
                 + "FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old;");
 
         database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old");
-
         //Insert Products
         insertProducts(database);
     }
@@ -67,15 +66,63 @@ public class ProductHistoryStore {
         database.execSQL(sql);
         database.execSQL(SQL_TABLE_CREATE);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
-                + " (" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET + ","
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + ") "
-                + "SELECT " + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", "
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET + ", "
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + " "
+                + " (" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ",Market, Category) "
+                + "SELECT " + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", Market, Category "
                 + "FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old;");
 
         database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old");
+    }
+
+    /**
+     * Upgrade model to V6 Version:
+     * Remove Category column and add MarketID column
+     *
+     * @param database
+     */
+    private static void onUpgradeV6(SQLiteDatabase database) {
+        String sql = "ALTER TABLE " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
+                + " RENAME TO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old;";
+        database.execSQL(sql);
+        database.execSQL(SQL_TABLE_CREATE);
+
+        Cursor cursor = getVersionLessThan6Rows(database);
+
+        if ((cursor != null) & (cursor.moveToFirst())) {
+            while (!cursor.isAfterLast()) {
+                sql = "INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " ("
+                        + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
+                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + ","
+                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + ") VALUES ("
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME)) + ",'"
+                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry._ID)) + "',"
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME)) + ")";
+
+                database.execSQL(sql);
+                cursor.moveToNext();
+            }
+        }
+
+        if (cursor != null) cursor.close();
+        database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old");
+    }
+
+    /**
+     * Get Rows from Catalog doing an INNER JOIN with Markets to get the MarketId
+     *
+     * @param database
+     * @return Cursor
+     */
+    private static Cursor getVersionLessThan6Rows(SQLiteDatabase database) {
+        String sql = "SELECT " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID + ","
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
+                + " FROM " + ShoppingListContract.MarketEntry.TABLE_NAME + " INNER JOIN "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old"
+                + " ON " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "="
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old.Market";
+
+        Cursor cursor = database.rawQuery(sql, null);
+        return cursor;
     }
 
     private static boolean existProduct(String productName, SQLiteDatabase db) {
@@ -99,13 +146,13 @@ public class ProductHistoryStore {
             productList.add("Papel Higienico");
             productList.add("Servilletas");
             productList.add("Detergente Lavadora");
-            productList.add("Jab�n de Mano");
+            productList.add("Jabón de Mano");
             productList.add("Cepillo de Dientes");
             productList.add("Pasta de Dientes");
-            productList.add("Gel de Ba�o");
+            productList.add("Gel de Baño");
             productList.add("Champu");
             productList.add("Rollo de Papel de Cocina");
-            productList.add("Limpiador Superficie de Ba�o");
+            productList.add("Limpiador Superficie de Baño");
             productList.add("Limpiador Superficie de Cocina");
             productList.add("Suavizante Lavadora");
             productList.add("Lavavajilla Maquina");
@@ -121,7 +168,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 1);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -145,7 +192,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 2);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -175,7 +222,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 3);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -193,7 +240,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 4);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -212,7 +259,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 4);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -237,7 +284,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 5);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -250,7 +297,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 5);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -275,7 +322,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 6);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -304,7 +351,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 6);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -324,7 +371,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 7);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -341,7 +388,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 7);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -364,7 +411,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 8);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -382,7 +429,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 8);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -411,7 +458,7 @@ public class ProductHistoryStore {
         }
         for (String productName : productList) {
             if (!existProduct(productName, db)) {
-                sql = getProductInsertSQL(productName, 9);
+                sql = getProductInsertSQL(productName);
                 db.execSQL(sql);
             }
         }
@@ -421,7 +468,7 @@ public class ProductHistoryStore {
             productList.add("Tomate Frito");
             for (String productName : productList) {
                 if (!existProduct(productName, db)) {
-                    sql = getProductInsertSQL(productName, 9);
+                    sql = getProductInsertSQL(productName);
                     db.execSQL(sql);
                 }
             }
@@ -445,14 +492,12 @@ public class ProductHistoryStore {
      * Build sql to Insert a product in the table
      *
      * @param productName product name
-     * @param categoryId  category
      * @return SQL
      */
-    private static String getProductInsertSQL(String productName, int categoryId) {
+    private static String getProductInsertSQL(String productName) {
         String sql = "INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
-                + "(" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", "
-                + ShoppingListContract.ProductHistoryEntry.COLUMN_CATEGORY_ID + ") VALUES "
-                + "('" + productName + "', " + categoryId + ")";
+                + "(" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ") VALUES "
+                + "('" + productName + "')";
         return sql;
     }
 

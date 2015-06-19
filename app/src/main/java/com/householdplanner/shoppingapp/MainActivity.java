@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.householdplanner.shoppingapp.asynctasks.BasketTask;
+import com.householdplanner.shoppingapp.common.ProductHelper;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
 import com.householdplanner.shoppingapp.cross.AppPreferences;
 import com.householdplanner.shoppingapp.cross.OnLoadData;
@@ -38,14 +39,16 @@ import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.fragments.FragmentDoShopping;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterData;
 import com.householdplanner.shoppingapp.fragments.FragmentEnterList;
-import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
+import com.householdplanner.shoppingapp.models.Product;
+import com.householdplanner.shoppingapp.usecases.UseCaseMarket;
+import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
+public class MainActivity extends BaseActivity implements ProductHelper.OnSaveProduct,
         OnLoadData {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -180,8 +183,8 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         } else {
             if (moreThanOneSupermarket()) {
                 Intent intent = new Intent(this, MarketListActivity.class);
-                intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_ALL, false);
-                intent.putExtra(MarketListActivity.IN_EXTRA_SHOW_CHECK_NO_MARKET, true);
+                intent.putExtra(MarketListActivity.EXTRA_SHOW_ALL_MARKETS, false);
+                intent.putExtra(MarketListActivity.EXTRA_SHOW_CHECK_NO_MARKET, true);
                 startActivityForResult(intent, SELECT_MARKET);
             } else {
                 AppGlobalState.getInstance().setMarket(MainActivity.this, 0, null);
@@ -190,14 +193,19 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         }
     }
 
+    /**
+     * Check if there are at least one product in the cart
+     *
+     * @return true if there are any product
+     */
     private boolean hasBasketProducts() {
-        ShoppingListRepository listRepository = new ShoppingListRepository(this);
-        Cursor cursor = listRepository.getProductsCommitted();
-        if (cursor != null) {
-            if (cursor.getCount() > 0) return true;
-            else return false;
+        UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(this);
+        List<Product> list = useCaseShoppingList.getProductsInBasket();
+        if (list != null & list.size() > 0) {
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     private void hideActionBarIcons() {
@@ -206,11 +214,15 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         mActionMenu.findItem(R.id.action_doShopping).setVisible(false);
     }
 
+    /**
+     * Check if some product on the List has supermarket assigned
+     *
+     * @return true if there are at least one
+     */
     private boolean moreThanOneSupermarket() {
-        boolean result = false;
-        ShoppingListRepository shoppingListRepository = new ShoppingListRepository(this);
-        result = shoppingListRepository.existsProductsInSupermarket();
-        shoppingListRepository.close();
+        boolean result;
+        UseCaseMarket useCaseMarket = new UseCaseMarket(this);
+        result = useCaseMarket.existProductWithSupermarketOnList();
         return result;
     }
 
@@ -430,12 +442,13 @@ public class MainActivity extends BaseActivity implements Product.OnSaveProduct,
         if (words.size() > 0) {
             VoiceInputToken inputToken = new VoiceInputToken(words.get(0));
             inputToken.parse();
-            String productName = inputToken.getProductName();
-            String market = null;
-            String amount = inputToken.getAmount();
-            int unitId = inputToken.getUnitId();
-            Product product = new Product(this, productName, market, amount, unitId, this);
-            product.addProductToList();
+            Product product = new Product();
+            product.name = inputToken.getProductName();
+            product.marketName = null;
+            product.amount = inputToken.getAmount();
+            product.unitId = inputToken.getUnitId();
+            ProductHelper productHelper = new ProductHelper(this, product, this);
+            productHelper.addProductToList();
         }
     }
 
