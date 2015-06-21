@@ -14,7 +14,7 @@
 
     <style name="Widget.ApplilandiaButton" parent="@android:style/Widget.Button">
         <item name="android:background">?attr/selectableItemBackground</item>
-        <item name="android:textColor">@color/accent_material_light</item>
+        <item name="android:textColor">@color/accent_red</item>
     </style>
 
     <style name="Widget.SearchView" parent="Widget.AppCompat.SearchView">

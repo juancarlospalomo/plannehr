@@ -85,7 +85,7 @@ public class UseCaseShoppingList {
         String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
         String[] selectionArgs = new String[]{"1"};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, null);
+                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -102,7 +102,7 @@ public class UseCaseShoppingList {
         String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
         String[] selectionArgs = new String[]{"0"};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, null);
+                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -121,7 +121,7 @@ public class UseCaseShoppingList {
                 ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "=?";
         String[] selectionArgs = new String[]{"0", String.valueOf(marketId)};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, null);
+                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -141,7 +141,7 @@ public class UseCaseShoppingList {
                 ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + " IS NULL)";
         String[] selectionArgs = new String[]{"0", String.valueOf(marketId)};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, null);
+                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;

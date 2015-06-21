@@ -43,9 +43,11 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 
     private static final String LOG_TAG = FragmentShoppingList.class.getSimpleName();
 
+    private static final int LIST_INVALID_POSITION = -1;
     private static final int LOADER_ID = 1;
 
     private static int mMarketId;
+    private int mListCurrentPosition = LIST_INVALID_POSITION;
     private RecyclerView mRecyclerViewShoppingList;
     private RecyclerView.LayoutManager mLayoutManager;
     private SnackBar mSnackBar;
@@ -113,6 +115,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                                 if (product != null) {
                                                     UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                                     useCaseShoppingList.moveToBasket(product);
+                                                    mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
                                                     getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                                 }
                                                 mAdapter.mProductDataList.remove(position);
@@ -133,6 +136,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                                 if (product != null) {
                                                     UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                                     useCaseShoppingList.moveToBasket(product);
+                                                    mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();;
                                                     getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                                 }
                                                 mAdapter.mProductDataList.remove(position);
@@ -165,6 +169,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                     if (product != null && position != SnackBar.INVALID_POSITION) {
                                         UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                         useCaseShoppingList.backToShoppingList(product);
+                                        mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
                                         getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                     }
                                     checkBoxActionIcon.setChecked(false);
@@ -197,6 +202,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                                 if (product != null && position != SnackBar.INVALID_POSITION) {
                                                     UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                                     useCaseShoppingList.backToShoppingList(product);
+                                                    mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
                                                     getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                                                         ((View) view.getParent()).setScaleY(1f);
@@ -270,6 +276,10 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                     setVisibleEmptyList(true);
                 } else {
                     setVisibleEmptyList(false);
+                    if (mListCurrentPosition != LIST_INVALID_POSITION) {
+                        mRecyclerViewShoppingList.getLayoutManager().scrollToPosition(mListCurrentPosition);
+                        mListCurrentPosition = LIST_INVALID_POSITION;
+                    }
                 }
                 break;
         }

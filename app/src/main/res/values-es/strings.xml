@@ -104,9 +104,9 @@
     <string name="textProductsAllSupermarkets">Todos los Mercados</string>
     <string name="search_title">Búsqueda</string>
     <string name="search_product_activity_title">Resultado de la Búsqueda</string>
-    <string name="textFragmentEnterListTitle">Mi Lista de la Compra</string>
+    <string name="textFragmentEnterListTitle">Lista</string>
     <string name="textFragmentMyProductsTitle">Mis Productos</string>
-    <string name="textFragmentShoppingListTitle">Productos a Comprar</string>
+    <string name="textFragmentShoppingListTitle">Para Comprar</string>
     <string name="textFragmentBasketTitle">En la Cesta</string>
     <string name="textMessageThereAreNotSupermarkets">No tienes mercados. Puedes crearlos</string>
     <string name="textMessageThereAreNotProducts">No hay productos que comiencen por</string>

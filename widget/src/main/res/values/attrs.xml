@@ -79,6 +79,7 @@
         <attr name="android:paddingRight" />
         <attr name="android:paddingBottom" />
         <attr name="android:colorBackground" />
+        <attr name="android:layout_height" />
     </declare-styleable>
 
     <declare-styleable name="slidingTabViewTextAppearance">

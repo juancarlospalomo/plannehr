@@ -32,6 +32,8 @@ import android.widget.TextView;
  */
 public class SlidingTabLayout extends HorizontalScrollView {
 
+    private final static String LOG_TAG = SlidingTabLayout.class.getSimpleName();
+
     /**
      * Allows complete control over the colors drawn in the tab layout. Set with
      * {@link #setCustomTabColorizer(TabColorizer)}.
@@ -62,6 +64,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private int mTabViewPaddingRight = 0;
     private int mTabViewPaddingBottom = 0;
     private int mTabViewBackgroundColor = 0;
+    private int mTabViewHeight = 48;
 
     private int mTitleOffset;
 
@@ -94,7 +97,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         mTitleOffset = (int) (TITLE_OFFSET_DIPS * getResources().getDisplayMetrics().density);
 
         mTabStrip = new SlidingTabStrip(context, attrs);
-        addView(mTabStrip, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        addView(mTabStrip, LayoutParams.MATCH_PARENT, mTabViewHeight);
     }
 
     /**
@@ -116,6 +119,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 mTabViewPaddingRight = (int) typedArray.getDimension(R.styleable.slidingTabView_android_paddingRight, 0);
                 mTabViewPaddingBottom = (int) typedArray.getDimension(R.styleable.slidingTabView_android_paddingBottom, 0);
                 mTabViewBackgroundColor = typedArray.getColor(R.styleable.slidingTabView_android_colorBackground, 0);
+                mTabViewHeight = (int) typedArray.getDimension(R.styleable.slidingTabView_android_layout_height, 0);
             }
         } finally {
             typedArray.recycle();
@@ -200,7 +204,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         } else {
             textView = new TextView(getContext(), mAttrs, R.attr.slidingTabViewTextAppearance);
         }
-        textView.setLayoutParams(new LinearLayout.LayoutParams(0, 48 * (int) getResources().getDisplayMetrics().density, 1));
+        textView.setLayoutParams(new LinearLayout.LayoutParams(0, mTabViewHeight, 1));
         textView.setGravity(Gravity.CENTER);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -216,8 +220,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
             // If we're running on ICS or newer, enable all-caps to match the Action Bar tab style
             textView.setAllCaps(true);
         }
-        //textView.setBackgroundColor(mTabViewBackgroundColor);
-        //textView.setPadding(mTabViewPaddingLeft, 0, mTabViewPaddingRight, 0);
+        textView.setPadding(mTabViewPaddingLeft, 0, mTabViewPaddingRight, mTabViewPaddingBottom);
         return textView;
     }
 
