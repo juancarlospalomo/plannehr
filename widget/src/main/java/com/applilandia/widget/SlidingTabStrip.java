@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 class SlidingTabStrip extends LinearLayout {
 
     private static final int SELECTED_INDICATOR_THICKNESS_DIPS = 2;
-    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = 0xFFFFFFFF;
+    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = 0xFFFF8A80;
 
     private final int mSelectedIndicatorThickness;
     private final Paint mSelectedIndicatorPaint;
@@ -34,7 +34,7 @@ class SlidingTabStrip extends LinearLayout {
         final float density = getResources().getDisplayMetrics().density;
 
         mDefaultTabColorizer = new SimpleTabColorizer();
-        mDefaultTabColorizer.setIndicatorColors(DEFAULT_SELECTED_INDICATOR_COLOR);
+        mDefaultTabColorizer.setIndicatorColors(getResources().getColor(R.color.accent_red));
 
         mSelectedIndicatorThickness = (int) (SELECTED_INDICATOR_THICKNESS_DIPS * density);
         mSelectedIndicatorPaint = new Paint();

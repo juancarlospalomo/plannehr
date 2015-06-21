@@ -16,8 +16,8 @@ android {
         applicationId "com.householdplanner.shoppingapp"
         minSdkVersion 10
         targetSdkVersion 22
-        versionCode 15
-        versionName "1.6.2"
+        versionCode 16
+        versionName "1.6.2.1"
         signingConfig signingConfigs.debug
     }
 

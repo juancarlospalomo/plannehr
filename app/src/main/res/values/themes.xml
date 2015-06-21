@@ -11,7 +11,8 @@
 
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/color_toolbar_background</item>
-        <item name="colorAccent">@color/accent_material_light</item>
+<!--        <item name="colorAccent">@color/accent_material_light</item>-->
+        <item name="colorAccent">@color/accent_red</item>
 
         <!-- Text styles -->
         <item name="android:textColorPrimary">@color/primary_text_default_material_light</item>

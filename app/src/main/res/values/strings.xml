@@ -104,10 +104,10 @@
     <string name="textProductsAllSupermarkets">All Markets</string>
     <string name="search_title">Search</string>
     <string name="search_product_activity_title">Search Result</string>
-    <string name="textFragmentEnterListTitle">My Shopping List</string>
-    <string name="textFragmentMyProductsTitle">My Products Database</string>
-    <string name="textFragmentShoppingListTitle">Products to Buy</string>
-    <string name="textFragmentBasketTitle">In the Shopping Cart</string>
+    <string name="textFragmentEnterListTitle">List</string>
+    <string name="textFragmentMyProductsTitle">Database</string>
+    <string name="textFragmentShoppingListTitle">To Buy</string>
+    <string name="textFragmentBasketTitle">In the Cart</string>
     <string name="textMessageThereAreNotSupermarkets">You don\'t have supermarkets. You can create them</string>
 	<string name="textMessageThereAreNotProducts">There\'s not products starting by</string>
 
