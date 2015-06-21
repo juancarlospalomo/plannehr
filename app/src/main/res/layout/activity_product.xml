@@ -41,8 +41,6 @@
             style="@style/editTextData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="start"
-            android:gravity="right"
             android:hint="@string/amount"
             android:inputType="numberDecimal" />
 

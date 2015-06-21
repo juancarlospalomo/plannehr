@@ -68,12 +68,13 @@ public class ShoppingListContract {
         public static final String COLUMN_PRODUCT_NAME = "Name";
         //Market Id FK
         public static final String COLUMN_MARKET_ID = "MarketId";
-        //Market name that product belongs to. Redundancy for query optimization
-        public static final String COLUMN_MARKET_NAME = "MarketName";
+        //Photo name
+        public static final String COLUMN_PHOTO_NAME = "Photo";
         /**
          * Alias for fields if they are needed
          */
-        public static final String ALIAS_ID = TABLE_NAME + "_" + _ID;
+        public static final String ALIAS_ID = TABLE_NAME + _ID;
+        public static final String ALIAS_MARKET_NAME = "MarketName";
 
         //Uri functions to manage the parameters
 

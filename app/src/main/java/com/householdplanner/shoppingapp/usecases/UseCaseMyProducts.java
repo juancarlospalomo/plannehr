@@ -23,7 +23,7 @@ public class UseCaseMyProducts {
     private static String[] mProjection = new String[]{ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_ID,
             ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME,
             ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID,
-            ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME};
+            ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME};
 
     public UseCaseMyProducts(Context context) {
         mContext = context;
@@ -50,7 +50,7 @@ public class UseCaseMyProducts {
                 product._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_ID));
                 product.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
                 product.marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID));
-                product.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME));
+                product.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
                 productList.add(product);
                 cursor.moveToNext();
             }
@@ -73,10 +73,10 @@ public class UseCaseMyProducts {
 
         if (cursor != null & cursor.moveToFirst()) {
             ProductHistory productHistory = new ProductHistory();
-            productHistory._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID));
+            productHistory._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_ID));
             productHistory.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
             productHistory.marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID));
-            productHistory.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME));
+            productHistory.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
             return productHistory;
         } else {
             return null;
@@ -104,10 +104,10 @@ public class UseCaseMyProducts {
 
         if (cursor != null & cursor.moveToFirst()) {
             ProductHistory productHistory = new ProductHistory();
-            productHistory._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID));
+            productHistory._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_ID));
             productHistory.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
             productHistory.marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID));
-            productHistory.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME));
+            productHistory.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
             return productHistory;
         } else {
             return null;

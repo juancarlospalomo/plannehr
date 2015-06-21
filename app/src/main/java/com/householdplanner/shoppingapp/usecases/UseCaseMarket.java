@@ -8,6 +8,7 @@ import com.householdplanner.shoppingapp.exceptions.MarketException;
 import com.householdplanner.shoppingapp.models.Market;
 import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
+import com.householdplanner.shoppingapp.stores.MarketStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,8 @@ public class UseCaseMarket {
         List<Market> marketList = new ArrayList<Market>();
 
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.MarketEntry.CONTENT_URI,
-                mProjection, null, null, ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " ASC");
+                mProjection, ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "<>'" + MarketStore.VIRTUAL_MARKET_NAME + "'",
+                null, ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " ASC");
         marketList = toList(cursor);
 
         return marketList;
@@ -73,7 +75,8 @@ public class UseCaseMarket {
         List<Market> marketList = new ArrayList<>();
 
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.MarketEntry.setUriProductMarket(),
-                null, null, null, ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " ASC");
+                null, null, null,
+                ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " ASC");
         marketList = toList(cursor);
 
         return marketList;
@@ -102,6 +105,7 @@ public class UseCaseMarket {
 
     /**
      * Search a market by its name
+     *
      * @param name market name
      * @return market object if it already exists
      */
@@ -162,7 +166,7 @@ public class UseCaseMarket {
      */
     public boolean createMarket(Market market) throws MarketException {
         Market currentMarket = getMarket(market.name);
-        if (currentMarket==null) {
+        if (currentMarket == null) {
             MarketRepository marketRepository = new MarketRepository(mContext);
             boolean result = marketRepository.insert(market);
             marketRepository.close();
@@ -174,6 +178,7 @@ public class UseCaseMarket {
 
     /**
      * Delete a market and remove the assignment for the product that owns it
+     *
      * @param marketId market id
      * @return true if it was deleted
      */
@@ -181,7 +186,7 @@ public class UseCaseMarket {
         boolean result;
         MarketRepository marketRepository = new MarketRepository(mContext);
         result = marketRepository.delete(marketId);
-        if (result ){
+        if (result) {
             ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
             historyRepository.unSetMarket(marketId);
             historyRepository.close();

@@ -58,7 +58,10 @@ public class ShoppingListProvider extends ContentProvider {
         sqLiteQueryBuilder.setTables(ShoppingListContract.ProductEntry.TABLE_NAME + " INNER JOIN " +
                 ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " ON "
                 + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + "="
-                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID);
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID
+                + " LEFT JOIN " + ShoppingListContract.MarketEntry.TABLE_NAME + " ON "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "="
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID);
 
         Cursor cursor = sqLiteQueryBuilder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, orderBy);
         return cursor;
@@ -73,13 +76,17 @@ public class ShoppingListProvider extends ContentProvider {
         sqLiteQueryBuilder.setTables(ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " LEFT JOIN " +
                 ShoppingListContract.ProductEntry.TABLE_NAME + " ON "
                 + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + "="
-                + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID);
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID
+                + " LEFT JOIN " + ShoppingListContract.MarketEntry.TABLE_NAME + " ON "
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "="
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID);
 
         return sqLiteQueryBuilder.query(mDatabaseHelper.getReadableDatabase(), projection, selection, selectionArgs, null, null, orderBy);
     }
 
     /**
      * Get the markets that have products on the List
+     *
      * @param orderBy order by clause
      * @return Cursor with markets
      */

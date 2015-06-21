@@ -46,7 +46,6 @@ public class MarketRepository {
      */
     public boolean insert(Market market) {
         ContentValues values = new ContentValues();
-        values.put(ShoppingListContract.MarketEntry._ID, market._id);
         values.put(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME, util.capitalize(market.name));
         long insertId = getDatabase().insert(ShoppingListContract.MarketEntry.TABLE_NAME, null, values);
         if (insertId > 0) {

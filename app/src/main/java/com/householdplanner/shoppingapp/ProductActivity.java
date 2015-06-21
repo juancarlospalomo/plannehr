@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import com.applilandia.widget.ValidationField;
 import com.householdplanner.shoppingapp.common.ProductHelper;
+import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
@@ -117,6 +118,7 @@ public class ProductActivity extends BaseActivity {
                     } else {
                         UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(ProductActivity.this);
                         useCaseShoppingList.updateProduct(mProduct);
+                        getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                         finishActivity();
                     }
                 } else {

@@ -45,6 +45,8 @@ import java.util.List;
 public class FragmentMarket extends Fragment implements LoaderManager.LoaderCallbacks<List<Market>>,
         AdapterView.OnItemClickListener {
 
+    private final static String LOG_TAG = FragmentMarket.class.getSimpleName();
+
     private static final int LOADER_ID = 1;
 
     //Request Codes
@@ -360,6 +362,15 @@ public class FragmentMarket extends Fragment implements LoaderManager.LoaderCall
             mContext = context;
             mMarketDataList = data;
             mSelectedItems = new SparseBooleanArray();
+        }
+
+        @Override
+        public int getCount() {
+            if (mMarketDataList!=null) {
+                return mMarketDataList.size();
+            } else {
+                return 0;
+            }
         }
 
         @Override

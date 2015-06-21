@@ -27,6 +27,7 @@ public class ShoppingListStore {
     //Database creation sql statement
     private static final String SQL_TABLE_CREATE = "CREATE TABLE "
             + ShoppingListContract.ProductEntry.TABLE_NAME + "(" + ShoppingListContract.ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + " INTEGER, "
             + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + " TEXT, "
             + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + " INTEGER, "
             + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + " INTEGER);";
@@ -132,8 +133,11 @@ public class ShoppingListStore {
                 + " FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " INNER JOIN "
                 + ShoppingListContract.ProductEntry.TABLE_NAME + "_old"
                 + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + "="
-                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Name AND "
-                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + "="
+                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Name "
+                + " LEFT JOIN " + ShoppingListContract.MarketEntry.TABLE_NAME
+                + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "="
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID
+                + " WHERE " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "="
                 + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Market";
 
         Cursor cursor = database.rawQuery(sql, null);

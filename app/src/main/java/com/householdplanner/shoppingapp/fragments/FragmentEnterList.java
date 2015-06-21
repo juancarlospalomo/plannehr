@@ -204,7 +204,8 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         Product product = mAdapter.mProductListData.get(position);
         if (product != null) {
             Intent intent = new Intent(this.getActivity(), ProductActivity.class);
-            intent.putExtra(ProductActivity.EXTRA_PRODUCT_ID, product._id);
+            intent.putExtra(ProductActivity.EXTRA_ID, product._id);
+            intent.putExtra(ProductActivity.EXTRA_PRODUCT_ID, product.productId);
             intent.putExtra(ProductActivity.EXTRA_PRODUCT_NAME, product.name);
             intent.putExtra(ProductActivity.EXTRA_MARKET_NAME, product.marketName);
             intent.putExtra(ProductActivity.EXTRA_AMOUNT, product.amount);

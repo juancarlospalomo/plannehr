@@ -16,7 +16,7 @@ public class ProductHistoryStore {
             + " (" + ShoppingListContract.ProductHistoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " TEXT COLLATE NOCASE, "
             + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + " INTEGER, "
-            + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + " TEXT);";
+            + ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME + " TEXT);";
 
     public static void onCreate(SQLiteDatabase database) {
         database.execSQL(SQL_TABLE_CREATE);
@@ -91,11 +91,9 @@ public class ProductHistoryStore {
             while (!cursor.isAfterLast()) {
                 sql = "INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " ("
                         + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
-                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + ","
-                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + ") VALUES ("
-                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME)) + ",'"
-                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry._ID)) + "',"
-                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME)) + ")";
+                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + ") VALUES ("
+                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME)) + ",'"
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry._ID)) + "')";
 
                 database.execSQL(sql);
                 cursor.moveToNext();
@@ -114,10 +112,9 @@ public class ProductHistoryStore {
      */
     private static Cursor getVersionLessThan6Rows(SQLiteDatabase database) {
         String sql = "SELECT " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID + ","
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
-                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
-                + " FROM " + ShoppingListContract.MarketEntry.TABLE_NAME + " INNER JOIN "
-                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old"
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME
+                + " FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old" + " LEFT JOIN "
+                + ShoppingListContract.MarketEntry.TABLE_NAME
                 + " ON " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "="
                 + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old.Market";
 

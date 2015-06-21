@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 
 import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
@@ -65,9 +64,8 @@ public class ProductHistoryRepository {
     public int createProductItem(ProductHistory productHistory) {
         ContentValues values = new ContentValues();
         values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME, productHistory.name);
-        if (!TextUtils.isEmpty(productHistory.marketName)) {
+        if (productHistory.marketId != 0) {
             values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID, productHistory.marketId);
-            values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME, productHistory.marketName);
         }
         long insertId = getDatabase().insert(ShoppingListContract.ProductHistoryEntry.TABLE_NAME, null,
                 values);
@@ -85,10 +83,8 @@ public class ProductHistoryRepository {
         ContentValues values = new ContentValues();
         if (productHistory.marketId != 0) {
             values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID, productHistory.marketId);
-            values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME, productHistory.marketName);
         } else {
             values.putNull(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID);
-            values.putNull(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME);
         }
         if (productHistory.name != null) {
             values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME, util.capitalize(productHistory.name));
@@ -122,10 +118,8 @@ public class ProductHistoryRepository {
     public void updateSupermarket(int currentMarketId, int newMarketId, String newMarketName) {
         ContentValues values = new ContentValues();
         values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID, newMarketId);
-        values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME, newMarketName);
-        if (getDatabase().update(ShoppingListContract.ProductHistoryEntry.TABLE_NAME, values,
-                ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "=" + currentMarketId, null) > 0) {
-        }
+        getDatabase().update(ShoppingListContract.ProductHistoryEntry.TABLE_NAME, values,
+                ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "=" + currentMarketId, null);
     }
 
 
@@ -137,7 +131,6 @@ public class ProductHistoryRepository {
     public void unSetMarket(int marketId) {
         ContentValues values = new ContentValues();
         values.putNull(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID);
-        values.putNull(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME);
         getDatabase().update(ShoppingListContract.ProductHistoryEntry.TABLE_NAME, values,
                 ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "=" + marketId, null);
     }
@@ -146,7 +139,7 @@ public class ProductHistoryRepository {
      * Get the product id of a product with a specific name
      *
      * @param productName
-     * @param marketId market id
+     * @param marketId    market id
      * @return product id
      */
     public int getProductId(String productName, int marketId) {
@@ -178,11 +171,14 @@ public class ProductHistoryRepository {
         String sql = "SELECT " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + ","
                 + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
                 + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + ","
-                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME
+                + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME
                 + " FROM " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
                 + " LEFT JOIN " + ShoppingListContract.ProductEntry.TABLE_NAME
                 + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + "="
                 + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID
+                + " INNER JOIN " + ShoppingListContract.MarketEntry.TABLE_NAME
+                + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "="
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID
                 + " WHERE " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " LIKE '" + pattern + "%'"
                 + " AND " + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry._ID + " IS NULL"
                 + " ORDER BY " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME;

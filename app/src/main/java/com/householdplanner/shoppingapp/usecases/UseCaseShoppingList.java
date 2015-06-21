@@ -21,12 +21,12 @@ public class UseCaseShoppingList {
 
     private Context mContext;
     //Fields for projection
-    private static String[] mProjection = new String[]{ShoppingListContract.ProductEntry._ID,
+    private static String[] mProjection = new String[]{ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry._ID,
             ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID,
-            ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME,
+            ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME,
             ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT,
             ShoppingListContract.ProductEntry.COLUMN_UNIT_ID,
-            ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME,
+            ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME,
             ShoppingListContract.ProductEntry.COLUMN_COMMITTED};
 
     public UseCaseShoppingList(Context context) {
@@ -47,7 +47,7 @@ public class UseCaseShoppingList {
                 product._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry._ID));
                 product.productId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID));
                 product.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
-                product.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME));
+                product.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
                 product.amount = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT));
                 product.unitId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID));
                 product.committed = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_COMMITTED)) == 1;
@@ -68,7 +68,8 @@ public class UseCaseShoppingList {
         List<Product> productList = new ArrayList<Product>();
 
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, null, null, ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " ASC");
+                mProjection, null, null,
+                ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -85,7 +86,8 @@ public class UseCaseShoppingList {
         String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
         String[] selectionArgs = new String[]{"1"};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
+                mProjection, selection, selectionArgs,
+                ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -102,7 +104,8 @@ public class UseCaseShoppingList {
         String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
         String[] selectionArgs = new String[]{"0"};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
+                mProjection, selection, selectionArgs,
+                ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -121,7 +124,8 @@ public class UseCaseShoppingList {
                 ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "=?";
         String[] selectionArgs = new String[]{"0", String.valueOf(marketId)};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
+                mProjection, selection, selectionArgs,
+                ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -141,7 +145,8 @@ public class UseCaseShoppingList {
                 ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + " IS NULL)";
         String[] selectionArgs = new String[]{"0", String.valueOf(marketId)};
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
-                mProjection, selection, selectionArgs, ShoppingListContract.ProductEntry.COLUMN_PRODUCT_NAME + " ASC");
+                mProjection, selection, selectionArgs,
+                ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " ASC");
         productList = toList(cursor);
 
         return productList;
@@ -151,18 +156,18 @@ public class UseCaseShoppingList {
      * Check if a product, based on its product name and market name is on the list
      *
      * @param productName product name
-     * @param marketName  market name
+     * @param marketId  market id
      * @return true if the product is on the list
      */
-    public boolean isProductInList(String productName, String marketName) {
+    public boolean isProductInList(String productName, int marketId) {
         //Variable for returning product list
         List<Product> productList = new ArrayList<Product>();
         String selection = ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + "=? AND "
                 + ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "=?";
         String[] selectionArgs = new String[]{productName, "0"};
-        if (marketName != null) {
-            selection += " AND " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_NAME + "=?";
-            selectionArgs = new String[]{productName, "0", marketName};
+        if (marketId != 0) {
+            selection += " AND " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "=?";
+            selectionArgs = new String[]{productName, "0", String.valueOf(marketId)};
         }
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductEntry.CONTENT_URI,
                 mProjection, selection, selectionArgs, null);
@@ -182,7 +187,7 @@ public class UseCaseShoppingList {
      */
     public void createProduct(Product product, boolean allowDuplicates) throws ProductException {
         //First, we´ll check if the product is already on the list
-        if (!allowDuplicates & isProductInList(product.name, product.marketName)) {
+        if (!allowDuplicates & isProductInList(product.name, product.marketId)) {
             //Raise exception
             throw new ProductException();
         } else {

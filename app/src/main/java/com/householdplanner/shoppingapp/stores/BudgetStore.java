@@ -23,7 +23,7 @@ public class BudgetStore {
     }
 
     public static void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        if (oldVersion < 5 && newVersion == 5) {
+        if (oldVersion < 5) {
             onUpgradeV5(database);
         }
     }
