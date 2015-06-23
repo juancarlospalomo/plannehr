@@ -91,9 +91,9 @@ public class ProductHistoryStore {
             while (!cursor.isAfterLast()) {
                 sql = "INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + " ("
                         + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ","
-                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + ") VALUES ("
-                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME)) + ",'"
-                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry._ID)) + "')";
+                        + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + ") VALUES ('"
+                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME)) + "',"
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry._ID)) + ")";
 
                 database.execSQL(sql);
                 cursor.moveToNext();

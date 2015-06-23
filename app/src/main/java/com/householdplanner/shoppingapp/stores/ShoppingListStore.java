@@ -2,6 +2,7 @@ package com.householdplanner.shoppingapp.stores;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 
@@ -106,16 +107,26 @@ public class ShoppingListStore {
 
         if ((cursor != null) & (cursor.moveToFirst())) {
             while (!cursor.isAfterLast()) {
-                sql = "INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME + " ("
-                        + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + ","
-                        + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
-                        + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
-                        + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + ") VALUES ("
-                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID)) + ",'"
-                        + cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT)) + "',"
-                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID))
-                        + cursor.getInt(cursor.getColumnIndex("Comitted")) + ")";
-
+                String amount = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT));
+                if (TextUtils.isEmpty(amount)) {
+                    sql = "INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME + " ("
+                            + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + ","
+                            + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
+                            + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + ") VALUES ("
+                            + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID)) + ","
+                            + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID)) + ","
+                            + cursor.getInt(cursor.getColumnIndex("Comitted")) + ")";
+                } else {
+                    sql = "INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME + " ("
+                            + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID + ","
+                            + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
+                            + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
+                            + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + ") VALUES ("
+                            + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry._ID)) + ",'"
+                            + cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT)) + "',"
+                            + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID)) + ","
+                            + cursor.getInt(cursor.getColumnIndex("Comitted")) + ")";
+                }
                 database.execSQL(sql);
                 cursor.moveToNext();
             }
@@ -136,9 +147,7 @@ public class ShoppingListStore {
                 + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Name "
                 + " LEFT JOIN " + ShoppingListContract.MarketEntry.TABLE_NAME
                 + " ON " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + "="
-                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID
-                + " WHERE " + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + "="
-                + ShoppingListContract.ProductEntry.TABLE_NAME + "_old.Market";
+                + ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry._ID;
 
         Cursor cursor = database.rawQuery(sql, null);
         return cursor;

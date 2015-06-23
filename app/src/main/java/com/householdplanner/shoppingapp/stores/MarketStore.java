@@ -1,8 +1,10 @@
 package com.householdplanner.shoppingapp.stores;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.householdplanner.shoppingapp.cross.util;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 
 public class MarketStore {
@@ -35,6 +37,7 @@ public class MarketStore {
     /**
      * Create an useless market starting by 'a'.
      * It´s only to order the markets and appears "All" in the first position
+     *
      * @param database
      */
     private static void onUpgradeV3(SQLiteDatabase database) {
@@ -43,6 +46,7 @@ public class MarketStore {
 
     /**
      * Add Color column
+     *
      * @param database
      */
     private static void onUpgradeV4(SQLiteDatabase database) {
@@ -62,6 +66,7 @@ public class MarketStore {
 
     /**
      * Remove MarketID column
+     *
      * @param database
      */
     private static void onUpgradeV6(SQLiteDatabase database) {
@@ -69,12 +74,24 @@ public class MarketStore {
                 + " RENAME TO " + ShoppingListContract.MarketEntry.TABLE_NAME + "_old;";
         database.execSQL(sql);
         database.execSQL(SQL_TABLE_CREATE);
-        database.execSQL("INSERT INTO " + ShoppingListContract.MarketEntry.TABLE_NAME
-                + "(" + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
-                + ShoppingListContract.MarketEntry.COLUMN_COLOR + ") "
-                + "SELECT " + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
+
+        sql = "SELECT " + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
                 + ShoppingListContract.MarketEntry.COLUMN_COLOR + " "
-                + "FROM " + ShoppingListContract.MarketEntry.TABLE_NAME + "_old;");
+                + "FROM " + ShoppingListContract.MarketEntry.TABLE_NAME + "_old;";
+        Cursor cursor = database.rawQuery(sql, null);
+
+        if (cursor != null & cursor.moveToFirst()) {
+            while(!cursor.isAfterLast()) {
+                sql = "INSERT INTO " + ShoppingListContract.MarketEntry.TABLE_NAME
+                        + "(" + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
+                        + ShoppingListContract.MarketEntry.COLUMN_COLOR + ") VALUES ('"
+                        + util.capitalize(cursor.getString(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME))) + "',"
+                        + cursor.getInt(cursor.getColumnIndex(ShoppingListContract.MarketEntry.COLUMN_COLOR)) + ")";
+                database.execSQL(sql);
+                cursor.moveToNext();
+            }
+        }
+
         database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.MarketEntry.TABLE_NAME + "_old");
     }
 
