@@ -233,7 +233,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                 });
                                 MyProductsAdapter.ViewHolder viewHolder = (MyProductsAdapter.ViewHolder) mRecyclerViewMyProducts.findViewHolderForAdapterPosition(currentPosition);
                                 animateRowDeleted(viewHolder.itemView, currentPosition);
-                                mSnackBar.show(R.string.text_snack_bar_move_cart);
+                                mSnackBar.show(R.string.text_snack_bar_move_myproduct);
                             }
                         }
                     }
@@ -370,13 +370,15 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         public class ViewHolder extends RecyclerView.ViewHolder {
 
             public CircleView mCircleAvatar;
-            public TextView mTextName;
+            public TextView mTextPrimary;
+            public TextView mTextSecondary;
             public AppCompatCheckBox mCheckBoxProduct;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 mCircleAvatar = (CircleView) itemView.findViewById(R.id.circleAvatar);
-                mTextName = (TextView) itemView.findViewById(R.id.textProduct);
+                mTextPrimary = (TextView) itemView.findViewById(R.id.textview_primary_text);
+                mTextSecondary = (TextView) itemView.findViewById(R.id.textview_secondary_text);
                 mCheckBoxProduct = (AppCompatCheckBox) itemView.findViewById(R.id.imageSecondaryActionIcon);
             }
         }
@@ -406,7 +408,13 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                 holder.mCircleAvatar.setColor(getResources().getColor(android.R.color.transparent));
             }
             //Set product name
-            holder.mTextName.setText(productHistory.name);
+            holder.mTextPrimary.setText(productHistory.name);
+            if (productHistory.marketName!=null) {
+                holder.mTextSecondary.setVisibility(View.VISIBLE);
+                holder.mTextSecondary.setText(productHistory.marketName);
+            } else {
+                holder.mTextSecondary.setVisibility(View.GONE);
+            }
             if (mSelectedItems.get(position)) {
                 holder.itemView.setBackgroundResource(R.drawable.list_row_background_selected);
             } else {

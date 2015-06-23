@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
-import com.householdplanner.shoppingapp.models.Market;
 import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.models.ProductHistory;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
@@ -65,7 +64,7 @@ public class UseCaseMyProducts {
      * @return ProductHistory or null
      */
     public ProductHistory getProduct(int id) {
-        String selection = ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry._ID + "=?";
+        String selection = ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + "=?";
         String[] args = new String[]{String.valueOf(id)};
 
         Cursor cursor = mContext.getContentResolver().query(ShoppingListContract.ProductHistoryEntry.CONTENT_URI,
@@ -142,19 +141,12 @@ public class UseCaseMyProducts {
      * @param marketId market id
      */
     public void moveToSupermarket(int id, int marketId) {
-        if (marketId != 0) {
-            UseCaseMarket useCaseMarket = new UseCaseMarket(mContext);
-            Market market = useCaseMarket.getMarket(marketId);
-            if (market != null) {
-                ProductHistory productHistory = new ProductHistory();
-                productHistory._id = id;
-                productHistory.marketId = marketId;
-                productHistory.marketName = market.name;
-                ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
-                historyRepository.updateProductItem(productHistory);
-                historyRepository.close();
-            }
-        }
+        ProductHistory productHistory = new ProductHistory();
+        productHistory._id = id;
+        productHistory.marketId = marketId;
+        ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
+        historyRepository.updateProductItem(productHistory);
+        historyRepository.close();
     }
 
 

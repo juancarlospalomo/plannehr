@@ -4,15 +4,15 @@
     <dimen name="text_size_body_1_material">14sp</dimen>
     <dimen name="text_size_subhead_material">16sp</dimen>
     <!-- Metrics for avatar in list item -->
-    <dimen name="list_primary_action_avatar_height">56dp</dimen>
-    <dimen name="list_primary_action_avatar_width">56dp</dimen>
+    <dimen name="list_primary_action_avatar_height">40dp</dimen>
+    <dimen name="list_primary_action_avatar_width">40dp</dimen>
     <!-- Padding right action icon -->
     <dimen name="padding_action_icon">8dp</dimen>
-    <dimen name="list_item_height">56dp</dimen>
+    <dimen name="list_item_height">72dp</dimen>
     <dimen name="list_item_two_lines_height">72dp</dimen>
     <dimen name="list_item_padding_horizontal_material">16dp</dimen>
     <dimen name="list_avatar_horizontal_padding">16dp</dimen>
-    <dimen name="list_avatar_vertical_padding">8dp</dimen>
+    <dimen name="list_avatar_vertical_padding">16dp</dimen>
     <dimen name="list_item_text_padding_top">16dp</dimen>
     <!-- Text padding left for list row primary action with avatar, text and icon -->
     <dimen name="list_primary_action_text_avatar_text">72dp</dimen>

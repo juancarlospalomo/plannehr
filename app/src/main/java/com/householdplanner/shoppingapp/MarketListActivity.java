@@ -196,12 +196,10 @@ public class MarketListActivity extends BaseActivity implements LoaderCallbacks<
 
     public class MarketListAdapter extends ArrayAdapter<Market> {
 
-        private Context mContext;
         private List<Market> mMarketDataList;
 
         public MarketListAdapter(Context context, List<Market> data) {
             super(context, R.layout.market_item);
-            mContext = context;
             mMarketDataList = data;
         }
 

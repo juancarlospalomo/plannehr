@@ -109,7 +109,7 @@
     <string name="textFragmentShoppingListTitle">Para Comprar</string>
     <string name="textFragmentBasketTitle">En la Cesta</string>
     <string name="textMessageThereAreNotSupermarkets">No tienes mercados. Puedes crearlos</string>
-    <string name="textMessageThereAreNotProducts">No hay productos que comiencen por</string>
+    <string name="textMessageThereAreNotProducts">No hay productos que contengan</string>
 
     <!-- SearchView Hint -->
     <string name="text_hint_search_view_product">Buscar producto</string>

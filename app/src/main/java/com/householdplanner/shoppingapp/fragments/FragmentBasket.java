@@ -286,8 +286,13 @@ public class FragmentBasket extends Fragment implements LoaderManager.LoaderCall
                 Product product = mProductDataList.get(position);
                 if (product != null) {
                     viewHolder.mTextViewPrimary.setText(product.name);
-                    viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
-                            product.unitId, product.amount));
+                    if (product.amount != null) {
+                        viewHolder.mTextViewSecondary.setVisibility(View.VISIBLE);
+                        viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
+                                product.unitId, product.amount));
+                    } else {
+                        viewHolder.mTextViewSecondary.setVisibility(View.GONE);
+                    }
                     viewHolder.mSecondaryActionIcon.setChecked(true);
                 }
             }

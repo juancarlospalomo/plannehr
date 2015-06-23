@@ -244,8 +244,6 @@ public class MainActivity extends BaseActivity implements ProductHelper.OnSavePr
         if (!AppGlobalState.getInstance().isShoppingMode(this)) {
             if ((source != null) && (source.equals(FragmentEnterList.TAG_FRAGMENT))) {
                 mCurrentItems = items;
-                //TODO: Review shopping mode
-                //setShoppingMenu();
             }
         }
     }
@@ -457,17 +455,6 @@ public class MainActivity extends BaseActivity implements ProductHelper.OnSavePr
             Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
             ViewPager viewPager = (ViewPager) fragment.getView().findViewById(R.id.pagerEnterData);
             viewPager.setCurrentItem(0);
-        }
-    }
-
-    private void setShoppingMenu() {
-        MenuItem menuItem = mActionMenu.findItem(R.id.action_doShopping);
-        if (menuItem != null) {
-            if (mCurrentItems == 0) {
-                menuItem.setVisible(false);
-            } else {
-                menuItem.setVisible(true);
-            }
         }
     }
 

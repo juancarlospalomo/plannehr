@@ -136,7 +136,8 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                                 if (product != null) {
                                                     UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                                     useCaseShoppingList.moveToBasket(product);
-                                                    mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();;
+                                                    mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
+                                                    ;
                                                     getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                                 }
                                                 mAdapter.mProductDataList.remove(position);
@@ -334,8 +335,13 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                 Product product = mProductDataList.get(position);
                 if (product != null) {
                     viewHolder.mTextViewPrimary.setText(product.name);
-                    viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
-                            product.unitId, product.amount));
+                    if (product.amount != null) {
+                        viewHolder.mTextViewSecondary.setVisibility(View.VISIBLE);
+                        viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
+                                product.unitId, product.amount));
+                    } else {
+                        viewHolder.mTextViewSecondary.setVisibility(View.GONE);
+                    }
                     viewHolder.mSecondaryActionIcon.setChecked(false);
                 }
             }

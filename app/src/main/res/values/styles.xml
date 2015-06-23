@@ -7,11 +7,6 @@
 
     <style name="Widget" parent="@android:style/Widget" />
 
-    <style name="Widget.ApplilandiaTextView" parent="@android:style/Widget.TextView">
-        <item name="android:textColor">?android:textColorPrimary</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-
     <style name="Widget.ApplilandiaButton" parent="@android:style/Widget.Button">
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/accent_red</item>
@@ -75,24 +70,6 @@
         <item name="android:layout_gravity">left</item>
     </style>
 
-    <style name="TransparentProgressDialog" parent="@style/Theme.AppCompat.Dialog">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowBackground">@color/transparent</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:background">@color/transparent</item>
-        <item name="android:bottomBright">@color/transparent</item>
-        <item name="android:bottomDark">@color/transparent</item>
-        <item name="android:bottomMedium">@color/transparent</item>
-        <item name="android:centerBright">@color/transparent</item>
-        <item name="android:centerDark">@color/transparent</item>
-        <item name="android:centerMedium">@color/transparent</item>
-        <item name="android:fullBright">@color/transparent</item>
-        <item name="android:fullDark">@color/transparent</item>
-        <item name="android:topBright">@color/transparent</item>
-        <item name="android:topDark">@color/transparent</item>
-    </style>
-
     <style name="textColouredButton" parent="@android:style/TextAppearance">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
@@ -101,24 +78,6 @@
     <style name="editTextData" parent="@android:style/TextAppearance">
         <item name="android:textColor">?android:textColorPrimary</item>
         <item name="android:textAppearance">?android:textAppearanceMedium</item>
-    </style>
-
-    <style name="buttonColouredAppearance">
-        <item name="android:textAppearance">?android:textAppearanceMedium</item>
-        <item name="android:layout_margin">3dp</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
-    <style name="buttonColouredAction">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textAppearance">?android:textAppearanceMedium</item>
-        <item name="android:layout_margin">3dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:shadowColor">#000000</item>
-        <item name="android:shadowDx">1</item>
-        <item name="android:shadowDy">1</item>
-        <item name="android:shadowRadius">2</item>
     </style>
 
 </resources>

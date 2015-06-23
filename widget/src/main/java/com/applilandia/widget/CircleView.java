@@ -137,6 +137,8 @@ public class CircleView extends View {
             mSize = Math.min(widthSize, heightSize);
         }
 
+        mSize += getPaddingTop() + getPaddingBottom();
+
         final int newMeasureSpec = MeasureSpec.makeMeasureSpec(mSize, MeasureSpec.EXACTLY);
         super.onMeasure(newMeasureSpec, newMeasureSpec);
     }
@@ -150,12 +152,14 @@ public class CircleView extends View {
         if (!mSetStroke) {
             strokeWidth = 0;
         }
-        int rectHeight = mSize - (paddingBottom + paddingTop + (strokeWidth * 2));
-        //Rect inside the view
+        int rectHeight = mSize;
+        int rectWidth = mSize;
         RectF innerRectF = new RectF();
-        innerRectF.set(0, 0, mSize, rectHeight);
-        final int radius = rectHeight / 2;
+        innerRectF.set(0, 0, rectWidth, rectHeight);
+        //Remove padding to calculate the radius
+        //Remove stroke width too
+        final int radius = ((mSize - (paddingTop + paddingBottom)) / 2) - (strokeWidth * 2);
         canvas.drawRect(innerRectF, mPaintRect);
-        canvas.drawCircle(radius + strokeWidth, radius + strokeWidth, radius, mPaintCircle);
+        canvas.drawCircle(rectWidth / 2, rectHeight / 2, radius, mPaintCircle);
     }
 }

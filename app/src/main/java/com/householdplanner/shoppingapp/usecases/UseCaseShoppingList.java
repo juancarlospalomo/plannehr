@@ -206,10 +206,12 @@ public class UseCaseShoppingList {
                 ProductHistory productHistory = new ProductHistory();
                 productHistory.name = product.name;
                 productHistory.marketName = product.marketName;
-                //Get marketId by the market name
-                UseCaseMarket useCaseMarket = new UseCaseMarket(mContext);
-                Market market = useCaseMarket.getMarket(productHistory.marketName);
-                productHistory.marketId = market._id;
+                if (product.marketName != null) {
+                    //Get marketId by the market name
+                    UseCaseMarket useCaseMarket = new UseCaseMarket(mContext);
+                    Market market = useCaseMarket.getMarket(productHistory.marketName);
+                    productHistory.marketId = market._id;
+                }
                 product.productId = historyRepository.createProductItem(productHistory);
                 listRepository.createProductItem(product);
             }

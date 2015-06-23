@@ -11,7 +11,7 @@
 
         <!-- colorPrimary is used for the default action bar background -->
         <item name="colorPrimary">@color/color_toolbar_background</item>
-<!--        <item name="colorAccent">@color/accent_material_light</item>-->
+        <!--        <item name="colorAccent">@color/accent_material_light</item>-->
         <item name="colorAccent">@color/accent_red</item>
 
         <!-- Text styles -->
@@ -43,8 +43,6 @@
         <item name="textAppearanceListItem">@style/AppTheme.TextAppearance.Material.Subhead</item>
         <item name="textAppearanceListItemSecondary">@style/AppTheme.TextAppearance.Material.Body1
         </item>
-        <!-- AppCompatTextView Style -->
-        <item name="android:textViewStyle">@style/Widget.ApplilandiaTextView</item>
         <!-- Navigation Drawer -->
         <item name="textDrawerItemColor">@color/text_drawer_item</item>
     </style>

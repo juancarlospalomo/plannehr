@@ -1,16 +1,17 @@
 package com.householdplanner.shoppingapp.common;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.householdplanner.shoppingapp.BaseActivity;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.exceptions.ProductException;
+import com.householdplanner.shoppingapp.fragments.AlertDialogFragment;
 import com.householdplanner.shoppingapp.models.Product;
 import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
-public class ProductHelper implements DialogInterface.OnClickListener {
+public class ProductHelper {
 
     /**
      * Interface to communicate through a callback handler
@@ -30,18 +31,6 @@ public class ProductHelper implements DialogInterface.OnClickListener {
         mProductHelperCallback = onSave;
     }
 
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        switch (which) {
-            case AlertDialog.BUTTON_POSITIVE:
-                saveProduct(true);
-                break;
-            case AlertDialog.BUTTON_NEGATIVE:
-                dialog.dismiss();
-                break;
-        }
-    }
-
     /**
      * Try to add a product to the list.  It´s the external interface method
      */
@@ -51,6 +40,7 @@ public class ProductHelper implements DialogInterface.OnClickListener {
 
     /**
      * Save a product on List
+     *
      * @param allowDuplicates if this value is true, it will save the product although it already exists
      */
     private void saveProduct(boolean allowDuplicates) {
@@ -59,7 +49,9 @@ public class ProductHelper implements DialogInterface.OnClickListener {
             useCaseShoppingList.createProduct(mProduct, allowDuplicates);
             mContext.getContentResolver().notifyChange(ShoppingListContract.ProductHistoryEntry.CONTENT_URI, null);
             mContext.getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
-            mProductHelperCallback.onSaveProduct();
+            if (mProductHelperCallback!=null) {
+                mProductHelperCallback.onSaveProduct();
+            }
         } catch (ProductException e) {
             //Duplicated not allow, ask the user if he/she wants to allow it anyway
             showAskDialog();
@@ -67,16 +59,26 @@ public class ProductHelper implements DialogInterface.OnClickListener {
     }
 
     /**
-     * Show a dialog to ask the user if he wants to allow insert the product,
-     * because it already exists
+     * Ask if add to the list one existing product on it
      */
     private void showAskDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-        alertDialog.setMessage(mContext.getResources().getString(R.string.textDuplicateProductWarningMessage));
-        alertDialog.setTitle(mContext.getResources().getString(R.string.textDuplicateProductWarningTitle));
-        alertDialog.setPositiveButton(android.R.string.ok, this);
-        alertDialog.setNegativeButton(android.R.string.cancel, this);
-        alertDialog.create().show();
+        AlertDialogFragment alertDialog = AlertDialogFragment.newInstance(mContext.getResources().getString(R.string.textDuplicateProductWarningTitle),
+                mContext.getResources().getString(R.string.textDuplicateProductWarningMessage),
+                mContext.getResources().getString(R.string.dialog_cancel),
+                mContext.getResources().getString(R.string.product_add_existing_text), null
+        );
+        alertDialog.setButtonOnClickListener(new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case AlertDialogFragment.INDEX_BUTTON_YES:
+                        saveProduct(true);
+                        break;
+                }
+
+            }
+        });
+        alertDialog.show(((BaseActivity) mContext).getSupportFragmentManager(), "confirmationDialog");
     }
 
 }

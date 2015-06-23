@@ -11,6 +11,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,8 +100,9 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
     }
 
     private void doQuery(String query) {
-        String[] fields = new String[]{ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME};
-        int[] listViewColumns = new int[]{R.id.textProduct};
+        String[] fields = new String[]{ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME,
+                ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME};
+        int[] listViewColumns = new int[]{R.id.textview_primary_text, R.id.textview_secondary_text};
 
         try {
             mListView = (ListView) findViewById(R.id.listViewProductsFiltered);
@@ -146,7 +148,8 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
     }
 
     static class ViewHolder {
-        public TextView textName;
+        public TextView mTextPrimary;
+        public TextView mTextSecondary;
         public AppCompatCheckBox imageCheck;
     }
 
@@ -171,7 +174,8 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 convertView = inflater.inflate(R.layout.usual_rowlayout, parent, false);
                 viewHolder = new ViewHolder();
-                viewHolder.textName = (TextView) convertView.findViewById(R.id.textProduct);
+                viewHolder.mTextPrimary = (TextView) convertView.findViewById(R.id.textview_primary_text);
+                viewHolder.mTextSecondary = (TextView) convertView.findViewById(R.id.textview_secondary_text);
                 viewHolder.imageCheck = (AppCompatCheckBox) convertView.findViewById(R.id.imageSecondaryActionIcon);
                 convertView.setTag(viewHolder);
             } else {
@@ -203,7 +207,14 @@ public class SearchProductActivity extends BaseActivity implements LoaderCallbac
             });
             mCursor.moveToPosition(position);
             viewHolder.imageCheck.setChecked(false);
-            viewHolder.textName.setText(util.capitalize(mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME))));
+            viewHolder.mTextPrimary.setText(util.capitalize(mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME))));
+            String marketName = mCursor.getString(mCursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
+            if (!TextUtils.isEmpty(marketName)) {
+                viewHolder.mTextSecondary.setVisibility(View.VISIBLE);
+                viewHolder.mTextSecondary.setText(marketName);
+            } else {
+                viewHolder.mTextSecondary.setVisibility(View.GONE);
+            }
             return convertView;
         }
 

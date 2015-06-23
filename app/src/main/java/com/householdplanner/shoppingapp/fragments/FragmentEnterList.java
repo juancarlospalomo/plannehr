@@ -17,7 +17,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,6 +45,7 @@ import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FragmentEnterList extends Fragment implements LoaderManager.LoaderCallbacks<List<Product>>,
@@ -67,7 +67,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
     private EnterListAdapter mAdapter;
     private RecyclerView mProductRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<Integer> mItemsSelected = null;
+    private boolean[] mArrayItemsSelected = null;
     private OnLoadData mCallback = null;
 
     @Override
@@ -80,7 +80,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
-            mItemsSelected = savedInstanceState.getIntegerArrayList(KEY_ITEMS_SELECTED);
+            mArrayItemsSelected = savedInstanceState.getBooleanArray(KEY_ITEMS_SELECTED);
             mSelectItemName = savedInstanceState.getString(KEY_SELECT_ITEM);
         }
         initRecyclerView();
@@ -105,7 +105,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 return true;
 
             case R.id.moveProduct:
-                mItemsSelected = getProductsSelected();
                 actionMoveSelectedToTarget();
                 return true;
 
@@ -220,13 +219,15 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
      * @param targetMarket market
      */
     private void moveSelectedToTarget(int targetMarket) {
-        if (mItemsSelected != null) {
+        if (mArrayItemsSelected != null) {
             UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
-            for (int index = 0; index < mItemsSelected.size(); index++) {
-                int id = mItemsSelected.get(index).intValue();
-                useCaseMyProducts.moveToSupermarket(id, targetMarket);
+            for (int index = 0; index < mArrayItemsSelected.length; index++) {
+                if (mArrayItemsSelected[index]) {
+                    int productId = mAdapter.mProductListData.get(index).productId;
+                    useCaseMyProducts.moveToSupermarket(productId, targetMarket);
+                }
             }
-            mItemsSelected = null;
+            mArrayItemsSelected = null;
         }
         getLoaderManager().restartLoader(LOADER_ID, null, this);
     }
@@ -237,7 +238,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
      * @param position row position
      */
     private void onListItemSelect(View view, int position) {
-        if (view!=null) {
+        if (view != null) {
             mAdapter.toggleSelection(position);
             if (mAdapter.isSelected(position)) {
                 view.setBackgroundResource(R.drawable.list_row_background_selected);
@@ -331,11 +332,46 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
         }
     }
 
+    /**
+     * Convert a SparseBooleanArray to one array of booleans
+     *
+     * @param data SparseBooleanArray
+     * @return boolean[]
+     */
+    private boolean[] convertToBooleanArray(SparseBooleanArray data) {
+        boolean[] result = new boolean[mAdapter.getItemCount()];
+        Arrays.fill(result, Boolean.FALSE);
+        for (int index = 0; index < mAdapter.getItemCount(); index++) {
+            if (mAdapter.mSelectedItems.get(index)) {
+                result[index] = true;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Convert a boolean array to a SparseBooleanArray
+     *
+     * @param data boolean[]
+     * @return SparseBooleanArray
+     */
+    private SparseBooleanArray convertToSparseBooleanArray(boolean[] data) {
+        SparseBooleanArray result = new SparseBooleanArray();
+        for (int index = 0; index < data.length; index++) {
+            if (data[index] == true) {
+                result.put(index, true);
+            }
+        }
+        return result;
+    }
+
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mItemsSelected != null) {
-            outState.putIntegerArrayList(KEY_ITEMS_SELECTED, mItemsSelected);
+        if (mAdapter.mSelectedItems != null) {
+            mArrayItemsSelected = convertToBooleanArray(mAdapter.mSelectedItems);
+            outState.putBooleanArray(KEY_ITEMS_SELECTED, mArrayItemsSelected);
         }
         if (mSelectItemName != null) {
             outState.putString(KEY_SELECT_ITEM, mSelectItemName);
@@ -385,13 +421,15 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
         public class ViewHolder extends RecyclerView.ViewHolder {
             public CircleView mImageAvatar;
-            public AppCompatTextView mText;
+            public AppCompatTextView mTextPrimary;
+            public AppCompatTextView mTextSecondary;
             public ImageView mImageEdit;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 mImageAvatar = (CircleView) itemView.findViewById(R.id.imageAvatar);
-                mText = (AppCompatTextView) itemView.findViewById(R.id.textProduct);
+                mTextPrimary = (AppCompatTextView) itemView.findViewById(R.id.textview_primary_text);
+                mTextSecondary = (AppCompatTextView) itemView.findViewById(R.id.textview_secondary_text);
                 mImageEdit = (ImageView) itemView.findViewById(R.id.imageSecondaryActionIcon);
             }
         }
@@ -442,7 +480,13 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 viewHolder.mImageAvatar.setColor(getResources().getColor(android.R.color.transparent));
             }
 
-            viewHolder.mText.setText(product.name);
+            viewHolder.mTextPrimary.setText(product.name);
+            if (product.marketName!=null) {
+                viewHolder.mTextSecondary.setVisibility(View.VISIBLE);
+                viewHolder.mTextSecondary.setText(product.marketName);
+            } else {
+                viewHolder.mTextSecondary.setVisibility(View.GONE);
+            }
             viewHolder.mImageEdit.setImageResource(R.drawable.ic_edit);
             if (mSelectedItems.get(position)) {
                 viewHolder.itemView.setBackgroundResource(R.drawable.list_row_background_selected);
@@ -545,7 +589,6 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
          * Clear all selected items
          */
         public void clearSelection() {
-            Log.v(LOG_TAG, "clearSelection");
             mSelectedItems.clear();
             mSelectedItems = new SparseBooleanArray();
             notifyDataSetChanged();
