@@ -3,11 +3,14 @@ package com.householdplanner.shoppingapp.fragments;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -40,9 +43,9 @@ import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
 import com.householdplanner.shoppingapp.loaders.ProductLoader;
 import com.householdplanner.shoppingapp.models.Product;
-import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
+import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -148,6 +151,23 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                             }
 
                             @Override
+                            public void onItemPrimaryActionClick(View view, final int position) {
+                                final Product product = mAdapter.mProductListData.get(position);
+                                ProductDialogFragment productDialogFragment = ProductDialogFragment.newInstance(product.name,
+                                        product._id, product.photoName, ProductDialogFragment.ProductActions.Remove);
+                                productDialogFragment.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
+                                        useCaseShoppingList.removeFromList(product.productId);
+                                        mAdapter.mProductListData.remove(position);
+                                        mAdapter.notifyItemRemoved(position);
+                                    }
+                                });
+                                productDialogFragment.show(getFragmentManager(), "fragment_product_dialog");
+                            }
+
+                            @Override
                             public void onItemSecondaryActionClick(View view, int position) {
                                 EditProduct(position);
                             }
@@ -206,6 +226,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             intent.putExtra(ProductActivity.EXTRA_ID, product._id);
             intent.putExtra(ProductActivity.EXTRA_PRODUCT_ID, product.productId);
             intent.putExtra(ProductActivity.EXTRA_PRODUCT_NAME, product.name);
+            intent.putExtra(ProductActivity.EXTRA_PHOTO_NAME, product.photoName);
             intent.putExtra(ProductActivity.EXTRA_MARKET_NAME, product.marketName);
             intent.putExtra(ProductActivity.EXTRA_AMOUNT, product.amount);
             intent.putExtra(ProductActivity.EXTRA_UNIT_ID, product.unitId);
@@ -427,7 +448,7 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                mImageAvatar = (CircleView) itemView.findViewById(R.id.imageAvatar);
+                mImageAvatar = (CircleView) itemView.findViewById(R.id.imagePrimaryActionIcon);
                 mTextPrimary = (AppCompatTextView) itemView.findViewById(R.id.textview_primary_text);
                 mTextSecondary = (AppCompatTextView) itemView.findViewById(R.id.textview_secondary_text);
                 mImageEdit = (ImageView) itemView.findViewById(R.id.imageSecondaryActionIcon);
@@ -464,24 +485,16 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
                 }
             });
 
-            Product product = mProductListData.get(position);
-            String marketName = product.marketName;
-
-            if (marketName != null) {
-                MarketRepository marketRepository = new MarketRepository(getActivity());
-                Integer color = marketRepository.getMarketColor(marketName);
-                marketRepository.close();
-                if (color != null) {
-                    viewHolder.mImageAvatar.setColor(color);
-                } else {
-                    viewHolder.mImageAvatar.setColor(getResources().getColor(android.R.color.transparent));
-                }
+            final Product product = mProductListData.get(position);
+            if (product.photoName != null) {
+                String pathFileName = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + product.photoName;
+                Bitmap bitmap = BitmapFactory.decodeFile(pathFileName);
+                viewHolder.mImageAvatar.setBitmap(bitmap);
             } else {
-                viewHolder.mImageAvatar.setColor(getResources().getColor(android.R.color.transparent));
+                viewHolder.mImageAvatar.setDrawable(R.drawable.ic_photo_red);
             }
-
             viewHolder.mTextPrimary.setText(product.name);
-            if (product.marketName!=null) {
+            if (product.marketName != null) {
                 viewHolder.mTextSecondary.setVisibility(View.VISIBLE);
                 viewHolder.mTextSecondary.setText(product.marketName);
             } else {

@@ -11,5 +11,6 @@
     <color name="list_item_background">#FAFAFA</color>
     <color name="list_item_pressed">#ECEBEB</color>
     <color name="list_item_selected">#BDBDBD</color>
+    <color name="photo_background">#BDBDBD</color>
 </resources>
 

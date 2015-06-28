@@ -4,11 +4,12 @@
     android:orientation="horizontal">
 
     <com.applilandia.widget.CircleView
-        android:id="@+id/circleAvatar"
+        android:id="@+id/imagePrimaryActionIcon"
         android:layout_width="?attr/listPreferredListItemAvatarWidth"
         android:layout_height="?attr/listPreferredListItemAvatarHeight"
         android:paddingBottom="?attr/listPaddingVerticalAvatar"
         android:paddingEnd="?attr/listPaddingHorizontalAvatar"
+        android:paddingLeft="?attr/listPaddingHorizontalAvatar"
         android:paddingRight="?attr/listPaddingHorizontalAvatar"
         android:paddingTop="?attr/listPaddingVerticalAvatar" />
 
@@ -16,9 +17,9 @@
         android:id="@+id/layout_primary_action_content"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_weight="1"
         android:clickable="false"
-        android:layout_gravity="center"
         android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatTextView

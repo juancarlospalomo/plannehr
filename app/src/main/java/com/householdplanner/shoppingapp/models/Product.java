@@ -12,6 +12,8 @@ public class Product {
     public int productId;
     //Product name
     public String name;
+    //Photo file name
+    public String photoName;
     //Market Id
     public int marketId;
     //Market name

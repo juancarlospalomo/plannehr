@@ -168,4 +168,9 @@
     <string name="text_accessibility_drawer_open">open</string>
     <string name="text_accessibility_drawer_close">Cerrar</string>
 
+    <!-- Photo Product Dialog -->
+    <string name="text_button_action_add">ADD</string>
+    <string name="text_button_action_remove">DELETE</string>
+    <string name="delete_product_photo_dialog_title">Delete Photo?</string>
+    <string name="cancel_product_photo_dialog">CANCEL</string>
 </resources>

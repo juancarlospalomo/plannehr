@@ -17,11 +17,13 @@ public class RecyclerViewClickListener implements RecyclerView.OnItemTouchListen
     private final static String LOG_TAG = RecyclerViewClickListener.class.getSimpleName();
 
     public interface RecyclerViewOnItemClickListener {
-        public void onItemClick(View view, int position);
+        void onItemClick(View view, int position);
 
-        public void onItemSecondaryActionClick(View view, int position);
+        void onItemPrimaryActionClick(View view, int position);
 
-        public void onItemLongClick(View view, int position);
+        void onItemSecondaryActionClick(View view, int position);
+
+        void onItemLongClick(View view, int position);
     }
 
     private View mView; //View touched
@@ -46,9 +48,23 @@ public class RecyclerViewClickListener implements RecyclerView.OnItemTouchListen
                     int bottom = mView.getBottom();
                     Rect outRect = new Rect(left, top, right, bottom);
                     if (outRect.contains((int) e.getX(), (int) e.getY())) {
+                        //Clicked on Secondary action
                         mListener.onItemSecondaryActionClick(secondaryActionIcon, mPosition);
                     } else {
-                        mListener.onItemClick(mView, mPosition);
+                        View primaryActionIcon = mView.findViewById(R.id.imagePrimaryActionIcon);
+                        if (primaryActionIcon != null) {
+                            left = primaryActionIcon.getLeft();
+                            right = primaryActionIcon.getRight();
+                            outRect = new Rect(left, top, right, bottom);
+                            if (outRect.contains((int) e.getX(), (int) e.getY())) {
+                                //Clicked on Avatar
+                                mListener.onItemPrimaryActionClick(mView, mPosition);
+                            } else {
+                                mListener.onItemClick(mView, mPosition);
+                            }
+                        } else {
+                            mListener.onItemClick(mView, mPosition);
+                        }
                     }
                 } else {
                     mListener.onItemClick(mView, mPosition);
@@ -74,6 +90,6 @@ public class RecyclerViewClickListener implements RecyclerView.OnItemTouchListen
     }
 
     @Override
-    public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+    public void onTouchEvent(RecyclerView recyclerView, MotionEvent event) {
     }
 }

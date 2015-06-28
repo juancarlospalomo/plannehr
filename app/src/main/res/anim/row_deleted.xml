@@ -4,15 +4,15 @@
     android:interpolator="@android:anim/linear_interpolator">
 
     <alpha
-        android:duration="100"
+        android:duration="@android:integer/config_shortAnimTime"
         android:fromAlpha="1.0"
         android:toAlpha="0.9"/>
 
     <scale
-        android:duration="100"
+        android:duration="@android:integer/config_shortAnimTime"
         android:fromXScale="1.0"
         android:fromYScale="1.0"
-        android:startOffset="100"
+        android:startOffset="@android:integer/config_shortAnimTime"
         android:toXScale="1.0"
         android:toYScale="0.0" />
 

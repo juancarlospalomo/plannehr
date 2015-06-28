@@ -2,10 +2,18 @@ package com.applilandia.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 
 /**
@@ -26,7 +34,10 @@ public class CircleView extends View {
     private int mSize = 0;
     //Paint to draw on canvas
     private Paint mPaintCircle;
-    private Paint mPaintRect;
+    //Bitmap to draw in the circle
+    private Bitmap mBitmap;
+    //Gesture detector
+    private GestureDetectorCompat mGestureDetector;
 
     public CircleView(Context context) {
         super(context);
@@ -61,7 +72,7 @@ public class CircleView extends View {
         }
 
         createCirclePaint();
-        createRectPaint();
+        mGestureDetector = new GestureDetectorCompat(context, new CircleGestureListener());
     }
 
     /**
@@ -85,13 +96,70 @@ public class CircleView extends View {
     }
 
     /**
-     * Create a transparent Paint to draw a rect inside the circle will be drawn
+     * Set the bitmap to draw inside the circle
+     *
+     * @param bitmap
      */
-    private void createRectPaint() {
-        mPaintRect = new Paint();
-        mPaintRect.setAntiAlias(true);
-        mPaintRect.setColor(getResources().getColor(android.R.color.transparent));
-        mPaintRect.setStyle(Paint.Style.FILL);
+    public void setBitmap(Bitmap bitmap) {
+        mSetStroke = false;
+        mPaintCircle.setColor(Color.WHITE);
+        mPaintCircle.setStyle(Paint.Style.FILL);
+        mPaintCircle.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        mBitmap = bitmap;
+        invalidate();
+    }
+
+
+    public void setDrawable(int resId) {
+        setBitmap(BitmapFactory.decodeResource(getResources(), resId));
+    }
+
+    /**
+     * Scale a bitmap
+     *
+     * @return Scaled bitmap
+     */
+    private Bitmap getScaledBitmap() {
+        final int width = mBitmap.getWidth();
+        final int height = mBitmap.getHeight();
+        final int targetSize = mSize - (getPaddingTop() + getPaddingBottom());
+        Matrix matrix = new Matrix();
+        float scaleX = (float) targetSize / (float) mBitmap.getWidth();
+        float scaleY = (float) targetSize / (float) mBitmap.getHeight();
+
+        matrix.postScale(scaleX, scaleY);
+        mBitmap = Bitmap.createBitmap(mBitmap, 0, 0, width, height, matrix, true);
+        return mBitmap;
+    }
+
+    /**
+     * Build a Rounded Bitmap
+     *
+     * @param source
+     * @return bitmap rounded
+     */
+    private Bitmap getCircleBitmap(Bitmap source) {
+        //http://stackoverflow.com/questions/8280027/what-does-porterduff-mode-mean-in-android-graphics-what-does-it-do
+        //http://ssp.impulsetrain.com/porterduff.html
+        int w = source.getWidth();
+        int h = source.getHeight();
+
+        int radius = Math.min(h / 2, w / 2);
+        Bitmap output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+
+        Canvas c = new Canvas(output);
+        c.drawARGB(0, 0, 0, 0);
+        p.setColor(Color.RED);
+        p.setStyle(Paint.Style.FILL);
+
+        c.drawCircle((w / 2), (h / 2), radius, p);
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        c.drawBitmap(source, 0, 0, p);
+
+        return output;
     }
 
     /**
@@ -154,12 +222,40 @@ public class CircleView extends View {
         }
         int rectHeight = mSize;
         int rectWidth = mSize;
-        RectF innerRectF = new RectF();
-        innerRectF.set(0, 0, rectWidth, rectHeight);
-        //Remove padding to calculate the radius
         //Remove stroke width too
         final int radius = ((mSize - (paddingTop + paddingBottom)) / 2) - (strokeWidth * 2);
-        canvas.drawRect(innerRectF, mPaintRect);
-        canvas.drawCircle(rectWidth / 2, rectHeight / 2, radius, mPaintCircle);
+        if (mBitmap != null) {
+            canvas.drawARGB(0, 0, 0, 0);
+            mPaintCircle.setColor(Color.RED);
+            mPaintCircle.setStyle(Paint.Style.FILL);
+            mPaintCircle.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+            canvas.drawBitmap(getCircleBitmap(getScaledBitmap()), mSize - ((radius * 2) + getPaddingLeft()), mSize - ((radius * 2) + getPaddingLeft()), mPaintCircle);
+        } else {
+            canvas.drawCircle(rectWidth / 2, rectHeight / 2, radius, mPaintCircle);
+        }
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mGestureDetector.onTouchEvent(event);
+    }
+
+    /**
+     * Manage the basic Gesture Listener
+     */
+    private class CircleGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            performClick();
+            return true;
+        }
+    }
+
+
 }

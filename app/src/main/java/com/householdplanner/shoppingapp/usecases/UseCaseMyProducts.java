@@ -2,6 +2,7 @@ package com.householdplanner.shoppingapp.usecases;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Environment;
 
 import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.models.Product;
@@ -9,6 +10,7 @@ import com.householdplanner.shoppingapp.models.ProductHistory;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,8 @@ public class UseCaseMyProducts {
     private static String[] mProjection = new String[]{ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry._ID + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_ID,
             ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME,
             ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID,
-            ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME};
+            ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME,
+            ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME};
 
     public UseCaseMyProducts(Context context) {
         mContext = context;
@@ -48,6 +51,7 @@ public class UseCaseMyProducts {
                 ProductHistory product = new ProductHistory();
                 product._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_ID));
                 product.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
+                product.photoName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME));
                 product.marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID));
                 product.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
                 productList.add(product);
@@ -74,6 +78,7 @@ public class UseCaseMyProducts {
             ProductHistory productHistory = new ProductHistory();
             productHistory._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_ID));
             productHistory.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
+            productHistory.photoName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME));
             productHistory.marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID));
             productHistory.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
             return productHistory;
@@ -105,6 +110,7 @@ public class UseCaseMyProducts {
             ProductHistory productHistory = new ProductHistory();
             productHistory._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_ID));
             productHistory.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
+            productHistory.photoName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME));
             productHistory.marketId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID));
             productHistory.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
             return productHistory;
@@ -145,9 +151,48 @@ public class UseCaseMyProducts {
         productHistory._id = id;
         productHistory.marketId = marketId;
         ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
-        historyRepository.updateProductItem(productHistory);
+        historyRepository.update(productHistory);
         historyRepository.close();
     }
 
+    /**
+     * Delete a product object from the Catalog
+     *
+     * @param productHistory product object to delete
+     */
+    public void deleteProduct(ProductHistory productHistory) {
+        ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
+        if (historyRepository.delete(productHistory._id)) {
+            //if it has a photo file, delete it from disk
+            if (productHistory.photoName != null) {
+                //Delete the file
+                File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + productHistory.photoName);
+                file.delete();
+            }
+        }
+    }
+
+    /**
+     * Remove the photo for the product in the catalog
+     *
+     * @param productHistory product object
+     */
+    public void removePhoto(ProductHistory productHistory) {
+
+        String fileName = productHistory.photoName;
+        productHistory.photoName = null;
+        if (productHistory._id != 0) {
+            ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
+            if (historyRepository.update(productHistory)) {
+                //Delete the file
+                File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + fileName);
+                file.delete();
+            }
+        } else {
+            //Only delete the file as the data are not saved in database
+            File file = new File(mContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + fileName);
+            file.delete();
+        }
+    }
 
 }

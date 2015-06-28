@@ -64,6 +64,11 @@ public class ProductHistoryRepository {
     public int createProductItem(ProductHistory productHistory) {
         ContentValues values = new ContentValues();
         values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME, productHistory.name);
+        if (productHistory.photoName != null) {
+            values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME, productHistory.photoName);
+        } else {
+            values.putNull(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME);
+        }
         if (productHistory.marketId != 0) {
             values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID, productHistory.marketId);
         }
@@ -78,7 +83,7 @@ public class ProductHistoryRepository {
      * @param productHistory catalog product
      * @return true if it was updated
      */
-    public boolean updateProductItem(ProductHistory productHistory) {
+    public boolean update(ProductHistory productHistory) {
         boolean result = false;
         ContentValues values = new ContentValues();
         if (productHistory.marketId != 0) {
@@ -88,6 +93,11 @@ public class ProductHistoryRepository {
         }
         if (productHistory.name != null) {
             values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME, util.capitalize(productHistory.name));
+        }
+        if (productHistory.photoName != null) {
+            values.put(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME, productHistory.photoName);
+        } else {
+            values.putNull(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME);
         }
 
         String whereClause = ShoppingListContract.ProductHistoryEntry._ID + "=" + productHistory._id;
@@ -102,10 +112,11 @@ public class ProductHistoryRepository {
      * Delete a product from the Catalog
      *
      * @param id product id (PK)
+     * @return true if the product was deleted
      */
-    public void deleteProduct(int id) {
-        getDatabase().delete(ShoppingListContract.ProductHistoryEntry.TABLE_NAME,
-                ShoppingListContract.ProductHistoryEntry._ID + "=" + id, null);
+    public boolean delete(int id) {
+        return getDatabase().delete(ShoppingListContract.ProductHistoryEntry.TABLE_NAME,
+                ShoppingListContract.ProductHistoryEntry._ID + "=" + id, null) > 0;
     }
 
     /**

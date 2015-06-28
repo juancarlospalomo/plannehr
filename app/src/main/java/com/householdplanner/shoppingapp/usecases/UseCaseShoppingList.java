@@ -24,6 +24,7 @@ public class UseCaseShoppingList {
     private static String[] mProjection = new String[]{ShoppingListContract.ProductEntry.TABLE_NAME + "." + ShoppingListContract.ProductEntry._ID,
             ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID,
             ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME,
+            ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "." + ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME,
             ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT,
             ShoppingListContract.ProductEntry.COLUMN_UNIT_ID,
             ShoppingListContract.MarketEntry.TABLE_NAME + "." + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " AS " + ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME,
@@ -47,6 +48,7 @@ public class UseCaseShoppingList {
                 product._id = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry._ID));
                 product.productId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_ID));
                 product.name = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME));
+                product.photoName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME));
                 product.marketName = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductHistoryEntry.ALIAS_MARKET_NAME));
                 product.amount = cursor.getString(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT));
                 product.unitId = cursor.getInt(cursor.getColumnIndex(ShoppingListContract.ProductEntry.COLUMN_UNIT_ID));
@@ -156,7 +158,7 @@ public class UseCaseShoppingList {
      * Check if a product, based on its product name and market name is on the list
      *
      * @param productName product name
-     * @param marketId  market id
+     * @param marketId    market id
      * @return true if the product is on the list
      */
     public boolean isProductInList(String productName, int marketId) {
@@ -205,6 +207,7 @@ public class UseCaseShoppingList {
                 //Then, we have to add it to the catalog and later to the list
                 ProductHistory productHistory = new ProductHistory();
                 productHistory.name = product.name;
+                productHistory.photoName = product.photoName;
                 productHistory.marketName = product.marketName;
                 if (product.marketName != null) {
                     //Get marketId by the market name
@@ -233,13 +236,16 @@ public class UseCaseShoppingList {
         ProductHistory productHistory = useCaseMyProducts.getProduct(product.name, product.marketId);
 
         if (productHistory != null) {
+            productHistory.photoName = product.photoName;
             if (productHistory.marketName != product.marketName) {
                 productHistory.marketName = product.marketName;
                 UseCaseMarket useCaseMarket = new UseCaseMarket(mContext);
                 Market market = useCaseMarket.getMarket(productHistory.name);
-                productHistory.marketId = market._id;
+                if (market != null) {
+                    productHistory.marketId = market._id;
+                }
             }
-            if (historyRepository.updateProductItem(productHistory)) {
+            if (historyRepository.update(productHistory)) {
                 listRepository.updateProductItem(product);
             }
         }
@@ -309,6 +315,23 @@ public class UseCaseShoppingList {
         ShoppingListRepository shoppingListRepository = new ShoppingListRepository(mContext);
         shoppingListRepository.deleteCommittedProducts();
         shoppingListRepository.close();
+    }
+
+    /**
+     * Remove the photo for the product in the catalog using the Catalog use cases
+     * @param product product object
+     */
+    public void removePhoto(Product product) {
+        ProductHistory productHistory = new ProductHistory();
+        productHistory._id = product.productId;
+        productHistory.photoName = product.photoName;
+        productHistory.name = product.name;
+        productHistory.marketId = product.marketId;
+        productHistory.marketName = product.marketName;
+
+        UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(mContext);
+        useCaseMyProducts.removePhoto(productHistory);
+        product.photoName = null;
     }
 
 }

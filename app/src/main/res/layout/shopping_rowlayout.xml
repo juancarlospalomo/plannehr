@@ -1,27 +1,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?attr/listItemTwoLinesHeight"
+    android:layout_height="?attr/listItemHeight"
     android:background="@drawable/list_row_background"
-    android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin">
+    android:orientation="horizontal">
+
+    <com.applilandia.widget.CircleView
+        android:id="@+id/imagePrimaryActionIcon"
+        android:layout_width="?attr/listPreferredListItemAvatarWidth"
+        android:layout_height="?attr/listPreferredListItemAvatarHeight"
+        android:paddingBottom="?attr/listPaddingVerticalAvatar"
+        android:paddingEnd="?attr/listPaddingHorizontalAvatar"
+        android:paddingLeft="?attr/listPaddingHorizontalAvatar"
+        android:paddingRight="?attr/listPaddingHorizontalAvatar"
+        android:paddingTop="?attr/listPaddingVerticalAvatar" />
 
     <LinearLayout
         android:id="@+id/layout_primary_action_content"
         android:layout_width="0dp"
-        android:layout_height="?attr/listItemTwoLinesHeight"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingTop="?attr/listPreferredItemPaddingTop">
+        android:clickable="false"
+        android:orientation="vertical">
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/textview_primary_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textAppearance="?attr/textAppearanceListItem" />
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/textview_secondary_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?attr/textAppearanceListItemSecondary" />
 

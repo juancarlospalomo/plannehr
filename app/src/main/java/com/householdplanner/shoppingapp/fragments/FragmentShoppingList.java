@@ -3,10 +3,13 @@ package com.householdplanner.shoppingapp.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,6 +27,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.applilandia.widget.CircleView;
 import com.applilandia.widget.SnackBar;
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.cross.AppGlobalState;
@@ -111,7 +115,7 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                                         animator.addListener(new AnimatorListenerAdapter() {
                                             @Override
                                             public void onAnimationEnd(Animator animation) {
-                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                Product product = mAdapter.mProductDataList.get(position);
                                                 if (product != null) {
                                                     UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                                     useCaseShoppingList.moveToBasket(product);
@@ -132,12 +136,11 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 
                                             @Override
                                             public void onAnimationEnd(Animation animation) {
-                                                Product product = (Product) mSnackBar.getAdapterItem();
+                                                Product product = mAdapter.mProductDataList.get(position);
                                                 if (product != null) {
                                                     UseCaseShoppingList useCaseShoppingList = new UseCaseShoppingList(getActivity());
                                                     useCaseShoppingList.moveToBasket(product);
                                                     mListCurrentPosition = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
-                                                    ;
                                                     getActivity().getContentResolver().notifyChange(ShoppingListContract.ProductEntry.CONTENT_URI, null);
                                                 }
                                                 mAdapter.mProductDataList.remove(position);
@@ -157,6 +160,20 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
                             @Override
                             public void onItemClick(View view, int position) {
 
+                            }
+
+                            @Override
+                            public void onItemPrimaryActionClick(final View view, final int position) {
+                                final Product product = mAdapter.mProductDataList.get(position);
+                                ProductDialogFragment productDialogFragment = ProductDialogFragment.newInstance(product.name,
+                                        product._id, product.photoName, ProductDialogFragment.ProductActions.Add);
+                                productDialogFragment.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        animateRowDeleted(view, position);
+                                    }
+                                });
+                                productDialogFragment.show(getFragmentManager(), "fragment_product_dialog");
                             }
 
                             @Override
@@ -310,12 +327,14 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
 
         public class ViewHolder extends RecyclerView.ViewHolder {
 
+            public CircleView mCircleAvatar;
             public AppCompatTextView mTextViewPrimary;
             public AppCompatTextView mTextViewSecondary;
             public AppCompatCheckBox mSecondaryActionIcon;
 
             public ViewHolder(View itemView) {
                 super(itemView);
+                mCircleAvatar = (CircleView) itemView.findViewById(R.id.imagePrimaryActionIcon);
                 mTextViewPrimary = (AppCompatTextView) itemView.findViewById(R.id.textview_primary_text);
                 mTextViewSecondary = (AppCompatTextView) itemView.findViewById(R.id.textview_secondary_text);
                 mSecondaryActionIcon = (AppCompatCheckBox) itemView.findViewById(R.id.imageSecondaryActionIcon);
@@ -333,17 +352,23 @@ public class FragmentShoppingList extends Fragment implements LoaderManager.Load
         public void onBindViewHolder(ShoppingListAdapter.ViewHolder viewHolder, int position) {
             if (mProductDataList != null) {
                 Product product = mProductDataList.get(position);
-                if (product != null) {
-                    viewHolder.mTextViewPrimary.setText(product.name);
-                    if (product.amount != null) {
-                        viewHolder.mTextViewSecondary.setVisibility(View.VISIBLE);
-                        viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
-                                product.unitId, product.amount));
-                    } else {
-                        viewHolder.mTextViewSecondary.setVisibility(View.GONE);
-                    }
-                    viewHolder.mSecondaryActionIcon.setChecked(false);
+                //Set photo in avatar
+                if (product.photoName != null) {
+                    String pathFileName = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + product.photoName;
+                    Bitmap bitmap = BitmapFactory.decodeFile(pathFileName);
+                    viewHolder.mCircleAvatar.setBitmap(bitmap);
+                } else {
+                    viewHolder.mCircleAvatar.setDrawable(R.drawable.ic_photo_red);
                 }
+                viewHolder.mTextViewPrimary.setText(product.name);
+                if (product.amount != null) {
+                    viewHolder.mTextViewSecondary.setVisibility(View.VISIBLE);
+                    viewHolder.mTextViewSecondary.setText(product.amount + " " + util.getMeasureUnitName(getActivity(),
+                            product.unitId, product.amount));
+                } else {
+                    viewHolder.mTextViewSecondary.setVisibility(View.GONE);
+                }
+                viewHolder.mSecondaryActionIcon.setChecked(false);
             }
         }
 

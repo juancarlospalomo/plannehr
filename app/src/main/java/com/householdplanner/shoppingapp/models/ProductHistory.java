@@ -8,6 +8,8 @@ public class ProductHistory {
     public int _id;
     //Product name
     public String name;
+    //Photo file name
+    public String photoName;
     //Market identifier
     public int marketId;
     //Market name

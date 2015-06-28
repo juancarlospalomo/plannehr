@@ -3,11 +3,14 @@ package com.householdplanner.shoppingapp.cross;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.media.ExifInterface;
 import android.preference.PreferenceManager;
 
 import com.householdplanner.shoppingapp.R;
 import com.householdplanner.shoppingapp.fragments.FragmentSetting;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -35,17 +38,6 @@ public class util {
             return calendar.get(Calendar.MONTH);
         } catch (ParseException e) {
             return -1;
-        }
-    }
-
-    public static Date getDate(String dateFormatted) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(
-                "yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        try {
-            return dateFormat.parse(dateFormatted);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
         }
     }
 
@@ -115,4 +107,63 @@ public class util {
         editor.putBoolean(FragmentSetting.PREF_SHOW_PRODUCTS_NOT_SET, value);
         editor.commit();
     }
+
+
+    /**
+     * Get the current orientation of a image file
+     *
+     * @param filePathName file name including the absolute path
+     * @return Orientation value
+     */
+    public static String getImageOrientation(String filePathName) {
+        File file = new File(filePathName);
+        return getImageOrientation(file);
+    }
+
+    /**
+     * Get the current orientation of a image file
+     *
+     * @param file file object with the image
+     * @return Orientation value
+     */
+    public static String getImageOrientation(File file) {
+        try {
+            ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
+            return exifInterface.getAttribute(ExifInterface.TAG_ORIENTATION);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Get the current rotation angle of an image
+     * @param filePathName image file name
+     * @return rotation angle
+     */
+    public static int getImageRotationAngle(String filePathName) {
+        String orientation = util.getImageOrientation(filePathName);
+        int orientationValue = orientation != null ? Integer.parseInt(orientation) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientationValue == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientationValue == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientationValue == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        return rotationAngle;
+    }
+
+    /**
+     * Get the current rotation angle of an image
+     * @param file image file object
+     * @return rotation angle
+     */
+    public static int getImageRotationAngle(File file){
+        String orientation = util.getImageOrientation(file);
+        int orientationValue = orientation != null ? Integer.parseInt(orientation) : ExifInterface.ORIENTATION_NORMAL;
+        int rotationAngle = 0;
+        if (orientationValue == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+        if (orientationValue == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+        if (orientationValue == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+        return rotationAngle;
+    }
+
 }

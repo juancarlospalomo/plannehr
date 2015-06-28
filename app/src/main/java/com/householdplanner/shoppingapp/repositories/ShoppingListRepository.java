@@ -56,6 +56,7 @@ public class ShoppingListRepository {
                 values);
 
         if (insertId > 0) {
+            product._id = (int) insertId;
             return true;
         } else return false;
     }

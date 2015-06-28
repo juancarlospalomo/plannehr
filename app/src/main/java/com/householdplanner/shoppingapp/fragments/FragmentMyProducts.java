@@ -5,11 +5,14 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -40,7 +43,6 @@ import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
 import com.householdplanner.shoppingapp.loaders.ProductHistoryLoader;
 import com.householdplanner.shoppingapp.models.ProductHistory;
-import com.householdplanner.shoppingapp.repositories.MarketRepository;
 import com.householdplanner.shoppingapp.repositories.ProductHistoryRepository;
 import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
 import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
@@ -93,12 +95,6 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         mSnackBar = (SnackBar) getView().findViewById(R.id.snackBarMyProducts);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
     /**
      * Init the recycler view
      */
@@ -116,6 +112,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
                     /**
                      * Animate the deletion of a row
+                     *
                      * @param view row view to animate
                      */
                     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -127,7 +124,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                                 animator.addListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
-                                        ProductHistory product = (ProductHistory) mSnackBar.getAdapterItem();
+                                        ProductHistory product = mAdapter.mProductHistoryListData.get(position);
                                         if (product != null) {
                                             UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
                                             if (useCaseMyProducts.copyToShoppingList(product)) {
@@ -176,6 +173,20 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                         if (mContextualMode) {
                             onListItemSelect(view, position);
                         }
+                    }
+
+                    @Override
+                    public void onItemPrimaryActionClick(final View view, final int position) {
+                        final ProductHistory productHistory = mAdapter.mProductHistoryListData.get(position);
+                        ProductDialogFragment productDialogFragment = ProductDialogFragment.newInstance(productHistory.name,
+                                productHistory._id, productHistory.photoName, ProductDialogFragment.ProductActions.Add);
+                        productDialogFragment.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                animateRowDeleted(view, position);
+                            }
+                        });
+                        productDialogFragment.show(getFragmentManager(), "fragment_product_dialog");
                     }
 
                     @Override
@@ -376,7 +387,7 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                mCircleAvatar = (CircleView) itemView.findViewById(R.id.circleAvatar);
+                mCircleAvatar = (CircleView) itemView.findViewById(R.id.imagePrimaryActionIcon);
                 mTextPrimary = (TextView) itemView.findViewById(R.id.textview_primary_text);
                 mTextSecondary = (TextView) itemView.findViewById(R.id.textview_secondary_text);
                 mCheckBoxProduct = (AppCompatCheckBox) itemView.findViewById(R.id.imageSecondaryActionIcon);
@@ -391,25 +402,19 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         }
 
         @Override
-        public void onBindViewHolder(MyProductsAdapter.ViewHolder holder, int position) {
-            ProductHistory productHistory = mProductHistoryListData.get(position);
-            //Set color in avatar
-            String marketName = productHistory.marketName;
-            if (marketName != null) {
-                MarketRepository marketRepository = new MarketRepository(getActivity());
-                Integer color = marketRepository.getMarketColor(marketName);
-                marketRepository.close();
-                if (color != null) {
-                    holder.mCircleAvatar.setColor(color);
-                } else {
-                    holder.mCircleAvatar.setColor(getResources().getColor(android.R.color.transparent));
-                }
+        public void onBindViewHolder(final MyProductsAdapter.ViewHolder holder, final int position) {
+            final ProductHistory productHistory = mProductHistoryListData.get(position);
+            //Set photo in avatar
+            if (productHistory.photoName != null) {
+                String pathFileName = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES).getPath() + "/" + productHistory.photoName;
+                Bitmap bitmap = BitmapFactory.decodeFile(pathFileName);
+                holder.mCircleAvatar.setBitmap(bitmap);
             } else {
-                holder.mCircleAvatar.setColor(getResources().getColor(android.R.color.transparent));
+                holder.mCircleAvatar.setDrawable(R.drawable.ic_photo_red);
             }
             //Set product name
             holder.mTextPrimary.setText(productHistory.name);
-            if (productHistory.marketName!=null) {
+            if (productHistory.marketName != null) {
                 holder.mTextSecondary.setVisibility(View.VISIBLE);
                 holder.mTextSecondary.setText(productHistory.marketName);
             } else {
@@ -442,6 +447,21 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
         public int findPositionByName(String name) {
             for (int index = 0; index < mProductHistoryListData.size(); index++) {
                 if (mProductHistoryListData.get(index).name.equals(name)) {
+                    return index;
+                }
+            }
+            return -1;
+        }
+
+        /**
+         * Find the position in the adapter of the row with product id = id
+         *
+         * @param id product id
+         * @return return position or -1 if it isn't found
+         */
+        public int findPositionById(int id) {
+            for (int index = 0; index < mProductHistoryListData.size(); index++) {
+                if (mProductHistoryListData.get(index)._id == id) {
                     return index;
                 }
             }
@@ -554,8 +574,8 @@ public class FragmentMyProducts extends Fragment implements LoaderCallbacks<List
                 ProductHistoryRepository historyRepository = new ProductHistoryRepository(getActivity());
                 for (int index = total - 1; index >= 0; index--) {
                     if (selected.get(index)) {
-                        int id = mAdapter.mProductHistoryListData.get(index)._id;
-                        historyRepository.deleteProduct(id);
+                        UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
+                        useCaseMyProducts.deleteProduct(mAdapter.mProductHistoryListData.get(index));
                         publishProgress(new Integer(index));
                     }
                 }

@@ -169,4 +169,10 @@
     <string name="text_snack_bar_move_cart">Movido al carro</string>
     <string name="text_snack_bar_move_shoppinglist">Movido a la lista</string>
 
+    <!-- Photo Product Dialog -->
+    <string name="text_button_action_add">AÑADIR</string>
+    <string name="text_button_action_remove">ELIMINAR</string>
+    <string name="delete_product_photo_dialog_title">¿Eliminar Foto?</string>
+    <string name="cancel_product_photo_dialog">CANCELAR</string>
+
 </resources>
