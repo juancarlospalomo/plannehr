@@ -33,6 +33,31 @@ public class ShoppingListStore {
             + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + " INTEGER, "
             + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + " INTEGER);";
 
+    //Database creation sql statement
+    private static final String SQL_TABLE_CREATE_V2 = "CREATE TABLE "
+            + "List(_id integer primary key autoincrement, "
+            + "Modify integer, "
+            + "Name text, "
+            + "Market text, "
+            + "Amount text, "
+            + "UnitId integer, "
+            + "Category text, "
+            + "Comitted integer, "
+            + "Sequence integer, "
+            + "SDate date, "
+            + "op integer, "
+            + "SyncDate date);";
+
+    //Database creation sql statement
+    private static final String SQL_TABLE_CREATE_V5 = "CREATE TABLE "
+            + ShoppingListContract.ProductEntry.TABLE_NAME + "(" + ShoppingListContract.ProductEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + "Name TEXT COLLATE NOCASE, "
+            + "Market TEXT, "
+            + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + " TEXT, "
+            + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + " INTEGER, "
+            + "Category INTEGER, "
+            + "Comitted INTEGER);";
+
     public static void onCreate(SQLiteDatabase database) {
         database.execSQL(SQL_TABLE_CREATE);
     }
@@ -58,7 +83,7 @@ public class ShoppingListStore {
         String sql = "ALTER TABLE " + ShoppingListContract.ProductEntry.TABLE_NAME
                 + " RENAME TO " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old;";
         database.execSQL(sql);
-        database.execSQL(SQL_TABLE_CREATE);
+        database.execSQL(SQL_TABLE_CREATE_V2);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME + "(Modify, Name, Market, Amount, "
                 + "UnitId, Category, Comitted, Sequence, SDate, op, SyncDate) "
                 + "SELECT Modify, Name, Brand, Amount, UnitId, Category, Comitted, "
@@ -75,18 +100,18 @@ public class ShoppingListStore {
         String sql = "ALTER TABLE " + ShoppingListContract.ProductEntry.TABLE_NAME
                 + " RENAME TO " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old;";
         database.execSQL(sql);
-        database.execSQL(SQL_TABLE_CREATE);
+        database.execSQL(SQL_TABLE_CREATE_V5);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductEntry.TABLE_NAME
                 + "(Name, Market,"
                 + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
                 + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
                 + "Category,"
-                + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + ") "
+                + "Comitted) "
                 + "SELECT Name, Market,"
                 + ShoppingListContract.ProductEntry.COLUMN_PRODUCT_AMOUNT + ","
                 + ShoppingListContract.ProductEntry.COLUMN_UNIT_ID + ","
                 + "Category,"
-                + ShoppingListContract.ProductEntry.COLUMN_COMMITTED + "Comitted "
+                + "Comitted "
                 + "FROM " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old;");
 
         database.execSQL("DROP TABLE IF EXISTS " + ShoppingListContract.ProductEntry.TABLE_NAME + "_old");

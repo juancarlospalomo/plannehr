@@ -18,6 +18,22 @@ public class ProductHistoryStore {
             + ShoppingListContract.ProductHistoryEntry.COLUMN_MARKET_ID + " INTEGER, "
             + ShoppingListContract.ProductHistoryEntry.COLUMN_PHOTO_NAME + " TEXT);";
 
+    // V5 Database creation SQL statement
+    private static final String SQL_TABLE_CREATE_V3 = "CREATE TABLE "
+            + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
+            + " (" + ShoppingListContract.ProductHistoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " TEXT COLLATE NOCASE, "
+            + "Category INTEGER, "
+            + "Market TEXT);";
+
+    // V5 Database creation SQL statement
+    private static final String SQL_TABLE_CREATE_V5 = "CREATE TABLE "
+            + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
+            + " (" + ShoppingListContract.ProductHistoryEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + " TEXT COLLATE NOCASE, "
+            + "Category INTEGER, "
+            + "Market TEXT);";
+
     public static void onCreate(SQLiteDatabase database) {
         database.execSQL(SQL_TABLE_CREATE);
         insertProducts(database);
@@ -44,7 +60,7 @@ public class ProductHistoryStore {
         String sql = "ALTER TABLE " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
                 + " RENAME TO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old;";
         database.execSQL(sql);
-        database.execSQL(SQL_TABLE_CREATE);
+        database.execSQL(SQL_TABLE_CREATE_V3);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
                 + " (" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ",Market,Category "
                 + "SELECT " + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", Brand, Category "
@@ -64,7 +80,7 @@ public class ProductHistoryStore {
         String sql = "ALTER TABLE " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
                 + " RENAME TO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME + "_old;";
         database.execSQL(sql);
-        database.execSQL(SQL_TABLE_CREATE);
+        database.execSQL(SQL_TABLE_CREATE_V5);
         database.execSQL("INSERT INTO " + ShoppingListContract.ProductHistoryEntry.TABLE_NAME
                 + " (" + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ",Market, Category) "
                 + "SELECT " + ShoppingListContract.ProductHistoryEntry.COLUMN_PRODUCT_NAME + ", Market, Category "

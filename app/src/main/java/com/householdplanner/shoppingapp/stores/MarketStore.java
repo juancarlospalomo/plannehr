@@ -17,6 +17,14 @@ public class MarketStore {
             + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " TEXT COLLATE NOCASE, "
             + ShoppingListContract.MarketEntry.COLUMN_COLOR + " INTEGER);";
 
+    // Database creation SQL statement
+    private static final String SQL_TABLE_CREATE_V4 = "CREATE TABLE "
+            + "Market ("
+            + ShoppingListContract.MarketEntry._ID + " integer primary key autoincrement, "
+            + "MarketId integer, "
+            + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + " text COLLATE NOCASE, "
+            + ShoppingListContract.MarketEntry.COLUMN_COLOR + " integer);";
+
     public static void onCreate(SQLiteDatabase database) {
         database.execSQL(SQL_TABLE_CREATE);
         insertVirtualMarket(database);
@@ -53,7 +61,7 @@ public class MarketStore {
         String sql = "ALTER TABLE " + ShoppingListContract.MarketEntry.TABLE_NAME
                 + " RENAME TO " + ShoppingListContract.MarketEntry.TABLE_NAME + "_old;";
         database.execSQL(sql);
-        database.execSQL(SQL_TABLE_CREATE);
+        database.execSQL(SQL_TABLE_CREATE_V4);
         database.execSQL("INSERT INTO " + ShoppingListContract.MarketEntry.TABLE_NAME
                 + "(MarketId" + ","
                 + ShoppingListContract.MarketEntry.COLUMN_MARKET_NAME + ","
