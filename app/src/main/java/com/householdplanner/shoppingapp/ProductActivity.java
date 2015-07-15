@@ -48,6 +48,11 @@ public class ProductActivity extends BaseActivity {
     private static final int NEW_MODE = 1;
     private static final int EDIT_MODE = 2;
 
+    //Keys for saving state when configuration change occurs
+    private static final String KEY_WORK_MODE = "workMode";
+    private static final String KEY_PRODUCT = "product";
+    private static final String KEY_TEMP_PHOTO_PATH = "temp_path";
+
     private static final int REQUEST_CHOOSE_IMAGE = 1;
     private static final int REQUEST_IMAGE_CAPTURE = 2;
 
@@ -73,8 +78,14 @@ public class ProductActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
-        //Get extra intent data if there are any
-        getIntentData();
+        if (savedInstanceState != null) {
+            mMode = savedInstanceState.getInt(KEY_WORK_MODE);
+            mCurrentTempPhotoPath = savedInstanceState.getString(KEY_TEMP_PHOTO_PATH);
+            mProduct = savedInstanceState.getParcelable(KEY_PRODUCT);
+        } else {
+            //Get extra intent data if there are any
+            getIntentData();
+        }
         inflateViews();
         configureFrameViewPhoto();
         if (mMode == EDIT_MODE) {
@@ -96,6 +107,14 @@ public class ProductActivity extends BaseActivity {
         mImageViewPhoto = (ImageView) findViewById(R.id.imageViewPhoto);
         mImageViewPrimaryAction = (ImageView) findViewById(R.id.imageViewPrimaryAction);
         mImageViewSecondaryAction = (ImageView) findViewById(R.id.imageViewSecondaryAction);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(KEY_WORK_MODE, mMode);
+        outState.putString(KEY_TEMP_PHOTO_PATH, mCurrentTempPhotoPath);
+        outState.putParcelable(KEY_PRODUCT, mProduct);
     }
 
     @Override
@@ -490,25 +509,6 @@ public class ProductActivity extends BaseActivity {
         //Hold the path of the file for the future processing
         mCurrentTempPhotoPath = tempFile.getAbsolutePath();
         return tempFile;
-    }
-
-
-
-
-    /**
-     * Save one orientation value into the metadata image file
-     *
-     * @param file  File object with the image
-     * @param value Orientation value
-     */
-    private void setImageOrientation(File file, String value) {
-        try {
-            ExifInterface exifInterface = new ExifInterface(file.getAbsolutePath());
-            exifInterface.setAttribute(ExifInterface.TAG_ORIENTATION, value);
-            exifInterface.saveAttributes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

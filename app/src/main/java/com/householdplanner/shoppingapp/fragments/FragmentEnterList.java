@@ -43,6 +43,7 @@ import com.householdplanner.shoppingapp.data.ShoppingListContract;
 import com.householdplanner.shoppingapp.listeners.RecyclerViewClickListener;
 import com.householdplanner.shoppingapp.loaders.ProductLoader;
 import com.householdplanner.shoppingapp.models.Product;
+import com.householdplanner.shoppingapp.models.ProductHistory;
 import com.householdplanner.shoppingapp.repositories.ShoppingListRepository;
 import com.householdplanner.shoppingapp.usecases.UseCaseMyProducts;
 import com.householdplanner.shoppingapp.usecases.UseCaseShoppingList;
@@ -244,8 +245,14 @@ public class FragmentEnterList extends Fragment implements LoaderManager.LoaderC
             UseCaseMyProducts useCaseMyProducts = new UseCaseMyProducts(getActivity());
             for (int index = 0; index < mArrayItemsSelected.length; index++) {
                 if (mArrayItemsSelected[index]) {
-                    int productId = mAdapter.mProductListData.get(index).productId;
-                    useCaseMyProducts.moveToSupermarket(productId, targetMarket);
+                    Product product = mAdapter.mProductListData.get(index);
+                    ProductHistory productHistory = new ProductHistory();
+                    productHistory._id = product.productId;
+                    productHistory.marketId = product.marketId;
+                    productHistory.marketName = product.marketName;
+                    productHistory.name = product.name;
+                    productHistory.photoName = product.photoName;
+                    useCaseMyProducts.moveToSupermarket(productHistory, targetMarket);
                 }
             }
             mArrayItemsSelected = null;

@@ -143,12 +143,10 @@ public class UseCaseMyProducts {
     /**
      * Set a new market for a product in the catalog
      *
-     * @param id       product id
+     * @param productHistory product in catalog
      * @param marketId market id
      */
-    public void moveToSupermarket(int id, int marketId) {
-        ProductHistory productHistory = new ProductHistory();
-        productHistory._id = id;
+    public void moveToSupermarket(ProductHistory productHistory, int marketId) {
         productHistory.marketId = marketId;
         ProductHistoryRepository historyRepository = new ProductHistoryRepository(mContext);
         historyRepository.update(productHistory);
